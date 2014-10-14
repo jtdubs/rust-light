@@ -65,7 +65,7 @@ impl Point {
         Point::new(self.x + o.x, self.y + o.y, self.z + o.z)
     }
 
-    pub fn add_self_v(&mut self, o : &Vector) -> Point {
+    pub fn add_self_v(&mut self, o : &Vector) {
         self.x = self.x + o.x;
         self.y = self.y + o.y;
         self.z = self.z + o.z;

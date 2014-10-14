@@ -37,10 +37,10 @@ impl Quaternion {
         let wx = w * x;
         let wy = w * y;
         let wz = w * z;
-        Matrix::new([1f64 - 2f64 * (yy + zz),        2f64 * (xy - wz),        2f64 * (xz + wy), 0f64,
-                            2f64 * (wy + wz), 1f64 - 2f64 * (xx + zz),        2f64 * (yz - wx), 0f64,
-                            2f64 * (xz - wy),        2f64 * (yz + wx), 1f64 - 2f64 * (xx + yy), 0f64,
-                                        0f64,                    0f64,                    0f64, 1f64])
+        Matrix::new(&[1f64 - 2f64 * (yy + zz),        2f64 * (xy - wz),        2f64 * (xz + wy), 0f64,
+                             2f64 * (wy + wz), 1f64 - 2f64 * (xx + zz),        2f64 * (yz - wx), 0f64,
+                             2f64 * (xz - wy),        2f64 * (yz + wx), 1f64 - 2f64 * (xx + yy), 0f64,
+                                         0f64,                    0f64,                    0f64, 1f64])
     }
 
     pub fn to_angle_axis(&self) -> (f64, Vector) {
@@ -81,7 +81,14 @@ impl Quaternion {
             self.w*q.w - (self.v.dot(&q.v)))
     }
 
-    // TODO: mul_self_q
+    pub fn mul_self_q(&mut self, q : &Quaternion) {
+        let vxv = self.v.cross(&q.v);
+        let vdv = self.v.dot(&q.v);
+        self.v.mul_self_s(q.w);
+        self.v.add_self_v(&q.v.mul_s(self.w));
+        self.v.add_self_v(&vxv);
+        self.w = self.w * q.w - vdv;
+    }
 
     pub fn add_q(&self, o : &Quaternion) -> Quaternion {
         Quaternion::new(&self.v.add_v(&o.v), self.w + o.w)

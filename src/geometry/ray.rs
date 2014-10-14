@@ -24,13 +24,13 @@ impl Ray {
     }
 
     pub fn at_time(&self, t : f64) -> Point {
-        self.origin + (self.direction * t)
+        self.origin.add_v(&self.direction.mul_s(t))
     }
 }
 
 impl Neg<Ray> for Ray {
     fn neg(&self) -> Ray {
-        Ray::new(&self.origin, &-self.direction)
+        Ray::new(&self.origin, &self.direction.reverse())
     }
 }
 

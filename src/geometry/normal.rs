@@ -30,7 +30,7 @@ impl Normal {
         if m == 0f64 { *self } else { self.div_s(m) }
     }
 
-    pub fn normalize_self(&self) {
+    pub fn normalize_self(&mut self) {
         let m = self.magnitude();
         if m != 0f64 { self.div_self_s(m) }
     }

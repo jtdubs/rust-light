@@ -54,7 +54,7 @@ impl Vector {
 
     pub fn normalize_self(&mut self) {
         let m = self.magnitude();
-        if (m != 0f64) { self.div_self_s(m) }
+        if m != 0f64 { self.div_self_s(m) }
     }
 
     pub fn angle_between(&self, o : &Vector) -> f64 {
