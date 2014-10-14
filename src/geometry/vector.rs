@@ -150,6 +150,13 @@ impl Transformable for Vector {
 }
 
 #[test]
+fn test_accessors() {
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).x, 1f64);
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).y, 2f64);
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).z, 3f64);
+}
+
+#[test]
 fn test_equality() {
     assert!(Vector::zero() == Vector::zero());
     assert!(Vector::zero() == Vector::new(0f64, 0f64, 0f64));

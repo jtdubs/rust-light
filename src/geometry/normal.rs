@@ -13,6 +13,22 @@ impl Normal {
         Normal { x: x, y: y, z: z }
     }
 
+    pub fn zero() -> Normal {
+        Normal::new(0f64, 0f64, 0f64)
+    }
+
+    pub fn unit_x() -> Normal {
+        Normal::new(1f64, 0f64, 0f64)
+    }
+
+    pub fn unit_y() -> Normal {
+        Normal::new(0f64, 1f64, 0f64)
+    }
+
+    pub fn unit_z() -> Normal {
+        Normal::new(0f64, 0f64, 1f64)
+    }
+
     pub fn dot(&self, o : &Normal) -> f64 {
         self.x * o.x + self.y * o.y + self.z * o.z
     }
@@ -125,4 +141,91 @@ impl Transformable for Normal {
         let c = self.clone();
         self.clone_from(&t.inverse_transformation_matrix().transpose().mul_n(&c))
     }
+}
+
+#[test]
+fn test_accessors() {
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).x, 1f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).y, 2f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).z, 3f64);
+}
+
+#[test]
+fn test_construction() {
+    assert_eq!(Normal::new(1f64, 2f64, 3f64), Vector::new(1f64, 2f64, 3f64).to_normal());
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).x, 1f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).y, 2f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).z, 3f64);
+}
+
+fn test_equality() {
+    assert!(Normal::zero() == Normal::zero());
+    assert!(Normal::zero() == Normal::new(0f64, 0f64, 0f64));
+    assert!(Normal::zero() != Normal::new(1f64, 0f64, 0f64));
+    assert!(Normal::zero() != Normal::new(0f64, 1f64, 0f64));
+    assert!(Normal::zero() != Normal::new(0f64, 0f64, 1f64));
+    assert!(Normal::unit_x() == Normal::unit_x());
+    assert!(Normal::unit_x() != Normal::unit_y());
+}
+
+#[test]
+fn test_dot() {
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::zero()), 0f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::unit_y()), 2f64);
+    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::new(4f64, 5f64, 6f64)), 32f64);
+}
+
+#[test]
+fn test_magnitude() {
+    assert_eq!(Normal::zero().magnitude(), 0f64);
+    assert_eq!(Normal::unit_x().magnitude(), 1f64);
+}
+
+#[test]
+fn test_normalize() {
+    assert_eq!(Normal::unit_x().mul_s(3f64).normalize(), Normal::unit_x());
+}
+
+#[test]
+fn test_reverse() {
+    assert_eq!(Normal::zero().reverse(), Normal::zero());
+    assert_eq!(Normal::new(1f64, -2f64, 3f64).reverse(), Normal::new(-1f64, 2f64, -3f64));
+}
+
+#[test]
+fn test_add() {
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_x()), Normal::new(2f64, 0f64, 0f64));
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_y()), Normal::new(1f64, 1f64, 0f64));
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_z()), Normal::new(1f64, 0f64, 1f64));
+
+    let mut v = Normal::unit_x();
+    v.add_self_n(&Normal::unit_x());
+    v.add_self_n(&Normal::unit_y());
+    assert_eq!(v, Normal::new(2f64, 1f64, 0f64));
+}
+
+#[test]
+fn test_mul() {
+    assert_eq!(Normal::unit_x().mul_s(3f64), Normal::new(3f64, 0f64, 0f64));
+    assert_eq!(Normal::unit_y().mul_s(3f64), Normal::new(0f64, 3f64, 0f64));
+
+    let mut v = Normal::unit_x();
+    v.mul_self_s(3f64);
+    assert_eq!(v, Normal::new(3f64, 0f64, 0f64));
+}
+
+#[test]
+fn test_div() {
+    assert_eq!(Normal::unit_x().mul_s(3f64).div_s(3f64), Normal::unit_x());
+    assert_eq!(Normal::unit_y().mul_s(3f64).div_s(3f64), Normal::unit_y());
+
+    let mut v = Normal::unit_x();
+    v.mul_self_s(3f64);
+    v.div_self_s(3f64);
+    assert_eq!(v, Normal::unit_x());
+}
+
+#[test]
+fn face_forward() {
+    assert_eq!(Normal::unit_x().reverse().face_forward(&Vector::unit_x()), Normal::unit_x());
 }
