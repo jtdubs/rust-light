@@ -1,6 +1,15 @@
 use filter::{BoxFilter,TriangleFilter,GaussianFilter,MitchellFilter,LanczosSincFilter,Filter};
 use std::iter::range_inclusive;
-mod filter;
+
+pub mod filter;
+pub mod geometry {
+    pub mod vector;
+    pub mod normal;
+    pub mod point;
+    pub mod matrix;
+    pub mod quaternion;
+    pub mod ray;
+}
 
 fn main() {
     println!("clf");
