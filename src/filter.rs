@@ -58,9 +58,9 @@ impl Filter for TriangleFilter {
 }
 
 pub struct GaussianFilter {
-    width  : f64,
-    height : f64,
-    alpha  : f64,
+    width   : f64,
+    height  : f64,
+    alpha   : f64,
     base_x  : f64,
     base_y  : f64,
 }
