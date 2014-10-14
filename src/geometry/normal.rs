@@ -1,5 +1,5 @@
 use geometry::vector::Vector;
-use geometry::matrix::Matrix;
+use geometry::transform::{Transform,Transformable};
 
 #[deriving(Show)]
 pub struct Normal {
@@ -41,21 +41,6 @@ impl Normal {
 
     pub fn face_forward_self(&mut self, forward : &Vector) {
         if self.dot(&forward.to_normal()) < 0f64 { self.reverse_self() }
-    }
-
-    pub fn mul_m(&self, m : &Matrix) -> Normal {
-        Normal::new(m[ 0] * self.x + m[ 4] * self.y + m[ 8] * self.z,
-                    m[ 1] * self.x + m[ 5] * self.y + m[ 9] * self.z,
-                    m[ 2] * self.x + m[ 6] * self.y + m[10] * self.z)
-    }
-
-    pub fn mul_self_m(&mut self, m : &Matrix) {
-        let x = self.x;
-        let y = self.y;
-        let z = self.z;
-        self.x = m[0] * x + m[4] * y + m[ 8] * z;
-        self.y = m[1] * x + m[5] * y + m[ 9] * z;
-        self.z = m[2] * x + m[6] * y + m[10] * z;
     }
 
     pub fn reverse(&self) -> Normal {
@@ -128,5 +113,16 @@ impl PartialEq for Normal {
 
     fn ne(&self, other: &Normal) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
+    }
+}
+
+impl Transformable for Normal {
+    fn transform(&self, t : &Transform) -> Normal {
+        t.inverse_transformation_matrix().transpose().mul_n(self)
+    }
+
+    fn transform_self(&mut self, t : &Transform) {
+        let c = self.clone();
+        self.clone_from(&t.inverse_transformation_matrix().transpose().mul_n(&c))
     }
 }

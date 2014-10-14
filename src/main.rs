@@ -1,7 +1,13 @@
 use filter::{BoxFilter,TriangleFilter,GaussianFilter,MitchellFilter,LanczosSincFilter,Filter};
 use std::iter::range_inclusive;
 
+#[allow(dead_code)]
 pub mod filter;
+
+#[allow(dead_code)]
+pub mod math;
+
+#[allow(dead_code)]
 pub mod geometry {
     pub mod vector;
     pub mod normal;
@@ -9,6 +15,8 @@ pub mod geometry {
     pub mod matrix;
     pub mod quaternion;
     pub mod ray;
+    pub mod aabb;
+    pub mod transform;
 }
 
 fn main() {

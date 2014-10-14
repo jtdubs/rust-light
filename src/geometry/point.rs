@@ -1,5 +1,5 @@
 use geometry::vector::Vector;
-use geometry::matrix::Matrix;
+use geometry::transform::{Transform,Transformable};
 
 #[deriving(Show)]
 pub struct Point {
@@ -31,34 +31,6 @@ impl Point {
 
     pub fn vector_from(&self, o : &Point) -> Vector {
         self.sub_p(o)
-    }
-
-    pub fn mul_m(&self, m : &Matrix) -> Point {
-        let s = m[3] * self.x + m[7] * self.y + m[11] * self.z + m[15];
-        
-        if s == 0f64 {
-            Point::origin()
-        } else {
-            Point::new((m[ 0] * self.x + m[ 4] * self.y + m[ 8] * self.z + m[12]) / s,
-                       (m[ 1] * self.x + m[ 5] * self.y + m[ 9] * self.z + m[13]) / s,
-                       (m[ 2] * self.x + m[ 6] * self.y + m[10] * self.z + m[14]) / s)
-        }
-    }
-
-    pub fn mul_self_m(&mut self, m : &Matrix) {
-        let x = self.x;
-        let y = self.y;
-        let z = self.z;
-        let s = m[3] * x + m[7] * y + m[11] * z + m[15];
-        if s == 0f64 {
-            self.x = 0f64;
-            self.y = 0f64;
-            self.z = 0f64;
-        } else {
-            self.x = (m[0] * x + m[4] * y + m[ 8] * z + m[12]) / s;
-            self.y = (m[1] * x + m[5] * y + m[ 9] * z + m[13]) / s;
-            self.z = (m[2] * x + m[6] * y + m[10] * z + m[14]) / s;
-        }
     }
 
     pub fn add_v(&self, o : &Vector) -> Point {
@@ -105,5 +77,16 @@ impl PartialEq for Point {
 
     fn ne(&self, other: &Point) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
+    }
+}
+
+impl Transformable for Point {
+    fn transform(&self, t : &Transform) -> Point {
+        t.transformation_matrix().mul_p(self)
+    }
+
+    fn transform_self(&mut self, t : &Transform) {
+        let c = self.clone();
+        self.clone_from(&t.transformation_matrix().mul_p(&c))
     }
 }

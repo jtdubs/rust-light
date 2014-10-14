@@ -1,5 +1,6 @@
 use geometry::vector::Vector;
 use geometry::point::Point;
+use geometry::transform::{Transform,Transformable};
 
 pub struct Ray {
     pub origin    : Point,
@@ -26,11 +27,23 @@ impl Ray {
     pub fn at_time(&self, t : f64) -> Point {
         self.origin.add_v(&self.direction.mul_s(t))
     }
-}
 
-impl Neg<Ray> for Ray {
-    fn neg(&self) -> Ray {
+    pub fn reverse(&self) -> Ray {
         Ray::new(&self.origin, &self.direction.reverse())
+    }
+
+    pub fn reverse_self(&mut self) {
+        self.direction.reverse_self()
     }
 }
 
+impl Transformable for Ray {
+    fn transform(&self, t : &Transform) -> Ray {
+        Ray::new(&self.origin.transform(t), &self.direction.transform(t))
+    }
+
+    fn transform_self(&mut self, t : &Transform) {
+        self.origin.transform_self(t);
+        self.direction.transform_self(t)
+    }
+}

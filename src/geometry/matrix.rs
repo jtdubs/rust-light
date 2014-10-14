@@ -22,6 +22,60 @@ impl Matrix {
                       0f64, 0f64, 0f64, 1f64])
     }
 
+    pub fn scaling(v : &Vector) -> Matrix {
+        Matrix::new(&[ v.x, 0f64, 0f64, 0f64,
+                      0f64,  v.y, 0f64, 0f64,
+                      0f64, 0f64,  v.z, 0f64,
+                      0f64, 0f64, 0f64, 1f64])
+    }
+     
+    pub fn translation(v : &Vector) -> Matrix {
+        Matrix::new(&[1f64, 0f64, 0f64,  v.x,
+                      0f64, 1f64, 0f64,  v.y,
+                      0f64, 0f64, 1f64,  v.z,
+                      0f64, 0f64, 0f64, 1f64])
+    }
+     
+    pub fn rotation(angle : f64, axis : &Vector) -> Matrix {
+        let c = angle.cos();
+        let s = angle.sin();
+        let u = axis.x;
+        let v = axis.y;
+        let w = axis.z;
+        Matrix::new(&[  u*u*(1f64-c)+c, u*v*(1f64-c)-w*s, u*w*(1f64-c)+v*s, 0f64,
+                      v*u*(1f64-c)+w*c,   v*v*(1f64-c)+c, u*w*(1f64-c)-u*s, 0f64,
+                      w*u*(1f64-c)-v*c, w*v*(1f64-c)+u*s,   u*w*(1f64-c)+c, 0f64,
+                                  0f64,             0f64,             0f64, 1f64])
+    }
+     
+    pub fn frustum(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
+        let a = (r+l)/(r-l);
+        let b2 = (t+b)/(t-b);
+        let c = -(f+n)/(f-n);
+        let d = -(2f64*f*n)/(f-n);
+        Matrix::new(&[(2f64*n)/(r-l),           0f64,     a, 0f64,
+                                0f64, (2f64*n)/(t-b),    b2, 0f64,
+                                0f64,           0f64,     c,    d,
+                                0f64,           0f64, -1f64, 0f64])
+    }
+     
+    pub fn perspective(fov_y : f64, aspect : f64, near : f64, far : f64) -> Matrix {
+        let fh = (fov_y / 2f64).tan() * near;
+        let fw = fh * aspect;
+        Matrix::frustum(-fw, fw, -fh, fh, near, far)
+    }
+     
+    pub fn orthographic(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
+        let tx = -(r+l)/(r-l);
+        let ty = -(t+b)/(t-b);
+        let tz = -(f+n)/(f-n);
+        Matrix::new(&[2f64/(r-l),       0f64,        0f64,   tx,
+                            0f64, 2f64/(t-b),        0f64,   ty,
+                            0f64,       0f64, -2f64*(f-n),   tz,
+                            0f64,       0f64,        0f64, 1f64])
+    }
+
+
     pub fn transpose(&self) -> Matrix {
         Matrix::new(&[self[0], self[4], self[ 8], self[12],
                       self[1], self[5], self[ 9], self[13],
@@ -111,10 +165,22 @@ impl Matrix {
                     self[ 8] * v.x + self[ 9] * v.y + self[10] * v.z)
     }
 
+    pub fn premul_v(&self, v : &Vector) -> Vector {
+        Vector::new(self[ 0] * v.x + self[ 4] * v.y + self[ 8] * v.z,
+                    self[ 1] * v.x + self[ 5] * v.y + self[ 9] * v.z,
+                    self[ 2] * v.x + self[ 6] * v.y + self[10] * v.z)
+    }
+
     pub fn mul_n(&self, n : &Normal) -> Normal {
         Normal::new(self[ 0] * n.x + self[ 1] * n.y + self[ 2] * n.z,
                     self[ 4] * n.x + self[ 5] * n.y + self[ 6] * n.z,
                     self[ 8] * n.x + self[ 9] * n.y + self[10] * n.z)
+    }
+
+    pub fn premul_n(&self, n : &Normal) -> Normal {
+        Normal::new(self[ 0] * n.x + self[ 4] * n.y + self[ 8] * n.z,
+                    self[ 1] * n.x + self[ 5] * n.y + self[ 9] * n.z,
+                    self[ 2] * n.x + self[ 6] * n.y + self[10] * n.z)
     }
     
     pub fn mul_p(&self, p : &Point) -> Point {
@@ -126,6 +192,18 @@ impl Matrix {
             Point::new((self[ 0] * p.x + self[ 1] * p.y + self[ 2] * p.z + self[ 3]) / s,
                        (self[ 4] * p.x + self[ 5] * p.y + self[ 6] * p.z + self[ 7]) / s,
                        (self[ 8] * p.x + self[ 9] * p.y + self[10] * p.z + self[11]) / s)
+        }
+    }
+
+    pub fn premul_p(&self, p : &Point) -> Point {
+        let s = self[3] * p.x + self[7] * p.y + self[11] * p.z + self[15];
+        
+        if s == 0f64 {
+            Point::origin()
+        } else {
+            Point::new((self[ 0] * p.x + self[ 4] * p.y + self[ 8] * p.z + self[12]) / s,
+                       (self[ 1] * p.x + self[ 5] * p.y + self[ 9] * p.z + self[13]) / s,
+                       (self[ 2] * p.x + self[ 6] * p.y + self[10] * p.z + self[14]) / s)
         }
     }
 }
@@ -156,57 +234,4 @@ impl PartialEq for Matrix {
     fn ne(&self, other: &Matrix) -> bool {
         self.m != other.m
     }
-}
-
-pub fn scaling_matrix(v : &Vector) -> Matrix {
-    Matrix::new(&[ v.x, 0f64, 0f64, 0f64,
-                  0f64,  v.y, 0f64, 0f64,
-                  0f64, 0f64,  v.z, 0f64,
-                  0f64, 0f64, 0f64, 1f64])
-}
-
-pub fn translation_matrix(v : &Vector) -> Matrix {
-    Matrix::new(&[1f64, 0f64, 0f64,  v.x,
-                  0f64, 1f64, 0f64,  v.y,
-                  0f64, 0f64, 1f64,  v.z,
-                  0f64, 0f64, 0f64, 1f64])
-}
-
-pub fn rotation_matrix(angle : f64, axis : &Vector) -> Matrix {
-    let c = angle.cos();
-    let s = angle.sin();
-    let u = axis.x;
-    let v = axis.y;
-    let w = axis.z;
-    Matrix::new(&[  u*u*(1f64-c)+c, u*v*(1f64-c)-w*s, u*w*(1f64-c)+v*s, 0f64,
-                  v*u*(1f64-c)+w*c,   v*v*(1f64-c)+c, u*w*(1f64-c)-u*s, 0f64,
-                  w*u*(1f64-c)-v*c, w*v*(1f64-c)+u*s,   u*w*(1f64-c)+c, 0f64,
-                              0f64,             0f64,             0f64, 1f64])
-}
-
-pub fn frustum_matrix(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
-    let a = (r+l)/(r-l);
-    let b2 = (t+b)/(t-b);
-    let c = -(f+n)/(f-n);
-    let d = -(2f64*f*n)/(f-n);
-    Matrix::new(&[(2f64*n)/(r-l),           0f64,     a, 0f64,
-                            0f64, (2f64*n)/(t-b),    b2, 0f64,
-                            0f64,           0f64,     c,    d,
-                            0f64,           0f64, -1f64, 0f64])
-}
-
-pub fn perspective_matrix(fov_y : f64, aspect : f64, near : f64, far : f64) -> Matrix {
-    let fh = (fov_y / 2f64).tan() * near;
-    let fw = fh * aspect;
-    frustum_matrix(-fw, fw, -fh, fh, near, far)
-}
-
-pub fn orthographic_matrix(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
-    let tx = -(r+l)/(r-l);
-    let ty = -(t+b)/(t-b);
-    let tz = -(f+n)/(f-n);
-    Matrix::new(&[2f64/(r-l),       0f64,        0f64,   tx,
-                        0f64, 2f64/(t-b),        0f64,   ty,
-                        0f64,       0f64, -2f64*(f-n),   tz,
-                        0f64,       0f64,        0f64, 1f64])
 }

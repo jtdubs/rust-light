@@ -1,7 +1,7 @@
 use std::num::FloatMath;
 
 use geometry::normal::Normal;
-use geometry::matrix::Matrix;
+use geometry::transform::{Transform,Transformable};
 
 #[deriving(Show)]
 pub struct Vector {
@@ -63,21 +63,6 @@ impl Vector {
 
     pub fn to_normal(&self) -> Normal {
         Normal::new(self.x, self.y, self.z)
-    }
-
-    pub fn mul_m(&self, m : &Matrix) -> Vector {
-        Vector::new(m[ 0] * self.x + m[ 4] * self.y + m[ 8] * self.z,
-                    m[ 1] * self.x + m[ 5] * self.y + m[ 9] * self.z,
-                    m[ 2] * self.x + m[ 6] * self.y + m[10] * self.z)
-    }
-
-    pub fn mul_self_m(&mut self, m : &Matrix) {
-        let x = self.x;
-        let y = self.y;
-        let z = self.z;
-        self.x = m[ 0] * x + m[ 4] * y + m[ 8] * z;
-        self.y = m[ 1] * x + m[ 5] * y + m[ 9] * z;
-        self.z = m[ 2] * x + m[ 6] * y + m[10] * z
     }
 
     pub fn mul_s(&self, s : f64) -> Vector {
@@ -151,4 +136,94 @@ impl PartialEq for Vector {
     fn ne(&self, other: &Vector) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
     }
+}
+
+impl Transformable for Vector {
+    fn transform(&self, t : &Transform) -> Vector {
+        t.transformation_matrix().mul_v(self)
+    }
+
+    fn transform_self(&mut self, t : &Transform) {
+        let c = self.clone();
+        self.clone_from(&t.transformation_matrix().mul_v(&c))
+    }
+}
+
+#[test]
+fn test_equality() {
+    assert!(Vector::zero() == Vector::zero());
+    assert!(Vector::zero() == Vector::new(0f64, 0f64, 0f64));
+    assert!(Vector::zero() != Vector::new(1f64, 0f64, 0f64));
+    assert!(Vector::zero() != Vector::new(0f64, 1f64, 0f64));
+    assert!(Vector::zero() != Vector::new(0f64, 0f64, 1f64));
+    assert!(Vector::unit_x() == Vector::unit_x());
+    assert!(Vector::unit_x() != Vector::unit_y());
+}
+
+#[test]
+fn test_dot() {
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).dot(&Vector::zero()), 0f64);
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).dot(&Vector::unit_y()), 2f64);
+    assert_eq!(Vector::new(1f64, 2f64, 3f64).dot(&Vector::new(4f64, 5f64, 6f64)), 32f64);
+}
+
+#[test]
+fn test_cross() {
+    assert_eq!(Vector::unit_x().cross(&Vector::unit_y()), Vector::unit_z());
+}
+
+#[test]
+fn test_magnitude() {
+    assert_eq!(Vector::zero().magnitude(), 0f64);
+    assert_eq!(Vector::unit_x().magnitude(), 1f64);
+}
+
+#[test]
+fn test_normalize() {
+    assert_eq!(Vector::unit_x().mul_s(3f64).normalize(), Vector::unit_x());
+}
+
+#[test]
+fn test_reverse() {
+    assert_eq!(Vector::zero().reverse(), Vector::zero());
+    assert_eq!(Vector::new(1f64, -2f64, 3f64).reverse(), Vector::new(-1f64, 2f64, -3f64));
+}
+
+#[test]
+fn test_add() {
+    assert_eq!(Vector::unit_x().add_v(&Vector::unit_x()), Vector::new(2f64, 0f64, 0f64));
+    assert_eq!(Vector::unit_x().add_v(&Vector::unit_y()), Vector::new(1f64, 1f64, 0f64));
+    assert_eq!(Vector::unit_x().add_v(&Vector::unit_z()), Vector::new(1f64, 0f64, 1f64));
+
+    let mut v = Vector::unit_x();
+    v.add_self_v(&Vector::unit_x());
+    v.add_self_v(&Vector::unit_y());
+    assert_eq!(v, Vector::new(2f64, 1f64, 0f64));
+}
+
+#[test]
+fn test_mul() {
+    assert_eq!(Vector::unit_x().mul_s(3f64), Vector::new(3f64, 0f64, 0f64));
+    assert_eq!(Vector::unit_y().mul_s(3f64), Vector::new(0f64, 3f64, 0f64));
+
+    let mut v = Vector::unit_x();
+    v.mul_self_s(3f64);
+    assert_eq!(v, Vector::new(3f64, 0f64, 0f64));
+}
+
+#[test]
+fn test_div() {
+    assert_eq!(Vector::unit_x().mul_s(3f64).div_s(3f64), Vector::unit_x());
+    assert_eq!(Vector::unit_y().mul_s(3f64).div_s(3f64), Vector::unit_y());
+
+    let mut v = Vector::unit_x();
+    v.mul_self_s(3f64);
+    v.div_self_s(3f64);
+    assert_eq!(v, Vector::unit_x());
+}
+
+#[test]
+fn test_angle() {
+    assert_eq!(Vector::unit_x().angle_between(&Vector::unit_y()), Float::frac_pi_2());
+    assert_eq!(Vector::unit_y().angle_between(&Vector::unit_x()), Float::frac_pi_2());
 }

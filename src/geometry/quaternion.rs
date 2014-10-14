@@ -18,6 +18,23 @@ impl Quaternion {
         Quaternion::new(&Vector::zero(), 1f64)
     }
 
+    pub fn rotation(angle : f64, axis : &Vector) -> Quaternion {
+        Quaternion::new(&axis.normalize().mul_s((angle/2f64).sin()), (angle/2f64).cos())
+    }
+     
+    pub fn rotation3(pitch : f64, yaw : f64, roll : f64) -> Quaternion {
+        let p = pitch/2f64;
+        let y = yaw/2f64;
+        let r = roll/2f64;
+        let sp = p.sin();
+        let sy = y.sin();
+        let sr = r.sin();
+        let cp = p.cos();
+        let cy = y.cos();
+        let cr = r.cos();
+        Quaternion::new(&Vector::new(cr*sp*cy + sr*cp*sy, cr*cp*sy - sr*sp*cy, sr*cp*cy - cr*sp*sy), cr*cp*cy + sr*sp*sy)
+    }
+
     pub fn normalize(&self) -> Quaternion {
         let s = self.magnitude_squared();
         Quaternion::new(&self.v.div_s(s), self.w)
@@ -128,21 +145,4 @@ impl PartialEq for Quaternion {
     fn ne(&self, other: &Quaternion) -> bool {
         self.v != other.v || self.w != other.w
     }
-}
-
-pub fn rotation_quaternion(angle : f64, axis : &Vector) -> Quaternion {
-    Quaternion::new(&axis.normalize().mul_s((angle/2f64).sin()), (angle/2f64).cos())
-}
-
-pub fn rotation_quaternion3(pitch : f64, yaw : f64, roll : f64) -> Quaternion {
-    let p = pitch/2f64;
-    let y = yaw/2f64;
-    let r = roll/2f64;
-    let sp = p.sin();
-    let sy = y.sin();
-    let sr = r.sin();
-    let cp = p.cos();
-    let cy = y.cos();
-    let cr = r.cos();
-    Quaternion::new(&Vector::new(cr*sp*cy + sr*cp*sy, cr*cp*sy - sr*sp*cy, sr*cp*cy - cr*sp*sy), cr*cp*cy + sr*sp*sy)
 }
