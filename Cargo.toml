@@ -3,3 +3,6 @@
 name = "Light"
 version = "0.0.1"
 authors = ["Justin Dubs <jtdubs@gmail.com>"]
+
+[dependencies.lodepng]
+git = "https://github.com/pornel/lodepng-rust.git"

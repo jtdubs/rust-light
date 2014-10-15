@@ -11,6 +11,9 @@ pub mod math;
 pub mod samplers;
 
 #[allow(dead_code)]
+pub mod film;
+
+#[allow(dead_code)]
 pub mod geometry {
     pub mod vector;
     pub mod normal;
