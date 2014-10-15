@@ -1,9 +1,9 @@
+use std::fmt::{Show,Formatter,Result};
 use std::num::FloatMath;
 
 use geometry::matrix::Matrix;
 use geometry::vector::Vector;
 
-#[deriving(Show)]
 pub struct Quaternion {
     v : Vector,
     w : f64
@@ -123,6 +123,12 @@ impl Quaternion {
     pub fn sub_self_q(&mut self, o : &Quaternion) {
         self.v.sub_self_v(&o.v);
         self.w = self.w - o.w;
+    }
+}
+
+impl Show for Quaternion {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "{{{}, {}, {}, {}}}", self.v.x, self.v.y, self.v.z, self.w)
     }
 }
 

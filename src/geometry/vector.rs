@@ -1,9 +1,9 @@
 use std::num::FloatMath;
+use std::fmt::{Show,Formatter,Result};
 
 use geometry::normal::Normal;
 use geometry::transform::{Transform,Transformable};
 
-#[deriving(Show)]
 pub struct Vector {
     pub x : f64,
     pub y : f64,
@@ -113,6 +113,12 @@ impl Vector {
         self.x = -self.x;
         self.y = -self.y;
         self.z = -self.z
+    }
+}
+
+impl Show for Vector {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "<{}, {}, {}>", self.x, self.y, self.z)
     }
 }
 

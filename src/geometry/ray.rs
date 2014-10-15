@@ -1,3 +1,5 @@
+use std::fmt::{Show,Formatter,Result};
+
 use geometry::vector::Vector;
 use geometry::point::Point;
 use geometry::transform::{Transform,Transformable};
@@ -34,6 +36,12 @@ impl Ray {
 
     pub fn reverse_self(&mut self) {
         self.direction.reverse_self()
+    }
+}
+
+impl Show for Ray {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "Ray {{ origin: {}, direction: {} }}", self.origin, self.direction)
     }
 }
 

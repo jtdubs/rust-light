@@ -1,3 +1,5 @@
+use std::fmt::{Show,Formatter,Result};
+
 use geometry::vector::Vector;
 use geometry::point::Point;
 use geometry::normal::Normal;
@@ -214,6 +216,16 @@ impl Index<uint, f64> for Matrix {
     }
 }
 
+impl Show for Matrix {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]",
+                 self[ 0], self[ 1], self[ 2], self[ 3],
+                 self[ 4], self[ 5], self[ 6], self[ 7],
+                 self[ 8], self[ 9], self[10], self[11],
+                 self[12], self[13], self[14], self[15])
+    }
+}
+
 impl Clone for Matrix {
     fn clone(&self) -> Matrix {
         Matrix::new(&self.m)
@@ -234,4 +246,36 @@ impl PartialEq for Matrix {
     fn ne(&self, other: &Matrix) -> bool {
         self.m != other.m
     }
+}
+
+#[test]
+fn test_access() {
+    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
+                           4f64,  5f64,  6f64,  7f64,
+                           8f64,  9f64, 10f64, 11f64,
+                          12f64, 13f64, 14f64, 15f64]);
+
+    for ix in range(0u, 16u) {
+        assert_eq!(l[ix], ix as f64);
+    }
+}
+
+fn test_equality() {
+    assert!(Matrix::zero() == Matrix::zero());
+    assert!(Matrix::identity() == Matrix::identity());
+    assert!(Matrix::identity() != Matrix::zero());
+    assert!(Matrix::identity() == Matrix::identity().clone());
+}
+
+fn test_transpose() {
+    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
+                           4f64,  5f64,  6f64,  7f64,
+                           8f64,  9f64, 10f64, 11f64,
+                          12f64, 13f64, 14f64, 15f64]);
+    let r = Matrix::new(&[ 0f64,   4f64,  8f64, 12f64,
+                           1f64,   5f64,  9f64, 13f64,
+                           2f64,   6f64, 10f64, 14f64,
+                           3f64,   7f64, 11f64, 15f64]);
+    assert_eq!(l.transpose(), r);
+    assert_eq!(l.transpose().transpose(), l);
 }

@@ -1,7 +1,8 @@
+use std::fmt::{Show,Formatter,Result};
+
 use geometry::vector::Vector;
 use geometry::transform::{Transform,Transformable};
 
-#[deriving(Show)]
 pub struct Normal {
     pub x : f64,
     pub y : f64,
@@ -107,6 +108,12 @@ impl Normal {
         self.x = self.x - o.x;
         self.y = self.y - o.y;
         self.z = self.z - o.z;
+    }
+}
+
+impl Show for Normal {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "[{}, {}, {}]", self.x, self.y, self.z)
     }
 }
 

@@ -1,7 +1,8 @@
+use std::fmt::{Show,Formatter,Result};
+
 use geometry::vector::Vector;
 use geometry::transform::{Transform,Transformable};
 
-#[deriving(Show)]
 pub struct Point {
     pub x : f64,
     pub y : f64,
@@ -67,6 +68,12 @@ impl Clone for Point {
         self.x = source.x;
         self.y = source.y;
         self.z = source.z;
+    }
+}
+
+impl Show for Point {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "({}, {}, {})", self.x, self.y, self.z)
     }
 }
 

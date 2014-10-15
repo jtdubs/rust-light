@@ -1,3 +1,5 @@
+use std::fmt::{Show,Formatter,Result};
+
 use geometry::point::Point;
 use geometry::transform::{Transform,Transformable};
 
@@ -127,6 +129,12 @@ impl AABB {
             Some([Point::new(n.x, n.y, n.z), Point::new(n.x, n.y, x.z), Point::new(n.x, x.y, n.z), Point::new(n.x, x.y, x.z),
                   Point::new(x.x, n.y, n.z), Point::new(x.x, n.y, x.z), Point::new(x.x, x.y, n.z), Point::new(x.x, x.y, x.z)])
         }
+    }
+}
+
+impl Show for AABB {
+    fn fmt(&self, f : &mut Formatter) -> Result {
+        writeln!(f, "AABB {{ min: {}, max: {} }}", self.min, self.max)
     }
 }
 
