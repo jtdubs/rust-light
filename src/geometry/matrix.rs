@@ -345,4 +345,27 @@ fn test_add_sub() {
     assert_eq!(l1c, l1);
 }
 
-// TODO: test vector, normal and point math
+#[test]
+fn test_vector_math() {
+    let v = Vector::new(1f64, 2f64, 3f64);
+
+    assert_eq!(Matrix::identity().mul_v(&v), v);
+    assert_eq!(Matrix::identity().premul_v(&v), v);
+}
+
+#[test]
+fn test_point_math() {
+    let p = Point::new(1f64, 2f64, 3f64);
+
+    assert_eq!(Matrix::identity().mul_p(&p), p);
+    assert_eq!(Matrix::identity().premul_p(&p), p);
+}
+
+#[test]
+fn test_normal_math() {
+    let n = Vector::new(1f64, 2f64, 3f64).to_normal();
+
+    assert_eq!(Matrix::identity().mul_n(&n), n);
+    assert_eq!(Matrix::identity().premul_n(&n), n);
+}
+

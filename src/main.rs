@@ -8,6 +8,9 @@ pub mod filter;
 pub mod math;
 
 #[allow(dead_code)]
+pub mod samplers;
+
+#[allow(dead_code)]
 pub mod geometry {
     pub mod vector;
     pub mod normal;

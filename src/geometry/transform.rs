@@ -107,3 +107,6 @@ pub trait Transformable {
         self.transform_self(&Transform::rotation3(pitch, yaw, roll))
     }
 }
+
+// TODO: test inverse
+// TODO: do a big transform test

@@ -40,6 +40,11 @@ impl Quaternion {
         Quaternion::new(&self.v.div_s(s), self.w)
     }
 
+    pub fn normalize_self(&mut self) {
+        let s = self.magnitude_squared();
+        self.v.div_self_s(s);
+    }
+
     pub fn to_matrix(&self) -> Matrix {
         let x = self.v.x;
         let y = self.v.y;
@@ -152,3 +157,5 @@ impl PartialEq for Quaternion {
         self.v != other.v || self.w != other.w
     }
 }
+
+// TODO: test that the _self methods get the same result as the non-_self methods

@@ -45,6 +45,27 @@ impl Show for Ray {
     }
 }
 
+impl Clone for Ray {
+    fn clone(&self) -> Ray {
+        Ray::new(&self.origin, &self.direction)
+    }
+
+    fn clone_from(&mut self, source: &Ray) {
+        self.origin = source.origin;
+        self.direction = source.direction;
+    }
+}
+
+impl PartialEq for Ray {
+    fn eq(&self, other: &Ray) -> bool {
+        self.origin == other.origin && self.direction == other.direction
+    }
+
+    fn ne(&self, other: &Ray) -> bool {
+        self.origin != other.origin || self.direction != other.direction
+    }
+}
+
 impl Transformable for Ray {
     fn transform(&self, t : &Transform) -> Ray {
         Ray::new(&self.origin.transform(t), &self.direction.transform(t))
@@ -54,4 +75,28 @@ impl Transformable for Ray {
         self.origin.transform_self(t);
         self.direction.transform_self(t)
     }
+}
+
+#[test]
+fn test_equality() {
+    assert!(Ray::x_axis() == Ray::x_axis());
+    assert!(Ray::x_axis() != Ray::y_axis());
+    assert!(Ray::x_axis() == Ray::new(&Point::origin(), &Vector::unit_x()));
+}
+
+#[test]
+fn test_reverse() {
+    assert_eq!(Ray::x_axis().reverse(), Ray::new(&Point::origin(), &Vector::unit_x().reverse()));
+    assert_eq!(Ray::x_axis().reverse().reverse(), Ray::x_axis());
+
+    let mut r = Ray::x_axis();
+    r.reverse_self();
+    assert_eq!(r, Ray::new(&Point::origin(), &Vector::unit_x().reverse()));
+    r.reverse_self();
+    assert_eq!(r, Ray::x_axis());
+}
+
+#[test]
+fn test_at_time() {
+    assert_eq!(Ray::x_axis().at_time(3f64), Point::new(3f64, 0f64, 0f64));
 }
