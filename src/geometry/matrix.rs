@@ -260,6 +260,7 @@ fn test_access() {
     }
 }
 
+#[test]
 fn test_equality() {
     assert!(Matrix::zero() == Matrix::zero());
     assert!(Matrix::identity() == Matrix::identity());
@@ -267,6 +268,7 @@ fn test_equality() {
     assert!(Matrix::identity() == Matrix::identity().clone());
 }
 
+#[test]
 fn test_transpose() {
     let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
                            4f64,  5f64,  6f64,  7f64,
@@ -279,3 +281,68 @@ fn test_transpose() {
     assert_eq!(l.transpose(), r);
     assert_eq!(l.transpose().transpose(), l);
 }
+
+#[test]
+fn test_mul() {
+    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
+                           4f64,  5f64,  6f64,  7f64,
+                           8f64,  9f64, 10f64, 11f64,
+                          12f64, 13f64, 14f64, 15f64]);
+
+    let r1 = l.mul_m(&Matrix::identity());
+    let r2 = Matrix::identity().mul_m(&l);
+
+    assert_eq!(l, r1);
+    assert_eq!(l, r2);
+
+    let mut l2 = l.clone();
+    l2.mul_self_m(&Matrix::identity());
+    assert_eq!(l, l2);
+}
+
+#[test]
+fn test_mul_div_s() {
+    let l1 = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
+                            4f64,  5f64,  6f64,  7f64,
+                            8f64,  9f64, 10f64, 11f64,
+                           12f64, 13f64, 14f64, 15f64]);
+
+    let l2 = Matrix::new(&[ 0f64,  2f64,  4f64,  6f64,
+                            8f64, 10f64, 12f64, 14f64,
+                           16f64, 18f64, 20f64, 22f64,
+                           24f64, 26f64, 28f64, 30f64]);
+
+    assert_eq!(l1.mul_s(2f64), l2);
+
+    let mut l1c = l1.clone();
+
+    l1c.mul_self_s(2f64);
+    assert_eq!(l1c, l2);
+    l1c.div_self_s(2f64);
+    assert_eq!(l1c, l1);
+}
+
+#[test]
+fn test_add_sub() {
+    let l1 = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
+                            4f64,  5f64,  6f64,  7f64,
+                            8f64,  9f64, 10f64, 11f64,
+                           12f64, 13f64, 14f64, 15f64]);
+
+    let l2 = Matrix::new(&[ 0f64,  2f64,  4f64,  6f64,
+                            8f64, 10f64, 12f64, 14f64,
+                           16f64, 18f64, 20f64, 22f64,
+                           24f64, 26f64, 28f64, 30f64]);
+
+    assert_eq!(l1.add_m(&l1), l2);
+    assert_eq!(l2.sub_m(&l1), l1);
+
+    let mut l1c = l1.clone();
+
+    l1c.add_self_m(&l1);
+    assert_eq!(l1c, l2);
+    l1c.sub_self_m(&l1);
+    assert_eq!(l1c, l1);
+}
+
+// TODO: test vector, normal and point math
