@@ -14,16 +14,16 @@ pub fn quadratic(a : f64, b : f64, c : f64) -> Option<[f64, ..2]> {
     }
 }
 
-pub fn radical_inverse(n : i64, b : i64) -> f64 {
+pub fn radical_inverse(n : uint, b : uint) -> f64 {
     helper(0f64, n, 1f64 / (b as f64), 1f64 / (b as f64), b)
 }
 
-fn helper(r : f64, i : i64, inv_bi : f64, inv_base : f64, b : i64) -> f64 {
+fn helper(r : f64, i : uint, inv_bi : f64, inv_base : f64, b : uint) -> f64 {
     if i == 0 {
         r
     } else {
         let di = i % b;
-        helper(r + ((di as f64) * inv_bi), ((i as f64) * inv_base).trunc() as i64, inv_bi * inv_base, inv_base, b)
+        helper(r + ((di as f64) * inv_bi), ((i as f64) * inv_base).trunc() as uint, inv_bi * inv_base, inv_base, b)
     }
 }
 
