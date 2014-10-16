@@ -1,4 +1,4 @@
-extern crate lodepng;
+// extern crate lodepng;
 
 use filter::Filter;
 
@@ -59,10 +59,10 @@ impl<F: Filter> Film<F> {
         }
     }
 
-    pub fn save(&self, path : &Path) -> Result<(), &str> {
-        match lodepng::encode_file(path, self.pixels.iter().map(|p| { (p.sum / p.weight_sum).round() as u8 }).collect::<Vec<u8>>().as_slice(), self.width, self.height, lodepng::LCT_GREY, 8) {
-            Err(_) => Err("encoding failure"),
-            Ok(_) => Ok(()),
-        }
-    }
+    // pub fn save(&self, path : &Path) -> Result<(), &str> {
+    //     match lodepng::encode_file(path, self.pixels.iter().map(|p| { (p.sum / p.weight_sum).round() as u8 }).collect::<Vec<u8>>().as_slice(), self.width, self.height, lodepng::LCT_GREY, 8) {
+    //         Err(_) => Err("encoding failure"),
+    //         Ok(_) => Ok(()),
+    //     }
+    // }
 }

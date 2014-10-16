@@ -1,12 +1,4 @@
 [root]
-name = "Light"
+name = "light"
 version = "0.0.1"
-dependencies = [
- "lodepng 0.1.0 (git+https://github.com/pornel/lodepng-rust.git#5491439fa0ba643a6201db0d2b9bd6ceef378ca3)",
-]
-
-[[package]]
-name = "lodepng"
-version = "0.1.0"
-source = "git+https://github.com/pornel/lodepng-rust.git#5491439fa0ba643a6201db0d2b9bd6ceef378ca3"
 
