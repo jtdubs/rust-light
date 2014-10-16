@@ -3,7 +3,7 @@ use std::fmt::{Show,Formatter,Result};
 use geometry::point::Point;
 use geometry::transform::{Transform,Transformable};
 
-struct AABB {
+pub struct AABB {
     empty : bool,
     min   : Point,
     max   : Point,

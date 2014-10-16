@@ -1,16 +1,7 @@
-#[allow(dead_code)]
 pub mod filter;
-
-#[allow(dead_code)]
 pub mod math;
-
-#[allow(dead_code)]
 pub mod sampler;
-
-#[allow(dead_code)]
 pub mod film;
-
-#[allow(dead_code)]
 pub mod geometry {
     pub mod vector;
     pub mod normal;

@@ -165,6 +165,7 @@ fn test_construction() {
     assert_eq!(Normal::new(1f64, 2f64, 3f64).z, 3f64);
 }
 
+#[test]
 fn test_equality() {
     assert!(Normal::zero() == Normal::zero());
     assert!(Normal::zero() == Normal::new(0f64, 0f64, 0f64));
