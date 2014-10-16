@@ -5,7 +5,7 @@ pub mod filter;
 pub mod math;
 
 #[allow(dead_code)]
-pub mod samplers;
+pub mod sampler;
 
 #[allow(dead_code)]
 pub mod film;

@@ -39,7 +39,7 @@ impl Sampler {
         let ns = 1f64 / nf;
         let mut v = Vec::<f64>::with_capacity(n);
         for x in std::iter::range(0u, n) {
-            let r = (ns * (x as f64)) + (self.range.sample::<TaskRng>(rng) / ns);
+            let r = (ns * (x as f64)) + (self.range.sample::<TaskRng>(rng) * ns);
             v.push(r);
         }
         v
@@ -54,8 +54,8 @@ impl Sampler {
         let mut v = Vec::<(f64, f64)>::with_capacity(w * h);
         for x in std::iter::range(0u, w) {
             for y in std::iter::range(0u, h) {
-                let rx = (ws * (x as f64)) + (self.range.sample::<TaskRng>(rng) / ws);
-                let ry = (hs * (y as f64)) + (self.range.sample::<TaskRng>(rng) / hs);
+                let rx = (ws * (x as f64)) + (self.range.sample::<TaskRng>(rng) * ws);
+                let ry = (hs * (y as f64)) + (self.range.sample::<TaskRng>(rng) * hs);
                 v.push((rx, ry));
             }
         }
