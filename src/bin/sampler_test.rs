@@ -30,9 +30,6 @@ fn draw(f : int, w : int, h : int, ix : int, grid : Option<(int, int)>, title : 
         }
      }
 
-    let fw = (w as f64) / (((w*w) + (h*h)) as f64).sqrt();
-    let fh = (h as f64) / (((w*w) + (h*h)) as f64).sqrt();
-
     println!("hold on;");
     println!("pbaspect ([1, 1]);");
     println!("axis (\"off\", \"nolabel\");");
@@ -47,6 +44,6 @@ fn draw(f : int, w : int, h : int, ix : int, grid : Option<(int, int)>, title : 
         print!("{}, ", y);
     }
     println!("];");
-    println!("scatter(xs, ys, 0.1, \"auto\");");
+    println!("scatter(xs, ys, 1, \"black\");");
     println!("hold off;");
 }
