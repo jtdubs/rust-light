@@ -2,7 +2,7 @@ use std::fmt::{Show,Formatter,Result};
 
 use geometry::vector::Vector;
 use geometry::point::Point;
-use geometry::transform::{Transform,Transformable};
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Ray {
     pub origin    : Point,
@@ -66,11 +66,13 @@ impl PartialEq for Ray {
     }
 }
 
-impl Transformable for Ray {
+impl Trans for Ray {
     fn transform(&self, t : &Transform) -> Ray {
         Ray::new(&self.origin.transform(t), &self.direction.transform(t))
     }
+}
 
+impl TransMut for Ray {
     fn transform_self(&mut self, t : &Transform) {
         self.origin.transform_self(t);
         self.direction.transform_self(t)

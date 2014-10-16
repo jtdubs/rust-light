@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::vector::Vector;
-use geometry::transform::{Transform,Transformable};
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Normal {
     pub x : f64,
@@ -139,11 +139,13 @@ impl PartialEq for Normal {
     }
 }
 
-impl Transformable for Normal {
+impl Trans for Normal {
     fn transform(&self, t : &Transform) -> Normal {
         t.inverse_transformation_matrix().transpose().mul_n(self)
     }
+}
 
+impl TransMut for Normal {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&t.inverse_transformation_matrix().transpose().mul_n(&c))

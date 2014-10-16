@@ -2,7 +2,7 @@ use std::num::FloatMath;
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::normal::Normal;
-use geometry::transform::{Transform,Transformable};
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Vector {
     pub x : f64,
@@ -144,11 +144,13 @@ impl PartialEq for Vector {
     }
 }
 
-impl Transformable for Vector {
+impl Trans for Vector {
     fn transform(&self, t : &Transform) -> Vector {
         t.transformation_matrix().mul_v(self)
     }
+}
 
+impl TransMut for Vector {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&t.transformation_matrix().mul_v(&c))

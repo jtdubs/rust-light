@@ -63,44 +63,47 @@ impl Transform {
     }
 }
 
-pub trait Transformable {
+pub trait Trans {
     fn transform(&self, t : &Transform) -> Self;
-    fn transform_self(&mut self, t : &Transform);
 
     fn translate(&self, v : &Vector) -> Self {
         self.transform(&Transform::translation(v))
-    }
-
-    fn translate_self(&mut self, v : &Vector) {
-        self.transform_self(&Transform::translation(v))
     }
 
     fn scale(&self, v : &Vector) -> Self {
         self.transform(&Transform::scaling(v))
     }
 
-    fn scale_self(&mut self, v : &Vector) {
-        self.transform_self(&Transform::scaling(v))
-    }
-
     fn rotate_q(&self, q : &Quaternion) -> Self {
         self.transform(&Transform::rotation_q(q))
-    }
-
-    fn rotate_self_q(&mut self, q : &Quaternion) {
-        self.transform_self(&Transform::rotation_q(q))
     }
 
     fn rotate(&self, angle : f64, axis : &Vector) -> Self {
         self.transform(&Transform::rotation(angle, axis))
     }
 
-    fn rotate_self(&mut self, angle : f64, axis : &Vector) {
-        self.transform_self(&Transform::rotation(angle, axis))
-    }
-
     fn rotate3(&self, pitch : f64, yaw : f64, roll : f64) -> Self {
         self.transform(&Transform::rotation3(pitch, yaw, roll))
+    }
+}
+
+pub trait TransMut {
+    fn transform_self(&mut self, t : &Transform);
+
+    fn translate_self(&mut self, v : &Vector) {
+        self.transform_self(&Transform::translation(v))
+    }
+
+    fn scale_self(&mut self, v : &Vector) {
+        self.transform_self(&Transform::scaling(v))
+    }
+
+    fn rotate_self_q(&mut self, q : &Quaternion) {
+        self.transform_self(&Transform::rotation_q(q))
+    }
+
+    fn rotate_self(&mut self, angle : f64, axis : &Vector) {
+        self.transform_self(&Transform::rotation(angle, axis))
     }
 
     fn rotate3_self(&mut self, pitch : f64, yaw : f64, roll : f64) {

@@ -7,10 +7,10 @@ pub struct Pixel {
     weight_sum : f64
 }
 
-pub struct Film<F: Filter> {
-    width : u32,
-    height : u32,
-    filter : F,
+pub struct Film<'a> {
+    pub width : u32,
+    pub height : u32,
+    filter : &'a Filter + 'a,
     pixels : Vec<Pixel>,
 }
 
@@ -20,19 +20,19 @@ impl Pixel {
     }
 }
 
-impl<F: Filter> Film<F> {
-    pub fn new(width : u32, height : u32, f : F) -> Film<F> {
+impl<'a> Film<'a> {
+    pub fn new(width : u32, height : u32, f : &Filter) -> Film<'a> {
         Film { width: width, height: height, filter: f, pixels: Vec::<Pixel>::from_fn((width * height) as uint, |_| Pixel::new()) }
     }
 
-    pub fn new_1080(f : F) -> Film<F> { Film::new(1920, 1080, f) }
-    pub fn new_720(f : F) -> Film<F> { Film::new(1280, 720, f) }
-    pub fn new_480(f : F) -> Film<F> { Film::new(720, 480, f) }
-    pub fn new_2k(f : F) -> Film<F> { Film::new(2048, 1080, f) }
-    pub fn new_4k(f : F) -> Film<F> { Film::new(4096, 2160, f) }
-    pub fn new_8k(f : F) -> Film<F> { Film::new(8192, 4608, f) }
-    pub fn new_qvga(f : F) -> Film<F> { Film::new(320, 240, f) }
-    pub fn new_vga(f : F) -> Film<F> { Film::new(640, 480, f) }
+    pub fn new_1080(f : &Filter) -> Film { Film::new(1920, 1080, f) }
+    pub fn new_720(f : &Filter) -> Film { Film::new(1280, 720, f) }
+    pub fn new_480(f : &Filter) -> Film { Film::new(720, 480, f) }
+    pub fn new_2k(f : &Filter) -> Film { Film::new(2048, 1080, f) }
+    pub fn new_4k(f : &Filter) -> Film { Film::new(4096, 2160, f) }
+    pub fn new_8k(f : &Filter) -> Film { Film::new(8192, 4608, f) }
+    pub fn new_qvga(f : &Filter) -> Film { Film::new(320, 240, f) }
+    pub fn new_vga(f : &Filter) -> Film { Film::new(640, 480, f) }
 
     pub fn sample_bounds(&self) -> ((int, int), (int, int)) {
         let (ex, ey) = self.filter.extent();

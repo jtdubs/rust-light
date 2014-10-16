@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::vector::Vector;
-use geometry::transform::{Transform,Transformable};
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Point {
     pub x : f64,
@@ -87,11 +87,13 @@ impl PartialEq for Point {
     }
 }
 
-impl Transformable for Point {
+impl Trans for Point {
     fn transform(&self, t : &Transform) -> Point {
         t.transformation_matrix().mul_p(self)
     }
+}
 
+impl TransMut for Point {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&t.transformation_matrix().mul_p(&c))

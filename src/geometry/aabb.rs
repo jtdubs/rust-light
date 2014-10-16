@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::point::Point;
-use geometry::transform::{Transform,Transformable};
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct AABB {
     empty : bool,
@@ -160,14 +160,16 @@ impl PartialEq for AABB {
     }
 }
 
-impl Transformable for AABB {
+impl Trans for AABB {
     fn transform(&self, t : &Transform) -> AABB {
         match self.corners() {
             None => *self,
             Some(cs) => AABB::for_points(cs.iter().map(|c| { c.transform(t) }).collect::<Vec<Point>>().as_slice())
         }
     }
- 
+}
+
+impl TransMut for AABB {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&c.transform(t))

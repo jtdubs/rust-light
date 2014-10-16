@@ -2,6 +2,7 @@ pub mod filter;
 pub mod math;
 pub mod sampler;
 pub mod film;
+pub mod camera;
 pub mod geometry {
     pub mod vector;
     pub mod normal;
