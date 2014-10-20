@@ -1,30 +1,29 @@
 use film::Film;
-use filter::Filter;
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::ray::Ray;
 use geometry::vector::Vector;
 use geometry::point::Point;
 
-pub trait Camera : TransMut {
-    fn get_film(&self) -> &Film;
+pub trait Camera<'a> : TransMut {
+    fn get_film(&self) -> &'a Film<'a>;
     fn cast(&self, fx : f64, fy : f64) -> Ray;
 }
 
-pub struct OrthoCamera {
+pub struct OrthoCamera<'a> {
     t : Transform,
-    f : &Film,
+    f : &'a Film<'a>,
     s : f64,
 }
 
-impl OrthoCamera {
-    pub fn new(f : &Film, s : f64) -> OrthoCamera {
-        OrthoCamera { t: Transform::identity(), f: Film::new_1080(f), s: s }
+impl<'a> OrthoCamera<'a> {
+    pub fn new(f : &'a Film<'a>, s : f64) -> OrthoCamera<'a> {
+        OrthoCamera { t: Transform::identity(), f: f, s: s }
     }
 }
 
-impl Camera for OrthoCamera {
-    fn get_film(&self) -> &Film {
-        &self.f
+impl<'a> Camera<'a> for OrthoCamera<'a> {
+    fn get_film(&self) -> &'a Film<'a> {
+        self.f
     }
 
     fn cast(&self, fx : f64, fy : f64) -> Ray {
@@ -38,7 +37,7 @@ impl Camera for OrthoCamera {
     }
 }
 
-impl TransMut for OrthoCamera {
+impl<'a> TransMut for OrthoCamera<'a> {
     fn transform_self(&mut self, t : &Transform) {
         self.t = t.compose(&self.t);
     }
