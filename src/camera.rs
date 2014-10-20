@@ -42,3 +42,39 @@ impl<'a> TransMut for OrthoCamera<'a> {
         self.t = t.compose(&self.t);
     }
 }
+
+pub struct PerspectiveCamera<'a> {
+    t : Transform,
+    f : &'a Film<'a>,
+    fov : f64
+}
+
+impl<'a> PerspectiveCamera<'a> {
+    pub fn new(f : &'a Film<'a>, fov : f64) -> PerspectiveCamera<'a> {
+        PerspectiveCamera { t: Transform::identity(), f: f, fov: fov }
+    }
+}
+
+impl<'a> Camera<'a> for PerspectiveCamera<'a> {
+    fn get_film(&self) -> &'a Film<'a> {
+        self.f
+    }
+
+    fn cast(&self, fx : f64, fy : f64) -> Ray {
+        let fw = self.f.width as f64;
+        let fh = self.f.height as f64;
+        let x = (fx / fw) * 2f64 - 1f64;
+        let y = (fy / fh) * 2f64 - 1f64;
+        let sx = (self.fov / 2f64).tan() * (fw / fh);
+        let sy = (self.fov / 2f64).tan();
+        let d = Vector::new(x*sx, y*sy, 1f64).normalize();
+        let o = Point::origin();
+        Ray::new(&o, &d)
+    }
+}
+
+impl<'a> TransMut for PerspectiveCamera<'a> {
+    fn transform_self(&mut self, t : &Transform) {
+        self.t = t.compose(&self.t);
+    }
+}
