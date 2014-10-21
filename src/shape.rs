@@ -4,13 +4,13 @@ use ray::Ray;
 use point::Point;
 use math::quadratic;
 
-pub trait Shape<'a> : Trans {
-    fn get_transform(&'a self) -> &'a Transform;
+pub trait Shape : Trans {
+    fn get_transform(&self) -> &Transform;
     fn bound(&self) -> AABB;
     fn intersections(&self, r : &Ray) -> Vec<f64>;
     fn surface_area(&self) -> f64;
 
-    fn world_bound(&'a self) -> AABB {
+    fn world_bound(&self) -> AABB {
         self.bound().transform(self.get_transform())
     }
 
@@ -33,7 +33,7 @@ pub trait Shape<'a> : Trans {
     }
 }
 
-pub trait ShapeMut<'a> : Shape<'a> + TransMut {
+pub trait ShapeMut : Shape + TransMut {
 }
 
 pub struct Box {
@@ -65,8 +65,8 @@ impl TransMut for Box {
     }
 }
 
-impl<'a> Shape<'a> for Box {
-    fn get_transform(&'a self) -> &'a Transform {
+impl Shape for Box {
+    fn get_transform(&self) -> &Transform {
         &self.t
     }
 
@@ -131,8 +131,8 @@ impl TransMut for Cone {
     }
 }
 
-impl<'a> Shape<'a> for Cone {
-    fn get_transform(&'a self) -> &'a Transform {
+impl Shape for Cone {
+    fn get_transform(&self) -> &Transform {
         &self.t
     }
 

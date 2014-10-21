@@ -1,6 +1,6 @@
 extern crate std;
 
-use std::iter::{iterate};
+use std::iter::iterate;
 
 pub fn quadratic(a : f64, b : f64, c : f64) -> Option<[f64, ..2]> {
     let d = b*b - 4f64*a*c;
