@@ -1,8 +1,8 @@
 use std::fmt::{Show,Formatter,Result};
 
-use geometry::vector::Vector;
-use geometry::point::Point;
-use geometry::normal::Normal;
+use vector::Vector;
+use point::Point;
+use normal::Normal;
 
 pub struct Matrix {
     m : [f64, ..16],

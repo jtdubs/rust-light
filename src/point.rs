@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
-use geometry::vector::Vector;
-use geometry::transform::{Transform,Trans,TransMut};
+use vector::Vector;
+use transform::{Transform,Trans,TransMut};
 
 pub struct Point {
     pub x : f64,

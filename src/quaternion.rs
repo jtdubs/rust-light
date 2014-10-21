@@ -1,8 +1,8 @@
 use std::fmt::{Show,Formatter,Result};
 use std::num::FloatMath;
 
-use geometry::matrix::Matrix;
-use geometry::vector::Vector;
+use matrix::Matrix;
+use vector::Vector;
 
 pub struct Quaternion {
     v : Vector,

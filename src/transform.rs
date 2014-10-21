@@ -1,6 +1,6 @@
-use geometry::matrix::Matrix;
-use geometry::vector::Vector;
-use geometry::quaternion::Quaternion;
+use matrix::Matrix;
+use vector::Vector;
+use quaternion::Quaternion;
 
 pub struct Transform {
     m : Matrix,

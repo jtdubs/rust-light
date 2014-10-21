@@ -1,8 +1,8 @@
 use film::Film;
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::ray::Ray;
-use geometry::vector::Vector;
-use geometry::point::Point;
+use transform::{Transform,Trans,TransMut};
+use ray::Ray;
+use vector::Vector;
+use point::Point;
 
 pub trait Camera<'a> : TransMut {
     fn get_film(&self) -> &'a Film<'a>;

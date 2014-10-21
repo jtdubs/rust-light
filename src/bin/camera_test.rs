@@ -4,7 +4,7 @@ use std::num::FloatMath;
 use light::camera::{Camera,OrthoCamera,PerspectiveCamera};
 use light::film::Film;
 use light::filter::BoxFilter;
-use light::geometry::ray::Ray;
+use light::ray::Ray;
 
 fn get_rays<'a>(c : &'a Camera<'a>) -> Vec<Ray> {
     let f = c.get_film();

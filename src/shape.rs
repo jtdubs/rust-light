@@ -1,7 +1,7 @@
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::aabb::AABB;
-use geometry::ray::Ray;
-use geometry::point::Point;
+use transform::{Transform,Trans,TransMut};
+use aabb::AABB;
+use ray::Ray;
+use point::Point;
 use math::quadratic;
 
 pub trait Shape<'a> : Trans {

@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
-use geometry::point::Point;
-use geometry::transform::{Transform,Trans,TransMut};
+use point::Point;
+use transform::{Transform,Trans,TransMut};
 
 pub struct AABB {
     empty : bool,
