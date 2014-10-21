@@ -53,6 +53,10 @@ impl<'a> PerspectiveCamera<'a> {
     pub fn new(f : &'a Film<'a>, fov : f64) -> PerspectiveCamera<'a> {
         PerspectiveCamera { t: Transform::identity(), f: f, fov: fov }
     }
+
+    pub fn get_fov_y(&self) -> f64 {
+        self.fov
+    }
 }
 
 impl<'a> Camera<'a> for PerspectiveCamera<'a> {
