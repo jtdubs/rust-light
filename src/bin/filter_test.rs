@@ -1,18 +1,18 @@
 extern crate light;
 
-use light::filter::{BoxFilter,TriangleFilter,GaussianFilter,MitchellFilter,LanczosSincFilter,Filter};
+use light::filter::Filter;
 use std::iter::range_inclusive;
 
 fn main() {
     println!("clf");
-    test(1, "Box", box BoxFilter::new(2f64, 2f64));
-    test(2, "Triangle", box TriangleFilter::new(2f64, 2f64));
-    test(3, "Gaussian", box GaussianFilter::new(2f64, 2f64, 0.5f64));
-    test(4, "Mitchell", box MitchellFilter::new(3f64, 3f64, 0.5f64, 0.25f64));
-    test(5, "Lanczos Sinc", box LanczosSincFilter::new(3f64, 3f64, Float::pi()));
+    test(1, "Box", Filter::new_box(2f64, 2f64));
+    test(2, "Triangle", Filter::new_triangle(2f64, 2f64));
+    test(3, "Gaussian", Filter::new_gaussian(2f64, 2f64, 0.5f64));
+    test(4, "Mitchell", Filter::new_mitchell(3f64, 3f64, 0.5f64, 0.25f64));
+    test(5, "Lanczos Sinc", Filter::new_lanczos_sinc(3f64, 3f64, Float::pi()));
 }
 
-fn test(ix : i64, title : &str, f : Box<Filter>) {
+fn test(ix : i64, title : &str, f : Filter) {
     println!("figure ({});", ix);
     println!("hold on;");
     println!("pbaspect ([1, 1]);");

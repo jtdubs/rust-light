@@ -5,24 +5,24 @@ use vector::Vector;
 use point::Point;
 
 pub trait Camera<'a> : TransMut {
-    fn get_film(&self) -> &'a Film<'a>;
+    fn get_film(&self) -> &'a Film;
     fn cast(&self, fx : f64, fy : f64) -> Ray;
 }
 
 pub struct OrthoCamera<'a> {
     t : Transform,
-    f : &'a Film<'a>,
+    f : &'a Film,
     s : f64,
 }
 
 impl<'a> OrthoCamera<'a> {
-    pub fn new(f : &'a Film<'a>, s : f64) -> OrthoCamera<'a> {
+    pub fn new(f : &'a Film, s : f64) -> OrthoCamera<'a> {
         OrthoCamera { t: Transform::identity(), f: f, s: s }
     }
 }
 
 impl<'a> Camera<'a> for OrthoCamera<'a> {
-    fn get_film(&self) -> &'a Film<'a> {
+    fn get_film(&self) -> &'a Film {
         self.f
     }
 
@@ -45,12 +45,12 @@ impl<'a> TransMut for OrthoCamera<'a> {
 
 pub struct PerspectiveCamera<'a> {
     t : Transform,
-    f : &'a Film<'a>,
+    f : &'a Film,
     fov : f64
 }
 
 impl<'a> PerspectiveCamera<'a> {
-    pub fn new(f : &'a Film<'a>, fov : f64) -> PerspectiveCamera<'a> {
+    pub fn new(f : &'a Film, fov : f64) -> PerspectiveCamera<'a> {
         PerspectiveCamera { t: Transform::identity(), f: f, fov: fov }
     }
 
@@ -60,7 +60,7 @@ impl<'a> PerspectiveCamera<'a> {
 }
 
 impl<'a> Camera<'a> for PerspectiveCamera<'a> {
-    fn get_film(&self) -> &'a Film<'a> {
+    fn get_film(&self) -> &'a Film {
         self.f
     }
 

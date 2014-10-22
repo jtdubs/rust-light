@@ -3,7 +3,7 @@ extern crate light;
 use std::num::FloatMath;
 use light::camera::{Camera,OrthoCamera,PerspectiveCamera};
 use light::film::Film;
-use light::filter::BoxFilter;
+use light::filter::Filter;
 use light::ray::Ray;
 
 fn get_rays<'a>(c : &'a Camera<'a>) -> Vec<Ray> {
@@ -19,8 +19,7 @@ fn get_rays<'a>(c : &'a Camera<'a>) -> Vec<Ray> {
 }
 
 fn main() {
-    let bf = &BoxFilter::new(1f64, 1f64);
-    let f = &Film::new(16, 12, bf);
+    let f = &Film::new(16, 12, Filter::new_box(1f64, 1f64));
 
     println!("clf;");
     draw_perspective(1, "Perspective (60)", &PerspectiveCamera::new(f, Float::frac_pi_3()));
