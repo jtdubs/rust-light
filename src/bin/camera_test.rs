@@ -1,16 +1,16 @@
 extern crate light;
 
 use std::num::FloatMath;
-use light::camera::{Camera,OrthoCamera,PerspectiveCamera};
+use light::camera::{Camera,PerspectiveCamera,OrthoCamera};
 use light::film::Film;
 use light::filter::Filter;
 use light::ray::Ray;
 
-fn get_rays<'a>(c : &'a Camera<'a>) -> Vec<Ray> {
-    let f = c.get_film();
-    let mut res = Vec::with_capacity((f.width * f.height) as uint);
-    for x in range(0, f.width) {
-        for y in range(0, f.height) {
+fn get_rays(c : &Camera) -> Vec<Ray> {
+    let (fw, fh) = c.get_film_size();
+    let mut res = Vec::with_capacity((fw * fh) as uint);
+    for x in range(0, fw) {
+        for y in range(0, fh) {
             let r = c.cast((x as f64) + 0.5f64, (y as f64) + 0.5f64);
             res.push(r);
         }
@@ -18,29 +18,27 @@ fn get_rays<'a>(c : &'a Camera<'a>) -> Vec<Ray> {
     res
 }
 
+fn make_film() -> Film {
+    Film::new(16, 12, Filter::new_box(1f64, 1f64))
+}
+
 fn main() {
-    let f = &Film::new(16, 12, Filter::new_box(1f64, 1f64));
-
     println!("clf;");
-    draw_perspective(1, "Perspective (60)", &PerspectiveCamera::new(f, Float::frac_pi_3()));
-    draw_perspective(2, "Perspective (90)", &PerspectiveCamera::new(f, Float::frac_pi_2()));
-    draw_ortho(3, "Orthographic", &OrthoCamera::new(f, 1f64));
+    draw(1, "Perspective (60)", &Camera::new_perspective(box make_film(), Float::frac_pi_3()));
+    draw(2, "Perspective (90)", &Camera::new_perspective(box make_film(), Float::frac_pi_2()));
+    draw(3, "Orthographic", &Camera::new_ortho(box make_film(), 1f64));
 }
 
-fn draw_perspective<'a>(ix : int, title : &str, c : &'a PerspectiveCamera<'a>) {
-    let f = c.get_film();
-    draw_plot(ix, title, c, (f.height as f64) / ((c.get_fov_y() / 2f64).tan() * 2f64));
-}
+fn draw(ix : int, title : &str, c : &Camera) {
+    let (ifw, ifh) = c.get_film_size();
+    let fw = ifw as f64;
+    let fh = ifh as f64;
+    
+    let h = match c {
+        &OrthoCamera(_, _, _) => fw.min(fh),
+        &PerspectiveCamera(_, _, fov_y) => fh / ((fov_y / 2f64).tan() * 2f64),
+    };
 
-fn draw_ortho<'a>(ix : int, title : &str, c : &'a OrthoCamera<'a>) {
-    let f = c.get_film();
-    draw_plot(ix, title, c, (f.width as f64).min(f.height as f64));
-}
-
-fn draw_plot<'a>(ix : int, title : &str, c : &'a Camera<'a>, h : f64) {
-    let f = c.get_film();
-    let fw = f.width as f64;
-    let fh = f.height as f64;
     let dim = fw.max(fh).max(h) + 4f64;
     let rays = get_rays(c);
     println!("figure ({});", ix);
