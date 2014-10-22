@@ -12,3 +12,4 @@ pub mod quaternion;
 pub mod ray;
 pub mod aabb;
 pub mod transform;
+pub mod scene;
