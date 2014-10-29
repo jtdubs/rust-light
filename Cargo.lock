@@ -2,7 +2,7 @@
 name = "light"
 version = "0.0.1"
 dependencies = [
- "lodepng 0.1.0 (git+https://github.com/pornel/lodepng-rust.git#dda3c7848cac2591745d5e967577b7517d28f2a2)",
+ "lodepng 0.1.0 (git+https://github.com/pornel/lodepng-rust.git)",
 ]
 
 [[package]]
