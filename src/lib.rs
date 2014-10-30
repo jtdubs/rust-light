@@ -14,3 +14,4 @@ pub mod aabb;
 pub mod transform;
 pub mod scene;
 pub mod primitive;
+pub mod renderer;

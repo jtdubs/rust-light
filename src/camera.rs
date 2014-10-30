@@ -49,6 +49,20 @@ impl Camera {
             },
         }
     }
+
+    pub fn receive(&mut self, fx : f64, fy : f64, p : u8) {
+        match self {
+            &OrthoCamera(_, ref mut f, _) => f.add_sample(fx, fy, p),
+            &PerspectiveCamera(_, ref mut f, _) => f.add_sample(fx, fy, p),
+        }
+    }
+
+    pub fn save(&self, path : &Path) -> Result<(), &str> {
+        match self {
+            &OrthoCamera(_, ref f, _) => f.save(path),
+            &PerspectiveCamera(_, ref f, _) => f.save(path),
+        }
+    }            
 }
 
 impl TransMut for Camera {

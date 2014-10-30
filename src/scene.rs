@@ -1,21 +1,36 @@
 use camera::Camera;
 use primitive::Primitive;
+use ray::Ray;
 
 pub struct Scene {
-    c : Camera,
-    ps : Vec<Primitive>,
+    pub camera : Camera,
+    pub primitives : Vec<Primitive>,
 }
 
 impl Scene {
     pub fn new(c : Camera) -> Scene {
-        Scene { c: c, ps: Vec::new() }
+        Scene { camera: c, primitives: Vec::new() }
     }
 
     pub fn add(&mut self, p : Primitive) {
-        self.ps.push(p);
+        self.primitives.push(p);
     }
 
-    pub fn get_camera(&self) -> &Camera {
-        &self.c
+    pub fn intersect(&self, r : &Ray) -> Option<f64> {
+        let mut first_intersection = None;
+
+        for p in self.primitives.iter() {
+            match p.intersect(r) {
+                None => { },
+                Some(t) => {
+                    match first_intersection {
+                        None => first_intersection = Some(t),
+                        Some(t0) => if t < t0 { first_intersection = Some(t) },
+                    }
+                }
+            }
+        }
+
+        first_intersection
     }
 }
