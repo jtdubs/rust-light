@@ -3,7 +3,7 @@ extern crate std;
 use std::rand::distributions::{Range, Sample};
 use std::rand::{TaskRng, Rng};
 
-use math::radical_inverse;
+use math::{radical_inverse,sobol,van_der_corput};
 
 pub struct Sampler {
     rng : TaskRng,
@@ -130,6 +130,14 @@ impl Sampler {
         let mut v = Vec::<(f64, f64)>::with_capacity(n);
         for x in std::iter::range(0u, n) {
             v.push((xs[x], ys2[x]));
+        }
+        v
+    }
+
+    pub fn s02_2d(&mut self, s1 : u32, s2 : u32, n : uint) -> Vec<(f64, f64)> {
+        let mut v = Vec::<(f64, f64)>::with_capacity(n);
+        for x in std::iter::range(0u, n) {
+            v.push((van_der_corput(x as u32, s1), sobol(x as u32, s2)));
         }
         v
     }
