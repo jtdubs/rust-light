@@ -18,7 +18,7 @@ fn main() {
                     Filter::new_gaussian(2f64, 2f64, 0.25f64)), 
                 Float::frac_pi_3()));
 
-    scene.add(Primitive::new(Shape::new_unit_box().translate(&Vector::new(1f64, 1f64, -4f64))));
+    scene.add(Primitive::new(Shape::new_unit_box().translate(&Vector::new(0f64, 0f64, 4f64))));
 
     render(&mut scene);
 

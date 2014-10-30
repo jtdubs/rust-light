@@ -6,7 +6,7 @@ pub fn render(s : &mut Scene) {
     let (fw, fh) = s.camera.get_film_size();
     for x in range(0u32, fw+1) {
         for y in range(0u32, fh+1) {
-            for &(dx, dy) in sampler.s02_2d(x, y, 8).iter() {
+            for &(dx, dy) in sampler.lhc_2d(8).iter() {
                 let fx = (x as f64) + dx;
                 let fy = (y as f64) + dy;
                 let r = s.camera.cast(fx, fy);

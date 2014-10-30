@@ -103,11 +103,7 @@ impl Shape {
 
     pub fn intersects(&self, r : &Ray) -> bool {
         let ts = self.intersections(r);
-        if ts.len() == 0 {
-            true
-        } else {
-            false
-        }
+        ts.len() > 0
     }
 }
 
