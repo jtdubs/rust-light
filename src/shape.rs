@@ -10,6 +10,8 @@ pub enum Shape {
     Cylinder(Transform, f64, f64),
     Disc(Transform, f64),
     Plane(Transform, f64, f64),
+    Sphere(Transform, f64),
+// TODO: sphere, triangle, parabaloid, intersection, union, disjunction
 }
 
 impl Shape {
@@ -33,24 +35,32 @@ impl Shape {
         Plane(Transform::identity(), half_width, half_depth)
     }
 
+    pub fn new_sphere(radius : f64) -> Shape {
+        Sphere(Transform::identity(), radius)
+    }
+
     pub fn new_unit_box() -> Shape {
-        Shape::new_box(1f64, 1f64, 1f64)
+        Shape::new_box(0.5f64, 0.564, 0.5f64)
     }
 
     pub fn new_unit_cone() -> Shape {
-        Shape::new_cone(1f64, 1f64)
+        Shape::new_cone(0.5f64, 1f64)
     }
 
     pub fn new_unit_cylinder() -> Shape {
-        Shape::new_cylinder(1f64, 1f64)
+        Shape::new_cylinder(0.5f64, 1f64)
     }
 
     pub fn new_unit_disc() -> Shape {
-        Shape::new_disc(1f64)
+        Shape::new_disc(0.5f64)
     }
 
     pub fn new_unit_plane() -> Shape {
-        Shape::new_plane(1f64, 1f64)
+        Shape::new_plane(0.5f64, 0.5f64)
+    }
+
+    pub fn new_unit_sphere() -> Shape {
+        Shape::new_sphere(0.5f64)
     }
 
     pub fn bound(&self) -> AABB {
@@ -60,6 +70,7 @@ impl Shape {
             &Cylinder(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
             &Disc(_, r) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, 0f64)]),
             &Plane(_, hw, hd) => AABB::for_points([Point::new(-hw, -hd, 0f64), Point::new(hw, hd, 0f64)]),
+            &Sphere(_, r) => AABB::for_points([Point::new(-r, -r, -r), Point::new(r, r, r)]),
         }
     }
 
@@ -70,6 +81,7 @@ impl Shape {
             &Cylinder(ref t, _, _) => t,
             &Disc(ref t, _) => t,
             &Plane(ref t, _, _) => t,
+            &Sphere(ref t, _) => t,
         }
     }
 
@@ -139,6 +151,18 @@ impl Shape {
                     if t >= 0f64 && p.x.abs() <= hw && p.y.abs() <= hd { res.push(t); };
                 }
             },
+            &Sphere(_, r) => {
+                let a = ray.direction.magnitude_squared();
+                let b = 2f64 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
+                let c = ray.origin.distance(&Point::origin()) - (r * r);
+                match quadratic(a, b, c) {
+                    None => { },
+                    Some([t1, t2]) => {
+                        if t1 >= 0f64 { res.push(t1); };
+                        if t2 >= 0f64 { res.push(t2); };
+                    },
+                }
+            }
         };
 
         res
@@ -151,6 +175,7 @@ impl Shape {
             &Cylinder(_, r, h) => 2f64 * r * h * Float::pi(),
             &Disc(_, r) => 2f64 * r * r * Float::pi(),
             &Plane(_, hw, hd) => 4f64 * hw * hd,
+            &Sphere(_, r) => 4f64 * r * r * Float::pi(),
         }
     }
 
@@ -181,6 +206,7 @@ impl Trans for Shape {
             &Cylinder(c, r, h) => Cylinder(t.compose(&c), r, h),
             &Disc(c, r) => Disc(t.compose(&c), r),
             &Plane(c, hw, hd) => Plane(t.compose(&c), hw, hd),
+            &Sphere(c, r) => Sphere(t.compose(&c), r),
         }
     }
 }
@@ -193,6 +219,7 @@ impl TransMut for Shape {
             &Cylinder(ref mut c, _, _) => { *c = t.compose(c); },
             &Disc(ref mut c, _) => { *c = t.compose(c); },
             &Plane(ref mut c, _, _) => { *c = t.compose(c); },
+            &Sphere(ref mut c, _) => { *c = t.compose(c); },
         };
     }
 }
