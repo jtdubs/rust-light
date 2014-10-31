@@ -2,6 +2,7 @@ use transform::{Transform,Trans,TransMut};
 use aabb::AABB;
 use ray::Ray;
 use point::Point;
+use vector::Vector;
 use math::quadratic;
 
 pub enum Shape {
@@ -11,7 +12,8 @@ pub enum Shape {
     Disc(Transform, f64),
     Plane(Transform, f64, f64),
     Sphere(Transform, f64),
-// TODO: sphere, triangle, parabaloid, intersection, union, disjunction
+    Triangle(Transform, Point, Point, Point),
+// TODO: triangle, parabaloid, intersection, union, disjunction
 }
 
 impl Shape {
@@ -39,6 +41,10 @@ impl Shape {
         Sphere(Transform::identity(), radius)
     }
 
+    pub fn new_triangle(a : &Point, b : &Point, c : &Point) -> Shape {
+        Triangle(Transform::identity(), a.clone(), b.clone(), c.clone())
+    }
+
     pub fn new_unit_box() -> Shape {
         Shape::new_box(0.5f64, 0.564, 0.5f64)
     }
@@ -63,6 +69,13 @@ impl Shape {
         Shape::new_sphere(0.5f64)
     }
 
+    pub fn new_unit_triangle() -> Shape {
+        Shape::new_triangle(
+            &Point::origin().sub_v(&Vector::unit_x()).sub_v(&Vector::unit_y()),
+            &Point::origin().add_v(&Vector::unit_x()).sub_v(&Vector::unit_y()),
+            &Point::origin().add_v(&Vector::unit_y()))
+    }
+
     pub fn bound(&self) -> AABB {
         match self {
             &Box(_, hw, hh, hd) => AABB::for_points([Point::new(-hw, -hh, -hd), Point::new(hw, hh, hd)]),
@@ -71,6 +84,7 @@ impl Shape {
             &Disc(_, r) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, 0f64)]),
             &Plane(_, hw, hd) => AABB::for_points([Point::new(-hw, -hd, 0f64), Point::new(hw, hd, 0f64)]),
             &Sphere(_, r) => AABB::for_points([Point::new(-r, -r, -r), Point::new(r, r, r)]),
+            &Triangle(_, a, b, c) => AABB::for_points([a, b, c]),
         }
     }
 
@@ -82,6 +96,7 @@ impl Shape {
             &Disc(ref t, _) => t,
             &Plane(ref t, _, _) => t,
             &Sphere(ref t, _) => t,
+            &Triangle(ref t, _, _, _) => t,
         }
     }
 
@@ -162,7 +177,26 @@ impl Shape {
                         if t2 >= 0f64 { res.push(t2); };
                     },
                 }
-            }
+            },
+            &Triangle(_, v0, v1, v2) => {
+                let e1 = v1.sub_p(&v0);
+                let e2 = v2.sub_p(&v0);
+                let h = ray.direction.cross(&e2);
+                let a = e1.dot(&h);
+                if a != 0f64 {
+                    let f = 1f64 / a;
+                    let s = ray.origin.sub_p(&v0);
+                    let u = f * s.dot(&h);
+                    if u >= 0f64 && u <= 1f64 {
+                        let q = s.cross(&e1);
+                        let v = f * ray.direction.dot(&q);
+                        if v >= 0f64 && (u + v) <= 1f64 {
+                            let t = f * e2.dot(&q);
+                            if t >= 0f64 { res.push(t); };
+                        }
+                    }
+                }
+            },
         };
 
         res
@@ -176,6 +210,7 @@ impl Shape {
             &Disc(_, r) => 2f64 * r * r * Float::pi(),
             &Plane(_, hw, hd) => 4f64 * hw * hd,
             &Sphere(_, r) => 4f64 * r * r * Float::pi(),
+            &Triangle(_, a, b, c) => 0.5f64 * b.sub_p(&a).cross(&c.sub_p(&a)).magnitude(),
         }
     }
 
@@ -207,6 +242,7 @@ impl Trans for Shape {
             &Disc(c, r) => Disc(t.compose(&c), r),
             &Plane(c, hw, hd) => Plane(t.compose(&c), hw, hd),
             &Sphere(c, r) => Sphere(t.compose(&c), r),
+            &Triangle(c, a, b, d) => Triangle(t.compose(&c), a, b, d),
         }
     }
 }
@@ -220,6 +256,7 @@ impl TransMut for Shape {
             &Disc(ref mut c, _) => { *c = t.compose(c); },
             &Plane(ref mut c, _, _) => { *c = t.compose(c); },
             &Sphere(ref mut c, _) => { *c = t.compose(c); },
+            &Triangle(ref mut c, _, _, _) => { *c = t.compose(c); },
         };
     }
 }
