@@ -13,7 +13,8 @@ pub enum Shape {
     Plane(Transform, f64, f64),
     Sphere(Transform, f64),
     Triangle(Transform, Point, Point, Point),
-// TODO: triangle, parabaloid, intersection, union, disjunction
+    Paraboloid(Transform, f64, f64),
+// TODO: intersection, union, disjunction
 }
 
 impl Shape {
@@ -43,6 +44,10 @@ impl Shape {
 
     pub fn new_triangle(a : &Point, b : &Point, c : &Point) -> Shape {
         Triangle(Transform::identity(), a.clone(), b.clone(), c.clone())
+    }
+
+    pub fn new_paraboloid(radius : f64, height : f64) -> Shape {
+        Paraboloid(Transform::identity(), radius, height)
     }
 
     pub fn new_unit_box() -> Shape {
@@ -76,6 +81,10 @@ impl Shape {
             &Point::origin().add_v(&Vector::unit_y()))
     }
 
+    pub fn new_unit_paraboloid() -> Shape {
+        Shape::new_paraboloid(0.5f64, 1f64)
+    }
+
     pub fn bound(&self) -> AABB {
         match self {
             &Box(_, hw, hh, hd) => AABB::for_points([Point::new(-hw, -hh, -hd), Point::new(hw, hh, hd)]),
@@ -85,6 +94,7 @@ impl Shape {
             &Plane(_, hw, hd) => AABB::for_points([Point::new(-hw, -hd, 0f64), Point::new(hw, hd, 0f64)]),
             &Sphere(_, r) => AABB::for_points([Point::new(-r, -r, -r), Point::new(r, r, r)]),
             &Triangle(_, a, b, c) => AABB::for_points([a, b, c]),
+            &Paraboloid(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
         }
     }
 
@@ -97,6 +107,7 @@ impl Shape {
             &Plane(ref t, _, _) => t,
             &Sphere(ref t, _) => t,
             &Triangle(ref t, _, _, _) => t,
+            &Paraboloid(ref t, _, _) => t,
         }
     }
 
@@ -197,6 +208,20 @@ impl Shape {
                     }
                 }
             },
+            &Paraboloid(_, r, h) => {
+                let a = (h * ray.direction.x * ray.direction.x + h * ray.direction.y * ray.direction.y) / (r * r);
+                let b = (2f64 * h * ray.origin.x * ray.direction.x + 2f64 * h * ray.origin.y * ray.direction.y) / (r * r) - ray.direction.z;
+                let c = (h * ray.origin.x * ray.origin.x + h * ray.origin.y * ray.origin.y) / (r * r) - ray.origin.z;
+                match quadratic(a, b, c) {
+                    None => { },
+                    Some([t1, t2]) => {
+                        let z1 = ray.at_time(t1).z;
+                        let z2 = ray.at_time(t2).z;
+                        if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
+                        if t2 >= 0f64 && z2 >= 0f64 && z2 <= h { res.push(t2); };
+                    },
+                }
+            },
         };
 
         res
@@ -211,6 +236,7 @@ impl Shape {
             &Plane(_, hw, hd) => 4f64 * hw * hd,
             &Sphere(_, r) => 4f64 * r * r * Float::pi(),
             &Triangle(_, a, b, c) => 0.5f64 * b.sub_p(&a).cross(&c.sub_p(&a)).magnitude(),
+            &Paraboloid(_, r, h) => (r / (h * h)) * ((r * r + 4f64 * h * h) * 1.5f64 - r * r * r) * Float::frac_pi_6(),
         }
     }
 
@@ -243,6 +269,7 @@ impl Trans for Shape {
             &Plane(c, hw, hd) => Plane(t.compose(&c), hw, hd),
             &Sphere(c, r) => Sphere(t.compose(&c), r),
             &Triangle(c, a, b, d) => Triangle(t.compose(&c), a, b, d),
+            &Paraboloid(c, r, h) => Paraboloid(t.compose(&c), r, h),
         }
     }
 }
@@ -257,6 +284,7 @@ impl TransMut for Shape {
             &Plane(ref mut c, _, _) => { *c = t.compose(c); },
             &Sphere(ref mut c, _) => { *c = t.compose(c); },
             &Triangle(ref mut c, _, _, _) => { *c = t.compose(c); },
+            &Paraboloid(ref mut c, _, _) => { *c = t.compose(c); },
         };
     }
 }
