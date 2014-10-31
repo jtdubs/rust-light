@@ -112,6 +112,7 @@ impl Shape {
         }
     }
 
+    // TODO: make speciailized version to only return first intersection, and maybe Vec is too heavy
     pub fn intersections(&self, r : &Ray) -> Vec<f64> {
         let mut res = Vec::new();
         let ray = r.transform(&self.get_transform().inverse());
