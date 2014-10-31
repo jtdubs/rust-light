@@ -30,6 +30,31 @@ impl AABB {
         self.empty
     }
 
+    pub fn range_x(&self) -> Option<(f64, f64)> {
+        if self.empty {
+            None
+        } else {
+            Some((self.min.x, self.max.x))
+        }
+    }
+
+    pub fn range_y(&self) -> Option<(f64, f64)> {
+        if self.empty {
+            None
+        } else {
+            Some((self.min.y, self.max.y))
+        }
+    }
+
+    pub fn range_z(&self) -> Option<(f64, f64)> {
+        if self.empty {
+            None
+        } else {
+            Some((self.min.z, self.max.z))
+        }
+    }
+        
+
     pub fn add_point(&self, p : &Point) -> AABB {
         if self.empty {
             AABB::for_point(p)
@@ -78,12 +103,16 @@ impl AABB {
     }
 
     pub fn add_self_aabb(&mut self, a : &AABB) {
-        self.min.x = self.min.x.min(a.min.x);
-        self.min.y = self.min.y.min(a.min.y);
-        self.min.z = self.min.z.min(a.min.z);
-        self.max.x = self.max.x.max(a.max.x);
-        self.max.y = self.max.y.max(a.max.y);
-        self.max.z = self.max.z.max(a.max.z);
+        if self.empty {
+            self.clone_from(a)
+        } else { 
+            self.min.x = self.min.x.min(a.min.x);
+            self.min.y = self.min.y.min(a.min.y);
+            self.min.z = self.min.z.min(a.min.z);
+            self.max.x = self.max.x.max(a.max.x);
+            self.max.y = self.max.y.max(a.max.y);
+            self.max.z = self.max.z.max(a.max.z);
+        }
     }
 
     pub fn overlaps(&self, a : &AABB) -> bool {

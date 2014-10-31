@@ -1,5 +1,6 @@
 use shape::Shape;
 use ray::Ray;
+use aabb::AABB;
 
 pub struct Primitive {
     pub shape : Shape,
@@ -20,6 +21,14 @@ impl Primitive {
 
     pub fn intersects(&self, r : &Ray) -> bool {
         self.shape.intersects(r)
+    }
+
+    pub fn bound(&self) -> AABB {
+        self.shape.bound()
+    }
+
+    pub fn world_bound(&self) -> AABB {
+        self.shape.world_bound()
     }
 }
 
