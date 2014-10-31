@@ -1,25 +1,25 @@
 extern crate std;
 
 use std::rand::distributions::{Range, Sample};
-use std::rand::{TaskRng, Rng};
+use std::rand::{XorShiftRng, Rng};
 
 use math::{radical_inverse,sobol,van_der_corput};
 
 pub struct Sampler {
-    rng : TaskRng,
+    rng : XorShiftRng,
     range : Range<f64>,
 }
 
 impl Sampler {
     pub fn new() -> Sampler {
-        Sampler { rng: std::rand::task_rng(), range: Range::new(0f64, 1f64) }
+        Sampler { rng: XorShiftRng::new_unseeded(), range: Range::new(0f64, 1f64) }
     }
 
     pub fn uniform_1d(&mut self, n : uint) -> Vec<f64> {
         let rng = &mut self.rng;
         let mut r = Vec::<f64>::with_capacity(n);
         for _ in std::iter::range(0u, n) {
-            r.push(self.range.sample::<TaskRng>(rng));
+            r.push(self.range.sample::<XorShiftRng>(rng));
         }
         r
     }
@@ -28,7 +28,7 @@ impl Sampler {
         let rng = &mut self.rng;
         let mut r = Vec::<(f64, f64)>::with_capacity(n);
         for _ in std::iter::range(0u, n) {
-            r.push((self.range.sample::<TaskRng>(rng), self.range.sample::<TaskRng>(rng)));
+            r.push((self.range.sample::<XorShiftRng>(rng), self.range.sample::<XorShiftRng>(rng)));
         }
         r
     }
@@ -39,7 +39,7 @@ impl Sampler {
         let ns = 1f64 / nf;
         let mut v = Vec::<f64>::with_capacity(n);
         for x in std::iter::range(0u, n) {
-            let r = (ns * (x as f64)) + (self.range.sample::<TaskRng>(rng) * ns);
+            let r = (ns * (x as f64)) + (self.range.sample::<XorShiftRng>(rng) * ns);
             v.push(r);
         }
         v
@@ -54,8 +54,8 @@ impl Sampler {
         let mut v = Vec::<(f64, f64)>::with_capacity(w * h);
         for x in std::iter::range(0u, w) {
             for y in std::iter::range(0u, h) {
-                let rx = (ws * (x as f64)) + (self.range.sample::<TaskRng>(rng) * ws);
-                let ry = (hs * (y as f64)) + (self.range.sample::<TaskRng>(rng) * hs);
+                let rx = (ws * (x as f64)) + (self.range.sample::<XorShiftRng>(rng) * ws);
+                let ry = (hs * (y as f64)) + (self.range.sample::<XorShiftRng>(rng) * hs);
                 v.push((rx, ry));
             }
         }
