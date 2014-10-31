@@ -17,8 +17,9 @@ fn main() {
     let mut scene = 
         Scene::new(
             Camera::new_perspective(
-                box Film::new(512u32, 256u32,
-                    Filter::new_gaussian(2f64, 2f64, 0.25f64)), 
+                box Film::new(1280u32, 720u32,
+//                    Filter::new_gaussian(2f64, 2f64, 0.25f64)), 
+                    Filter::new_box(1f64, 1f64)), 
                 Float::frac_pi_3()));
 
     scene.add(Primitive::new(Shape::new_unit_triangle().rotate3(-pi_4, 0f64, 0f64).translate(&Vector::new(-4f64, 3f64, 10f64))));
