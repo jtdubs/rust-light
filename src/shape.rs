@@ -9,6 +9,7 @@ pub enum Shape {
     Cone(Transform, f64, f64),
     Cylinder(Transform, f64, f64),
     Disc(Transform, f64),
+    Plane(Transform, f64, f64),
 }
 
 impl Shape {
@@ -28,6 +29,10 @@ impl Shape {
         Disc(Transform::identity(), radius)
     }
 
+    pub fn new_plane(half_width : f64, half_depth : f64) -> Shape {
+        Plane(Transform::identity(), half_width, half_depth)
+    }
+
     pub fn new_unit_box() -> Shape {
         Shape::new_box(1f64, 1f64, 1f64)
     }
@@ -44,12 +49,17 @@ impl Shape {
         Shape::new_disc(1f64)
     }
 
+    pub fn new_unit_plane() -> Shape {
+        Shape::new_plane(1f64, 1f64)
+    }
+
     pub fn bound(&self) -> AABB {
         match self {
             &Box(_, hw, hh, hd) => AABB::for_points([Point::new(-hw, -hh, -hd), Point::new(hw, hh, hd)]),
             &Cone(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
             &Cylinder(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
             &Disc(_, r) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, 0f64)]),
+            &Plane(_, hw, hd) => AABB::for_points([Point::new(-hw, -hd, 0f64), Point::new(hw, hd, 0f64)]),
         }
     }
 
@@ -59,6 +69,7 @@ impl Shape {
             &Cone(ref t, _, _) => t,
             &Cylinder(ref t, _, _) => t,
             &Disc(ref t, _) => t,
+            &Plane(ref t, _, _) => t,
         }
     }
 
@@ -120,7 +131,14 @@ impl Shape {
                     let d = ray.at_time(t).distance_squared(&Point::origin());
                     if t >= 0f64 && d <= r { res.push(t); };
                 }
-            }
+            },
+            &Plane(_, hw, hd) => {
+                if ray.direction.z > 0.0001 {
+                    let t = -ray.origin.z / ray.direction.z;
+                    let p = ray.at_time(t);
+                    if t >= 0f64 && p.x.abs() <= hw && p.y.abs() <= hd { res.push(t); };
+                }
+            },
         };
 
         res
@@ -132,6 +150,7 @@ impl Shape {
             &Cone(_, r, h) => r * (r * r + h * h).sqrt() * Float::pi(),
             &Cylinder(_, r, h) => 2f64 * r * h * Float::pi(),
             &Disc(_, r) => 2f64 * r * r * Float::pi(),
+            &Plane(_, hw, hd) => 4f64 * hw * hd,
         }
     }
 
@@ -161,6 +180,7 @@ impl Trans for Shape {
             &Cone(c, r, h) => Cone(t.compose(&c), r, h), 
             &Cylinder(c, r, h) => Cylinder(t.compose(&c), r, h),
             &Disc(c, r) => Disc(t.compose(&c), r),
+            &Plane(c, hw, hd) => Plane(t.compose(&c), hw, hd),
         }
     }
 }
@@ -172,6 +192,7 @@ impl TransMut for Shape {
             &Cone(ref mut c, _, _) => { *c = t.compose(c); },
             &Cylinder(ref mut c, _, _) => { *c = t.compose(c); },
             &Disc(ref mut c, _) => { *c = t.compose(c); },
+            &Plane(ref mut c, _, _) => { *c = t.compose(c); },
         };
     }
 }
