@@ -138,8 +138,8 @@ impl Shape {
             },
             &Cone(_, r, h) => {
                 let a = (h * h * ray.direction.x * ray.direction.x + h * h * ray.direction.y * ray.direction.y) / (r * r) + (-ray.direction.z * ray.direction.z);
-                let b = (2f64 * h * h * ray.origin.x * ray.origin.x + 2f64 * h * h * ray.origin.y * ray.origin.y) / (r * r) + (-2f64 * ray.origin.z * ray.direction.z + 2f64 * ray.direction.z * h);
-                let c = (h * h * ray.origin.x * ray.origin.x + h * h * ray.origin.y * ray.origin.y) / (-ray.origin.z * ray.origin.z + 2f64 * ray.origin.z * h - h * h);
+                let b = (2f64 * h * h * ray.origin.x * ray.direction.x + 2f64 * h * h * ray.origin.y * ray.direction.y) / (r * r) + (-2f64 * ray.origin.z * ray.direction.z + 2f64 * ray.direction.z * h);
+                let c = (h * h * ray.origin.x * ray.origin.x + h * h * ray.origin.y * ray.origin.y) / (r * r) + (-ray.origin.z * ray.origin.z + 2f64 * ray.origin.z * h - h * h);
                 match quadratic(a, b, c) {
                     None => { }
                     Some((t1, t2)) => {
