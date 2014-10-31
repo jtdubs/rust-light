@@ -26,7 +26,7 @@ fn main() {
     scene.add(Primitive::new(Shape::new_unit_disc().rotate3(-pi_4, 0f64, 0f64).translate(&Vector::new(4f64, 3f64, 10f64))));
     scene.add(Primitive::new(Shape::new_unit_box().rotate3(0f64, 0f64, 0f64).translate(&Vector::new(-6f64, -3f64, 10f64))));
     scene.add(Primitive::new(Shape::new_unit_sphere().rotate3(0f64, 0f64, 0f64).translate(&Vector::new(-3f64, -3f64, 10f64))));
-    // scene.add(Primitive::new(Shape::new_unit_cylinder().rotate3(pi_2, 0f64, 0f64).translate(&Vector::new(0f64, -3f64, 10f64))));
+    scene.add(Primitive::new(Shape::new_unit_cylinder().rotate3(pi_2, 0f64, 0f64).translate(&Vector::new(0f64, -3f64, 10f64))));
     scene.add(Primitive::new(Shape::new_unit_paraboloid().rotate3(-pi_2, 0f64, 0f64).translate(&Vector::new(3f64, -3f64, 10f64))));
     // scene.add(Primitive::new(Shape::new_unit_cone().rotate3(pi_2, 0f64, 0f64).translate(&Vector::new(6f64, -3f64, 10f64))));
 

@@ -2,7 +2,7 @@ extern crate std;
 
 use std::iter::iterate;
 
-pub fn quadratic(a : f64, b : f64, c : f64) -> Option<[f64, ..2]> {
+pub fn quadratic(a : f64, b : f64, c : f64) -> Option<(f64, f64)> {
     let d = b*b - 4f64*a*c;
     if d < 0f64 {
         None
@@ -10,7 +10,7 @@ pub fn quadratic(a : f64, b : f64, c : f64) -> Option<[f64, ..2]> {
         let q = if b < 0f64 { -(b - d.sqrt()) / 2f64 } else { -(b + d.sqrt()) / 2f64 };
         let r1 = q / a;
         let r2 = c / q;
-        if r1 < r2 { Some([r1, r2]) } else { Some([r2, r1]) }
+        if r1 < r2 { Some((r1, r2)) } else { Some((r2, r1)) }
     }
 }
 

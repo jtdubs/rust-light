@@ -16,61 +16,63 @@ pub enum Shape {
     Paraboloid(Transform, f64, f64),
 }
 
+// TODO: would like Paraboloid and Cone to be centered on the origin
+
 impl Shape {
-    pub fn new_box(half_width : f64, half_height : f64, half_depth : f64) -> Shape {
-        Box(Transform::identity(), half_width, half_height, half_depth)
+    pub fn new_box(width : f64, height : f64, depth : f64) -> Shape {
+        Box(Transform::identity(), width / 2f64, height / 2f64, depth / 2f64)
     }
 
-    pub fn new_cone(radius : f64, height : f64) -> Shape {
-        Cone(Transform::identity(), radius, height)
+    pub fn new_cone(diameter : f64, height : f64) -> Shape {
+        Cone(Transform::identity(), diameter / 2f64, height)
     }
 
-    pub fn new_cylinder(radius : f64, height : f64) -> Shape {
-        Cylinder(Transform::identity(), radius, height)
+    pub fn new_cylinder(diameter : f64, height : f64) -> Shape {
+        Cylinder(Transform::identity(), diameter / 2f64, height / 2f64)
     }
 
-    pub fn new_disc(radius : f64) -> Shape {
-        Disc(Transform::identity(), radius)
+    pub fn new_disc(diameter : f64) -> Shape {
+        Disc(Transform::identity(), diameter / 2f64)
     }
 
-    pub fn new_plane(half_width : f64, half_depth : f64) -> Shape {
-        Plane(Transform::identity(), half_width, half_depth)
+    pub fn new_plane(width : f64, depth : f64) -> Shape {
+        Plane(Transform::identity(), width / 2f64, depth / 2f64)
     }
 
-    pub fn new_sphere(radius : f64) -> Shape {
-        Sphere(Transform::identity(), radius)
+    pub fn new_sphere(diameter : f64) -> Shape {
+        Sphere(Transform::identity(), diameter / 2f64)
     }
 
     pub fn new_triangle(a : &Point, b : &Point, c : &Point) -> Shape {
         Triangle(Transform::identity(), a.clone(), b.clone(), c.clone())
     }
 
-    pub fn new_paraboloid(radius : f64, height : f64) -> Shape {
-        Paraboloid(Transform::identity(), radius, height)
+    pub fn new_paraboloid(diameter : f64, height : f64) -> Shape {
+        Paraboloid(Transform::identity(), diameter / 2f64, height)
     }
 
     pub fn new_unit_box() -> Shape {
-        Shape::new_box(0.5f64, 0.564, 0.5f64)
+        Shape::new_box(1f64, 1f64, 1f64)
     }
 
     pub fn new_unit_cone() -> Shape {
-        Shape::new_cone(0.5f64, 1f64)
+        Shape::new_cone(1f64, 1f64)
     }
 
     pub fn new_unit_cylinder() -> Shape {
-        Shape::new_cylinder(0.5f64, 1f64)
+        Shape::new_cylinder(1f64, 1f64)
     }
 
     pub fn new_unit_disc() -> Shape {
-        Shape::new_disc(0.5f64)
+        Shape::new_disc(1f64)
     }
 
     pub fn new_unit_plane() -> Shape {
-        Shape::new_plane(0.5f64, 0.5f64)
+        Shape::new_plane(1f64, 1f64)
     }
 
     pub fn new_unit_sphere() -> Shape {
-        Shape::new_sphere(0.5f64)
+        Shape::new_sphere(1f64)
     }
 
     pub fn new_unit_triangle() -> Shape {
@@ -81,14 +83,14 @@ impl Shape {
     }
 
     pub fn new_unit_paraboloid() -> Shape {
-        Shape::new_paraboloid(0.5f64, 1f64)
+        Shape::new_paraboloid(1f64, 1f64)
     }
 
     pub fn bound(&self) -> AABB {
         match self {
             &Box(_, hw, hh, hd) => AABB::for_points([Point::new(-hw, -hh, -hd), Point::new(hw, hh, hd)]),
             &Cone(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
-            &Cylinder(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
+            &Cylinder(_, r, hh) => AABB::for_points([Point::new(-r, -r, -hh), Point::new(r, r, hh)]),
             &Disc(_, r) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, 0f64)]),
             &Plane(_, hw, hd) => AABB::for_points([Point::new(-hw, -hd, 0f64), Point::new(hw, hd, 0f64)]),
             &Sphere(_, r) => AABB::for_points([Point::new(-r, -r, -r), Point::new(r, r, r)]),
@@ -140,7 +142,7 @@ impl Shape {
                 let c = (h * h * ray.origin.x * ray.origin.x + h * h * ray.origin.y * ray.origin.y) / (-ray.origin.z * ray.origin.z + 2f64 * ray.origin.z * h - h * h);
                 match quadratic(a, b, c) {
                     None => { }
-                    Some([t1, t2]) => {
+                    Some((t1, t2)) => {
                         let z1 = ray.at_time(t1).z;
                         let z2 = ray.at_time(t2).z;
                         if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
@@ -148,19 +150,20 @@ impl Shape {
                     }
                 }
             },
-            &Cylinder(_, r, h) => {
+            &Cylinder(_, r, hh) => {
                 let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
-                let b = 2f64 * ((ray.direction.x * ray.origin.x) + (ray.direction.y + ray.origin.y));
+                let b = 2f64 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
                 let c = (ray.origin.x * ray.origin.x) + (ray.origin.y * ray.origin.y) - (r * r);
                 match quadratic(a, b, c) {
                     None => { },
-                    Some([t1, t2]) => {
+                    Some((t1, t2)) => {
                         let z1 = ray.at_time(t1).z;
                         let z2 = ray.at_time(t2).z;
-                        if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
-                        if t2 >= 0f64 && z2 >= 0f64 && z2 <= h { res.push(t2); };
+                        if t1 >= 0f64 && z1 >= -hh && z1 <= hh { res.push(t1); };
+                        if t2 >= 0f64 && z2 >= -hh && z2 <= hh { res.push(t2); };
                     },
                 }
+
             },
             &Disc(_, r) => {
                 if ray.direction.z > 0.0001 {
@@ -182,7 +185,7 @@ impl Shape {
                 let c = ray.origin.distance_squared(&Point::origin()) - (r * r);
                 match quadratic(a, b, c) {
                     None => { },
-                    Some([t1, t2]) => {
+                    Some((t1, t2)) => {
                         if t1 >= 0f64 { res.push(t1); };
                         if t2 >= 0f64 { res.push(t2); };
                     },
@@ -213,7 +216,7 @@ impl Shape {
                 let c = (h * ray.origin.x * ray.origin.x + h * ray.origin.y * ray.origin.y) / (r * r) - ray.origin.z;
                 match quadratic(a, b, c) {
                     None => { },
-                    Some([t1, t2]) => {
+                    Some((t1, t2)) => {
                         let z1 = ray.at_time(t1).z;
                         let z2 = ray.at_time(t2).z;
                         if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
@@ -263,7 +266,7 @@ impl Trans for Shape {
         match self {
             &Box(c, hw, hh, hd) => Box(t.compose(&c), hw, hh, hd),
             &Cone(c, r, h) => Cone(t.compose(&c), r, h), 
-            &Cylinder(c, r, h) => Cylinder(t.compose(&c), r, h),
+            &Cylinder(c, r, hh) => Cylinder(t.compose(&c), r, hh),
             &Disc(c, r) => Disc(t.compose(&c), r),
             &Plane(c, hw, hd) => Plane(t.compose(&c), hw, hd),
             &Sphere(c, r) => Sphere(t.compose(&c), r),
@@ -285,5 +288,16 @@ impl TransMut for Shape {
             &Triangle(ref mut c, _, _, _) => { *c = t.compose(c); },
             &Paraboloid(ref mut c, _, _) => { *c = t.compose(c); },
         };
+    }
+}
+
+#[test]
+fn test_cylinder() {
+    let c = Shape::new_unit_cylinder().rotate3(Float::frac_pi_2(), 0f64, 0f64).translate(&Vector::new(0f64, 0f64, 10f64));
+    let r = Ray::z_axis();
+
+    match c.intersect(&r) {
+        None => assert!(false),
+        Some(t) => assert_eq!(t, 9.5f64),
     }
 }
