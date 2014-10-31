@@ -14,7 +14,6 @@ pub enum Shape {
     Sphere(Transform, f64),
     Triangle(Transform, Point, Point, Point),
     Paraboloid(Transform, f64, f64),
-// TODO: intersection, union, disjunction
 }
 
 impl Shape {
@@ -180,7 +179,7 @@ impl Shape {
             &Sphere(_, r) => {
                 let a = ray.direction.magnitude_squared();
                 let b = 2f64 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
-                let c = ray.origin.distance(&Point::origin()) - (r * r);
+                let c = ray.origin.distance_squared(&Point::origin()) - (r * r);
                 match quadratic(a, b, c) {
                     None => { },
                     Some([t1, t2]) => {
