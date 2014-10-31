@@ -7,6 +7,7 @@ use math::quadratic;
 pub enum Shape {
     Box(Transform, f64, f64, f64),
     Cone(Transform, f64, f64),
+    Cylinder(Transform, f64, f64),
 }
 
 impl Shape {
@@ -18,6 +19,10 @@ impl Shape {
         Cone(Transform::identity(), radius, height)
     }
 
+    pub fn new_cylinder(radius : f64, height : f64) -> Shape {
+        Cylinder(Transform::identity(), radius, height)
+    }
+
     pub fn new_unit_box() -> Shape {
         Shape::new_box(1f64, 1f64, 1f64)
     }
@@ -26,10 +31,15 @@ impl Shape {
         Shape::new_cone(1f64, 1f64)
     }
 
+    pub fn new_unit_cylinder() -> Shape {
+        Shape::new_cylinder(1f64, 1f64)
+    }
+
     pub fn bound(&self) -> AABB {
         match self {
             &Box(_, hw, hh, hd) => AABB::for_points([Point::new(-hw, -hh, -hd), Point::new(hw, hh, hd)]),
-            &Cone(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)])
+            &Cone(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
+            &Cylinder(_, r, h) => AABB::for_points([Point::new(-r, -r, 0f64), Point::new(r, r, h)]),
         }
     }
 
@@ -37,6 +47,7 @@ impl Shape {
         match self {
             &Box(ref t, _, _, _) => t,
             &Cone(ref t, _, _) => t,
+            &Cylinder(ref t, _, _) => t,
         }
     }
 
@@ -65,17 +76,33 @@ impl Shape {
                 }
             },
             &Cone(_, r, h) => {
-                let a = (h*h*ray.direction.x*ray.direction.x + h*h*ray.direction.y*ray.direction.y) / (r*r) + (-ray.direction.z*ray.direction.z);
-                let b = (2f64*h*h*ray.origin.x*ray.origin.x + 2f64*h*h*ray.origin.y*ray.origin.y) / (r*r) + (-2f64*ray.origin.z*ray.direction.z + 2f64*ray.direction.z*h);
-                let c = (h*h*ray.origin.x*ray.origin.x + h*h*ray.origin.y*ray.origin.y) / (-ray.origin.z*ray.origin.z + 2f64*ray.origin.z*h - h*h);
+                let a = (h * h * ray.direction.x * ray.direction.x + h * h * ray.direction.y * ray.direction.y) / (r * r) + (-ray.direction.z * ray.direction.z);
+                let b = (2f64 * h * h * ray.origin.x * ray.origin.x + 2f64 * h * h * ray.origin.y * ray.origin.y) / (r * r) + (-2f64 * ray.origin.z * ray.direction.z + 2f64 * ray.direction.z * h);
+                let c = (h * h * ray.origin.x * ray.origin.x + h * h * ray.origin.y * ray.origin.y) / (-ray.origin.z * ray.origin.z + 2f64 * ray.origin.z * h - h * h);
                 match quadratic(a, b, c) {
                     None => { }
                     Some([t1, t2]) => {
-                        if t1 > 0f64 && ray.at_time(t1).z >= 0f64 && ray.at_time(t1).z <= h { res.push(t1); };
-                        if t2 > 0f64 && ray.at_time(t2).z >= 0f64 && ray.at_time(t2).z <= h { res.push(t2); };
+                        let z1 = ray.at_time(t1).z;
+                        let z2 = ray.at_time(t2).z;
+                        if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
+                        if t2 >= 0f64 && z2 >= 0f64 && z2 <= h { res.push(t2); };
                     }
                 }
-            }
+            },
+            &Cylinder(_, r, h) => {
+                let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
+                let b = 2f64 * ((ray.direction.x * ray.origin.x) + (ray.direction.y + ray.origin.y));
+                let c = (ray.origin.x * ray.origin.x) + (ray.origin.y * ray.origin.y) - (r * r);
+                match quadratic(a, b, c) {
+                    None => { },
+                    Some([t1, t2]) => {
+                        let z1 = ray.at_time(t1).z;
+                        let z2 = ray.at_time(t2).z;
+                        if t1 >= 0f64 && z1 >= 0f64 && z1 <= h { res.push(t1); };
+                        if t2 >= 0f64 && z2 >= 0f64 && z2 <= h { res.push(t2); };
+                    },
+                }
+            },
         };
 
         res
@@ -85,6 +112,7 @@ impl Shape {
         match self {
             &Box(_, hw, hh, hd) => (8f64 * hd * hw) + (8f64 * hd * hh) + (8f64 * hw * hh),
             &Cone(_, r, h) => r * (r * r + h * h).sqrt() * Float::pi(),
+            &Cylinder(_, r, h) => 2f64 * r * h * Float::pi(),
         }
     }
 
@@ -112,6 +140,7 @@ impl Trans for Shape {
         match self {
             &Box(c, hw, hh, hd) => Box(t.compose(&c), hw, hh, hd),
             &Cone(c, r, h) => Cone(t.compose(&c), r, h), 
+            &Cylinder(c, r, h) => Cylinder(t.compose(&c), r, h),
         }
     }
 }
@@ -121,6 +150,7 @@ impl TransMut for Shape {
         match self {
             &Box(ref mut c, _, _, _) => { *c = t.compose(c); },
             &Cone(ref mut c, _, _) => { *c = t.compose(c); },
+            &Cylinder(ref mut c, _, _) => { *c = t.compose(c); },
         };
     }
 }
