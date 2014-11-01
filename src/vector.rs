@@ -105,6 +105,26 @@ impl Vector {
         self.z = self.z - o.z
     }
 
+    pub fn mul_v(&self, v : &Vector) -> Vector {
+        Vector::new(self.x * v.x, self.y * v.y, self.z * v.z)
+    }
+
+    pub fn mul_self_v(&mut self, v : &Vector) {
+        self.x = self.x * v.x;
+        self.y = self.y * v.y;
+        self.z = self.z * v.z;
+    }
+
+    pub fn div_v(&self, v : &Vector) -> Vector {
+        Vector::new(self.x / v.x, self.y / v.y, self.z / v.z)
+    }
+
+    pub fn div_self_v(&mut self, v : &Vector) {
+        self.x = self.x / v.x;
+        self.y = self.y / v.y;
+        self.z = self.z / v.z;
+    }
+
     pub fn reverse(&self) -> Vector {
         Vector::new(-self.x, -self.y, -self.z)
     }
