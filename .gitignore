@@ -1,3 +1,5 @@
 /target
 *.oct
 *.png
+perf.data
+perf.data.old
