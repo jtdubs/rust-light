@@ -17,18 +17,18 @@ impl Transform {
     }
 
     pub fn scaling(v : &Vector) -> Transform {
-        Transform { m: Matrix::scaling(v), n: Matrix::scaling(&Vector::new(1f64/v.x, 1f64/v.y, 1f64/v.z)) }
+        Transform { m: Matrix::scaling(v), n: Matrix::scaling(&Vector::new(1f32/v.x, 1f32/v.y, 1f32/v.z)) }
     }
 
     pub fn rotation_q(q : &Quaternion) -> Transform {
         Transform { m: q.to_matrix(), n: q.conjugate().to_matrix() }
     }
 
-    pub fn rotation(angle : f64, axis : &Vector) -> Transform {
+    pub fn rotation(angle : f32, axis : &Vector) -> Transform {
         Transform::rotation_q(&Quaternion::rotation(angle, axis))
     }
 
-    pub fn rotation3(pitch : f64, yaw : f64, roll : f64) -> Transform {
+    pub fn rotation3(pitch : f32, yaw : f32, roll : f32) -> Transform {
         Transform::rotation_q(&Quaternion::rotation3(pitch, yaw, roll))
     }
 
@@ -78,11 +78,11 @@ pub trait Trans {
         self.transform(&Transform::rotation_q(q))
     }
 
-    fn rotate(&self, angle : f64, axis : &Vector) -> Self {
+    fn rotate(&self, angle : f32, axis : &Vector) -> Self {
         self.transform(&Transform::rotation(angle, axis))
     }
 
-    fn rotate3(&self, pitch : f64, yaw : f64, roll : f64) -> Self {
+    fn rotate3(&self, pitch : f32, yaw : f32, roll : f32) -> Self {
         self.transform(&Transform::rotation3(pitch, yaw, roll))
     }
 }
@@ -102,11 +102,11 @@ pub trait TransMut {
         self.transform_self(&Transform::rotation_q(q))
     }
 
-    fn rotate_self(&mut self, angle : f64, axis : &Vector) {
+    fn rotate_self(&mut self, angle : f32, axis : &Vector) {
         self.transform_self(&Transform::rotation(angle, axis))
     }
 
-    fn rotate3_self(&mut self, pitch : f64, yaw : f64, roll : f64) {
+    fn rotate3_self(&mut self, pitch : f32, yaw : f32, roll : f32) {
         self.transform_self(&Transform::rotation3(pitch, yaw, roll))
     }
 }

@@ -5,76 +5,76 @@ use point::Point;
 use normal::Normal;
 
 pub struct Matrix {
-    m : [f64, ..16],
+    m : [f32, ..16],
 }
 
 impl Matrix {
-    pub fn new(m : &[f64, ..16]) -> Matrix {
+    pub fn new(m : &[f32, ..16]) -> Matrix {
         Matrix { m: *m }
     }
 
     pub fn zero() -> Matrix {
-        Matrix::new(&[0f64, ..16])
+        Matrix::new(&[0f32, ..16])
     }
 
     pub fn identity() -> Matrix {
-        Matrix::new(&[1f64, 0f64, 0f64, 0f64,
-                      0f64, 1f64, 0f64, 0f64,
-                      0f64, 0f64, 1f64, 0f64,
-                      0f64, 0f64, 0f64, 1f64])
+        Matrix::new(&[1f32, 0f32, 0f32, 0f32,
+                      0f32, 1f32, 0f32, 0f32,
+                      0f32, 0f32, 1f32, 0f32,
+                      0f32, 0f32, 0f32, 1f32])
     }
 
     pub fn scaling(v : &Vector) -> Matrix {
-        Matrix::new(&[ v.x, 0f64, 0f64, 0f64,
-                      0f64,  v.y, 0f64, 0f64,
-                      0f64, 0f64,  v.z, 0f64,
-                      0f64, 0f64, 0f64, 1f64])
+        Matrix::new(&[ v.x, 0f32, 0f32, 0f32,
+                      0f32,  v.y, 0f32, 0f32,
+                      0f32, 0f32,  v.z, 0f32,
+                      0f32, 0f32, 0f32, 1f32])
     }
      
     pub fn translation(v : &Vector) -> Matrix {
-        Matrix::new(&[1f64, 0f64, 0f64,  v.x,
-                      0f64, 1f64, 0f64,  v.y,
-                      0f64, 0f64, 1f64,  v.z,
-                      0f64, 0f64, 0f64, 1f64])
+        Matrix::new(&[1f32, 0f32, 0f32,  v.x,
+                      0f32, 1f32, 0f32,  v.y,
+                      0f32, 0f32, 1f32,  v.z,
+                      0f32, 0f32, 0f32, 1f32])
     }
      
-    pub fn rotation(angle : f64, axis : &Vector) -> Matrix {
+    pub fn rotation(angle : f32, axis : &Vector) -> Matrix {
         let c = angle.cos();
         let s = angle.sin();
         let u = axis.x;
         let v = axis.y;
         let w = axis.z;
-        Matrix::new(&[  u*u*(1f64-c)+c, u*v*(1f64-c)-w*s, u*w*(1f64-c)+v*s, 0f64,
-                      v*u*(1f64-c)+w*c,   v*v*(1f64-c)+c, u*w*(1f64-c)-u*s, 0f64,
-                      w*u*(1f64-c)-v*c, w*v*(1f64-c)+u*s,   u*w*(1f64-c)+c, 0f64,
-                                  0f64,             0f64,             0f64, 1f64])
+        Matrix::new(&[  u*u*(1f32-c)+c, u*v*(1f32-c)-w*s, u*w*(1f32-c)+v*s, 0f32,
+                      v*u*(1f32-c)+w*c,   v*v*(1f32-c)+c, u*w*(1f32-c)-u*s, 0f32,
+                      w*u*(1f32-c)-v*c, w*v*(1f32-c)+u*s,   u*w*(1f32-c)+c, 0f32,
+                                  0f32,             0f32,             0f32, 1f32])
     }
      
-    pub fn frustum(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
+    pub fn frustum(l : f32, r : f32, b : f32, t : f32, n : f32, f : f32) -> Matrix {
         let a = (r+l)/(r-l);
         let b2 = (t+b)/(t-b);
         let c = -(f+n)/(f-n);
-        let d = -(2f64*f*n)/(f-n);
-        Matrix::new(&[(2f64*n)/(r-l),           0f64,     a, 0f64,
-                                0f64, (2f64*n)/(t-b),    b2, 0f64,
-                                0f64,           0f64,     c,    d,
-                                0f64,           0f64, -1f64, 0f64])
+        let d = -(2f32*f*n)/(f-n);
+        Matrix::new(&[(2f32*n)/(r-l),           0f32,     a, 0f32,
+                                0f32, (2f32*n)/(t-b),    b2, 0f32,
+                                0f32,           0f32,     c,    d,
+                                0f32,           0f32, -1f32, 0f32])
     }
      
-    pub fn perspective(fov_y : f64, aspect : f64, near : f64, far : f64) -> Matrix {
-        let fh = (fov_y / 2f64).tan() * near;
+    pub fn perspective(fov_y : f32, aspect : f32, near : f32, far : f32) -> Matrix {
+        let fh = (fov_y / 2f32).tan() * near;
         let fw = fh * aspect;
         Matrix::frustum(-fw, fw, -fh, fh, near, far)
     }
      
-    pub fn orthographic(l : f64, r : f64, b : f64, t : f64, n : f64, f : f64) -> Matrix {
+    pub fn orthographic(l : f32, r : f32, b : f32, t : f32, n : f32, f : f32) -> Matrix {
         let tx = -(r+l)/(r-l);
         let ty = -(t+b)/(t-b);
         let tz = -(f+n)/(f-n);
-        Matrix::new(&[2f64/(r-l),       0f64,        0f64,   tx,
-                            0f64, 2f64/(t-b),        0f64,   ty,
-                            0f64,       0f64, -2f64*(f-n),   tz,
-                            0f64,       0f64,        0f64, 1f64])
+        Matrix::new(&[2f32/(r-l),       0f32,        0f32,   tx,
+                            0f32, 2f32/(t-b),        0f32,   ty,
+                            0f32,       0f32, -2f32*(f-n),   tz,
+                            0f32,       0f32,        0f32, 1f32])
     }
 
 
@@ -109,27 +109,27 @@ impl Matrix {
         self.clone_from(&r);
     }
 
-    pub fn mul_s(&self, s : f64) -> Matrix {
+    pub fn mul_s(&self, s : f32) -> Matrix {
         Matrix::new(&[self[ 0] * s, self[ 1] * s, self[ 2] * s, self[ 3] * s,
                       self[ 4] * s, self[ 5] * s, self[ 6] * s, self[ 7] * s,
                       self[ 8] * s, self[ 9] * s, self[10] * s, self[11] * s,
                       self[12] * s, self[13] * s, self[14] * s, self[15] * s])
     }
 
-    pub fn mul_self_s(&mut self, s : f64) {
+    pub fn mul_self_s(&mut self, s : f32) {
         for ix in range(0u, 16u) {
             self.m[ix] = self.m[ix] * s
         }
     }
 
-    pub fn div_s(&self, s : f64) -> Matrix {
+    pub fn div_s(&self, s : f32) -> Matrix {
         Matrix::new(&[self[ 0] / s, self[ 1] / s, self[ 2] / s, self[ 3] / s,
                       self[ 4] / s, self[ 5] / s, self[ 6] / s, self[ 7] / s,
                       self[ 8] / s, self[ 9] / s, self[10] / s, self[11] / s,
                       self[12] / s, self[13] / s, self[14] / s, self[15] / s])
     }
 
-    pub fn div_self_s(&mut self, s : f64) {
+    pub fn div_self_s(&mut self, s : f32) {
         for ix in range(0u, 16u) {
             self.m[ix] = self.m[ix] / s
         }
@@ -188,7 +188,7 @@ impl Matrix {
     pub fn mul_p(&self, p : &Point) -> Point {
         let s = self[12] * p.x + self[13] * p.y + self[14] * p.z + self[15];
         
-        if s == 0f64 {
+        if s == 0f32 {
             Point::origin()
         } else {
             Point::new((self[ 0] * p.x + self[ 1] * p.y + self[ 2] * p.z + self[ 3]) / s,
@@ -200,7 +200,7 @@ impl Matrix {
     pub fn premul_p(&self, p : &Point) -> Point {
         let s = self[3] * p.x + self[7] * p.y + self[11] * p.z + self[15];
         
-        if s == 0f64 {
+        if s == 0f32 {
             Point::origin()
         } else {
             Point::new((self[ 0] * p.x + self[ 4] * p.y + self[ 8] * p.z + self[12]) / s,
@@ -210,8 +210,8 @@ impl Matrix {
     }
 }
 
-impl Index<uint, f64> for Matrix {
-    fn index(&self, index : &uint) -> &f64 {
+impl Index<uint, f32> for Matrix {
+    fn index(&self, index : &uint) -> &f32 {
         &self.m[*index]
     }
 }
@@ -250,13 +250,13 @@ impl PartialEq for Matrix {
 
 #[test]
 fn test_access() {
-    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
-                           4f64,  5f64,  6f64,  7f64,
-                           8f64,  9f64, 10f64, 11f64,
-                          12f64, 13f64, 14f64, 15f64]);
+    let l = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,
+                           4f32,  5f32,  6f32,  7f32,
+                           8f32,  9f32, 10f32, 11f32,
+                          12f32, 13f32, 14f32, 15f32]);
 
     for ix in range(0u, 16u) {
-        assert_eq!(l[ix], ix as f64);
+        assert_eq!(l[ix], ix as f32);
     }
 }
 
@@ -270,24 +270,24 @@ fn test_equality() {
 
 #[test]
 fn test_transpose() {
-    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
-                           4f64,  5f64,  6f64,  7f64,
-                           8f64,  9f64, 10f64, 11f64,
-                          12f64, 13f64, 14f64, 15f64]);
-    let r = Matrix::new(&[ 0f64,   4f64,  8f64, 12f64,
-                           1f64,   5f64,  9f64, 13f64,
-                           2f64,   6f64, 10f64, 14f64,
-                           3f64,   7f64, 11f64, 15f64]);
+    let l = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,
+                           4f32,  5f32,  6f32,  7f32,
+                           8f32,  9f32, 10f32, 11f32,
+                          12f32, 13f32, 14f32, 15f32]);
+    let r = Matrix::new(&[ 0f32,   4f32,  8f32, 12f32,
+                           1f32,   5f32,  9f32, 13f32,
+                           2f32,   6f32, 10f32, 14f32,
+                           3f32,   7f32, 11f32, 15f32]);
     assert_eq!(l.transpose(), r);
     assert_eq!(l.transpose().transpose(), l);
 }
 
 #[test]
 fn test_mul() {
-    let l = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
-                           4f64,  5f64,  6f64,  7f64,
-                           8f64,  9f64, 10f64, 11f64,
-                          12f64, 13f64, 14f64, 15f64]);
+    let l = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,
+                           4f32,  5f32,  6f32,  7f32,
+                           8f32,  9f32, 10f32, 11f32,
+                          12f32, 13f32, 14f32, 15f32]);
 
     let r1 = l.mul_m(&Matrix::identity());
     let r2 = Matrix::identity().mul_m(&l);
@@ -302,37 +302,37 @@ fn test_mul() {
 
 #[test]
 fn test_mul_div_s() {
-    let l1 = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
-                            4f64,  5f64,  6f64,  7f64,
-                            8f64,  9f64, 10f64, 11f64,
-                           12f64, 13f64, 14f64, 15f64]);
+    let l1 = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,
+                            4f32,  5f32,  6f32,  7f32,
+                            8f32,  9f32, 10f32, 11f32,
+                           12f32, 13f32, 14f32, 15f32]);
 
-    let l2 = Matrix::new(&[ 0f64,  2f64,  4f64,  6f64,
-                            8f64, 10f64, 12f64, 14f64,
-                           16f64, 18f64, 20f64, 22f64,
-                           24f64, 26f64, 28f64, 30f64]);
+    let l2 = Matrix::new(&[ 0f32,  2f32,  4f32,  6f32,
+                            8f32, 10f32, 12f32, 14f32,
+                           16f32, 18f32, 20f32, 22f32,
+                           24f32, 26f32, 28f32, 30f32]);
 
-    assert_eq!(l1.mul_s(2f64), l2);
+    assert_eq!(l1.mul_s(2f32), l2);
 
     let mut l1c = l1.clone();
 
-    l1c.mul_self_s(2f64);
+    l1c.mul_self_s(2f32);
     assert_eq!(l1c, l2);
-    l1c.div_self_s(2f64);
+    l1c.div_self_s(2f32);
     assert_eq!(l1c, l1);
 }
 
 #[test]
 fn test_add_sub() {
-    let l1 = Matrix::new(&[ 0f64,  1f64,  2f64,  3f64,
-                            4f64,  5f64,  6f64,  7f64,
-                            8f64,  9f64, 10f64, 11f64,
-                           12f64, 13f64, 14f64, 15f64]);
+    let l1 = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,
+                            4f32,  5f32,  6f32,  7f32,
+                            8f32,  9f32, 10f32, 11f32,
+                           12f32, 13f32, 14f32, 15f32]);
 
-    let l2 = Matrix::new(&[ 0f64,  2f64,  4f64,  6f64,
-                            8f64, 10f64, 12f64, 14f64,
-                           16f64, 18f64, 20f64, 22f64,
-                           24f64, 26f64, 28f64, 30f64]);
+    let l2 = Matrix::new(&[ 0f32,  2f32,  4f32,  6f32,
+                            8f32, 10f32, 12f32, 14f32,
+                           16f32, 18f32, 20f32, 22f32,
+                           24f32, 26f32, 28f32, 30f32]);
 
     assert_eq!(l1.add_m(&l1), l2);
     assert_eq!(l2.sub_m(&l1), l1);
@@ -347,7 +347,7 @@ fn test_add_sub() {
 
 #[test]
 fn test_vector_math() {
-    let v = Vector::new(1f64, 2f64, 3f64);
+    let v = Vector::new(1f32, 2f32, 3f32);
 
     assert_eq!(Matrix::identity().mul_v(&v), v);
     assert_eq!(Matrix::identity().premul_v(&v), v);
@@ -355,7 +355,7 @@ fn test_vector_math() {
 
 #[test]
 fn test_point_math() {
-    let p = Point::new(1f64, 2f64, 3f64);
+    let p = Point::new(1f32, 2f32, 3f32);
 
     assert_eq!(Matrix::identity().mul_p(&p), p);
     assert_eq!(Matrix::identity().premul_p(&p), p);
@@ -363,7 +363,7 @@ fn test_point_math() {
 
 #[test]
 fn test_normal_math() {
-    let n = Vector::new(1f64, 2f64, 3f64).to_normal();
+    let n = Vector::new(1f32, 2f32, 3f32).to_normal();
 
     assert_eq!(Matrix::identity().mul_n(&n), n);
     assert_eq!(Matrix::identity().premul_n(&n), n);

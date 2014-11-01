@@ -11,11 +11,11 @@ impl Primitive {
         Primitive { shape: s }
     }
 
-    pub fn intersections(&self, r : &Ray) -> Vec<f64> {
+    pub fn intersections(&self, r : &Ray) -> Vec<f32> {
         self.shape.intersections(r)
     }
 
-    pub fn intersect(&self, r : &Ray) -> Option<f64> {
+    pub fn intersect(&self, r : &Ray) -> Option<f32> {
         self.shape.intersect(r)
     }
 

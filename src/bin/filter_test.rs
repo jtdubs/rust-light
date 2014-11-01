@@ -5,11 +5,11 @@ use std::iter::range_inclusive;
 
 fn main() {
     println!("clf");
-    test(1, "Box", Filter::new_box(2f64, 2f64));
-    test(2, "Triangle", Filter::new_triangle(2f64, 2f64));
-    test(3, "Gaussian", Filter::new_gaussian(2f64, 2f64, 0.5f64));
-    test(4, "Mitchell", Filter::new_mitchell(3f64, 3f64, 0.5f64, 0.25f64));
-    test(5, "Lanczos Sinc", Filter::new_lanczos_sinc(3f64, 3f64, Float::pi()));
+    test(1, "Box", Filter::new_box(2f32, 2f32));
+    test(2, "Triangle", Filter::new_triangle(2f32, 2f32));
+    test(3, "Gaussian", Filter::new_gaussian(2f32, 2f32, 0.5f32));
+    test(4, "Mitchell", Filter::new_mitchell(3f32, 3f32, 0.5f32, 0.25f32));
+    test(5, "Lanczos Sinc", Filter::new_lanczos_sinc(3f32, 3f32, Float::pi()));
 }
 
 fn test(ix : i64, title : &str, f : Filter) {
@@ -24,7 +24,7 @@ fn test(ix : i64, title : &str, f : Filter) {
     println!("z = [");
     for y in range_inclusive(-30i, 30i) {
         for x in range_inclusive(-30i, 30i) {
-            print!("{}", f.weight((x as f64)/10f64, (y as f64)/10f64));
+            print!("{}", f.weight((x as f32)/10f32, (y as f32)/10f32));
             if x != 30i { print!(","); }
         }
         println!(";");

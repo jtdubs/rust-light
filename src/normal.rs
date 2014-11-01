@@ -4,60 +4,60 @@ use vector::Vector;
 use transform::{Transform,Trans,TransMut};
 
 pub struct Normal {
-    pub x : f64,
-    pub y : f64,
-    pub z : f64,
+    pub x : f32,
+    pub y : f32,
+    pub z : f32,
 }
  
 impl Normal {
-    pub fn new(x : f64, y : f64, z : f64) -> Normal {
+    pub fn new(x : f32, y : f32, z : f32) -> Normal {
         Normal { x: x, y: y, z: z }
     }
 
     pub fn zero() -> Normal {
-        Normal::new(0f64, 0f64, 0f64)
+        Normal::new(0f32, 0f32, 0f32)
     }
 
     pub fn unit_x() -> Normal {
-        Normal::new(1f64, 0f64, 0f64)
+        Normal::new(1f32, 0f32, 0f32)
     }
 
     pub fn unit_y() -> Normal {
-        Normal::new(0f64, 1f64, 0f64)
+        Normal::new(0f32, 1f32, 0f32)
     }
 
     pub fn unit_z() -> Normal {
-        Normal::new(0f64, 0f64, 1f64)
+        Normal::new(0f32, 0f32, 1f32)
     }
 
-    pub fn dot(&self, o : &Normal) -> f64 {
+    pub fn dot(&self, o : &Normal) -> f32 {
         self.x * o.x + self.y * o.y + self.z * o.z
     }
 
-    pub fn magnitude_squared(&self) -> f64 {
+    pub fn magnitude_squared(&self) -> f32 {
         self.dot(self)
     }
 
-    pub fn magnitude(&self) -> f64 {
+    pub fn magnitude(&self) -> f32 {
         self.magnitude_squared().sqrt()
     }
 
     pub fn normalize(&self) -> Normal {
         let m = self.magnitude();
-        if m == 0f64 { *self } else { self.div_s(m) }
+        if m == 0f32 { *self } else { self.div_s(m) }
     }
 
     pub fn normalize_self(&mut self) {
         let m = self.magnitude();
-        if m != 0f64 { self.div_self_s(m) }
+        if m != 0f32 { self.div_self_s(m) }
     }
 
     pub fn face_forward(&self, forward : &Vector) -> Normal {
-      if self.dot(&forward.to_normal()) < 0f64 { self.reverse() } else { *self }
+      if self.dot(&forward.to_normal()) < 0f32 { self.reverse() } else { *self }
     }
 
     pub fn face_forward_self(&mut self, forward : &Vector) {
-        if self.dot(&forward.to_normal()) < 0f64 { self.reverse_self() }
+        if self.dot(&forward.to_normal()) < 0f32 { self.reverse_self() }
     }
 
     pub fn reverse(&self) -> Normal {
@@ -70,21 +70,21 @@ impl Normal {
         self.z = -self.z;
     }
 
-    pub fn mul_s(&self, s : f64) -> Normal {
+    pub fn mul_s(&self, s : f32) -> Normal {
         Normal::new(self.x * s, self.y * s, self.z * s)
     }
 
-    pub fn mul_self_s(&mut self, s : f64) {
+    pub fn mul_self_s(&mut self, s : f32) {
         self.x = self.x * s;
         self.y = self.y * s;
         self.z = self.z * s;
     }
 
-    pub fn div_s(&self, s : f64) -> Normal {
+    pub fn div_s(&self, s : f32) -> Normal {
         Normal::new(self.x / s, self.y / s, self.z / s)
     }
 
-    pub fn div_self_s(&mut self, s : f64) {
+    pub fn div_self_s(&mut self, s : f32) {
         self.x = self.x / s;
         self.y = self.y / s;
         self.z = self.z / s;
@@ -154,84 +154,84 @@ impl TransMut for Normal {
 
 #[test]
 fn test_accessors() {
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).x, 1f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).y, 2f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).z, 3f64);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).x, 1f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).y, 2f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).z, 3f32);
 }
 
 #[test]
 fn test_construction() {
-    assert_eq!(Normal::new(1f64, 2f64, 3f64), Vector::new(1f64, 2f64, 3f64).to_normal());
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).x, 1f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).y, 2f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).z, 3f64);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32), Vector::new(1f32, 2f32, 3f32).to_normal());
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).x, 1f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).y, 2f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).z, 3f32);
 }
 
 #[test]
 fn test_equality() {
     assert!(Normal::zero() == Normal::zero());
-    assert!(Normal::zero() == Normal::new(0f64, 0f64, 0f64));
-    assert!(Normal::zero() != Normal::new(1f64, 0f64, 0f64));
-    assert!(Normal::zero() != Normal::new(0f64, 1f64, 0f64));
-    assert!(Normal::zero() != Normal::new(0f64, 0f64, 1f64));
+    assert!(Normal::zero() == Normal::new(0f32, 0f32, 0f32));
+    assert!(Normal::zero() != Normal::new(1f32, 0f32, 0f32));
+    assert!(Normal::zero() != Normal::new(0f32, 1f32, 0f32));
+    assert!(Normal::zero() != Normal::new(0f32, 0f32, 1f32));
     assert!(Normal::unit_x() == Normal::unit_x());
     assert!(Normal::unit_x() != Normal::unit_y());
 }
 
 #[test]
 fn test_dot() {
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::zero()), 0f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::unit_y()), 2f64);
-    assert_eq!(Normal::new(1f64, 2f64, 3f64).dot(&Normal::new(4f64, 5f64, 6f64)), 32f64);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).dot(&Normal::zero()), 0f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).dot(&Normal::unit_y()), 2f32);
+    assert_eq!(Normal::new(1f32, 2f32, 3f32).dot(&Normal::new(4f32, 5f32, 6f32)), 32f32);
 }
 
 #[test]
 fn test_magnitude() {
-    assert_eq!(Normal::zero().magnitude(), 0f64);
-    assert_eq!(Normal::unit_x().magnitude(), 1f64);
+    assert_eq!(Normal::zero().magnitude(), 0f32);
+    assert_eq!(Normal::unit_x().magnitude(), 1f32);
 }
 
 #[test]
 fn test_normalize() {
-    assert_eq!(Normal::unit_x().mul_s(3f64).normalize(), Normal::unit_x());
+    assert_eq!(Normal::unit_x().mul_s(3f32).normalize(), Normal::unit_x());
 }
 
 #[test]
 fn test_reverse() {
     assert_eq!(Normal::zero().reverse(), Normal::zero());
-    assert_eq!(Normal::new(1f64, -2f64, 3f64).reverse(), Normal::new(-1f64, 2f64, -3f64));
+    assert_eq!(Normal::new(1f32, -2f32, 3f32).reverse(), Normal::new(-1f32, 2f32, -3f32));
 }
 
 #[test]
 fn test_add() {
-    assert_eq!(Normal::unit_x().add_n(&Normal::unit_x()), Normal::new(2f64, 0f64, 0f64));
-    assert_eq!(Normal::unit_x().add_n(&Normal::unit_y()), Normal::new(1f64, 1f64, 0f64));
-    assert_eq!(Normal::unit_x().add_n(&Normal::unit_z()), Normal::new(1f64, 0f64, 1f64));
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_x()), Normal::new(2f32, 0f32, 0f32));
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_y()), Normal::new(1f32, 1f32, 0f32));
+    assert_eq!(Normal::unit_x().add_n(&Normal::unit_z()), Normal::new(1f32, 0f32, 1f32));
 
     let mut v = Normal::unit_x();
     v.add_self_n(&Normal::unit_x());
     v.add_self_n(&Normal::unit_y());
-    assert_eq!(v, Normal::new(2f64, 1f64, 0f64));
+    assert_eq!(v, Normal::new(2f32, 1f32, 0f32));
 }
 
 #[test]
 fn test_mul() {
-    assert_eq!(Normal::unit_x().mul_s(3f64), Normal::new(3f64, 0f64, 0f64));
-    assert_eq!(Normal::unit_y().mul_s(3f64), Normal::new(0f64, 3f64, 0f64));
+    assert_eq!(Normal::unit_x().mul_s(3f32), Normal::new(3f32, 0f32, 0f32));
+    assert_eq!(Normal::unit_y().mul_s(3f32), Normal::new(0f32, 3f32, 0f32));
 
     let mut v = Normal::unit_x();
-    v.mul_self_s(3f64);
-    assert_eq!(v, Normal::new(3f64, 0f64, 0f64));
+    v.mul_self_s(3f32);
+    assert_eq!(v, Normal::new(3f32, 0f32, 0f32));
 }
 
 #[test]
 fn test_div() {
-    assert_eq!(Normal::unit_x().mul_s(3f64).div_s(3f64), Normal::unit_x());
-    assert_eq!(Normal::unit_y().mul_s(3f64).div_s(3f64), Normal::unit_y());
+    assert_eq!(Normal::unit_x().mul_s(3f32).div_s(3f32), Normal::unit_x());
+    assert_eq!(Normal::unit_y().mul_s(3f32).div_s(3f32), Normal::unit_y());
 
     let mut v = Normal::unit_x();
-    v.mul_self_s(3f64);
-    v.div_self_s(3f64);
+    v.mul_self_s(3f32);
+    v.div_self_s(3f32);
     assert_eq!(v, Normal::unit_x());
 }
 

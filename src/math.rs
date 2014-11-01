@@ -2,42 +2,42 @@ extern crate std;
 
 use std::iter::iterate;
 
-pub fn quadratic(a : f64, b : f64, c : f64) -> Option<(f64, f64)> {
-    let d = b*b - 4f64*a*c;
-    if d < 0f64 {
+pub fn quadratic(a : f32, b : f32, c : f32) -> Option<(f32, f32)> {
+    let d = b*b - 4f32*a*c;
+    if d < 0f32 {
         None
     } else {
-        let q = if b < 0f64 { -(b - d.sqrt()) / 2f64 } else { -(b + d.sqrt()) / 2f64 };
+        let q = if b < 0f32 { -(b - d.sqrt()) / 2f32 } else { -(b + d.sqrt()) / 2f32 };
         let r1 = q / a;
         let r2 = c / q;
         if r1 < r2 { Some((r1, r2)) } else { Some((r2, r1)) }
     }
 }
 
-pub fn radical_inverse(n : uint, b : uint) -> f64 {
-    helper(0f64, n, 1f64 / (b as f64), 1f64 / (b as f64), b)
+pub fn radical_inverse(n : uint, b : uint) -> f32 {
+    helper(0f32, n, 1f32 / (b as f32), 1f32 / (b as f32), b)
 }
 
-fn helper(r : f64, i : uint, inv_bi : f64, inv_base : f64, b : uint) -> f64 {
+fn helper(r : f32, i : uint, inv_bi : f32, inv_base : f32, b : uint) -> f32 {
     if i == 0 {
         r
     } else {
         let di = i % b;
-        helper(r + ((di as f64) * inv_bi), ((i as f64) * inv_base).trunc() as uint, inv_bi * inv_base, inv_base, b)
+        helper(r + ((di as f32) * inv_bi), ((i as f32) * inv_base).trunc() as uint, inv_bi * inv_base, inv_base, b)
     }
 }
 
-pub fn van_der_corput(n : u32, scramble : u32) -> f64 {
+pub fn van_der_corput(n : u32, scramble : u32) -> f32 {
     let num = ((reverse_bits(n) ^ scramble) >> 8) & 0xFFFFFF;
     let denom = 1u32 << 24;
-    (num as f64) / (denom as f64)
+    (num as f32) / (denom as f32)
 }
 
-pub fn sobol(n : u32, scramble : u32) -> f64 {
+pub fn sobol(n : u32, scramble : u32) -> f32 {
     let vs = std::iter::iterate(1u32 << 31, |x| { x ^ (x >> 1) }).take(32);
     let ns = range(0u, 32u).map(|s| { (n >> s) & 1 });
     let s = ns.zip(vs).map(|(a, b)| { a * b }).fold(scramble, |a, b| { a ^ b });
-    (((s >> 8) & 0xFFFFFF) as f64) / ((1u32 << 24) as f64)
+    (((s >> 8) & 0xFFFFFF) as f32) / ((1u32 << 24) as f32)
 }
 
 pub fn reverse_bits(n : u32) -> u32 {

@@ -25,7 +25,7 @@ impl Scene {
         bounds
     }
 
-    pub fn intersect(&self, r : &Ray) -> Option<f64> {
+    pub fn intersect(&self, r : &Ray) -> Option<f32> {
         let mut first_intersection = None;
 
         for &(ref a, ref p) in self.primitives.iter() {

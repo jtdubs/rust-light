@@ -6,26 +6,26 @@ use vector::Vector;
 
 pub struct Quaternion {
     v : Vector,
-    w : f64
+    w : f32
 }
 
 impl Quaternion {
-    pub fn new(v : &Vector, w : f64) -> Quaternion {
+    pub fn new(v : &Vector, w : f32) -> Quaternion {
         Quaternion { v: *v, w: w }
     }
 
     pub fn identity() -> Quaternion {
-        Quaternion::new(&Vector::zero(), 1f64)
+        Quaternion::new(&Vector::zero(), 1f32)
     }
 
-    pub fn rotation(angle : f64, axis : &Vector) -> Quaternion {
-        Quaternion::new(&axis.normalize().mul_s((angle/2f64).sin()), (angle/2f64).cos())
+    pub fn rotation(angle : f32, axis : &Vector) -> Quaternion {
+        Quaternion::new(&axis.normalize().mul_s((angle/2f32).sin()), (angle/2f32).cos())
     }
      
-    pub fn rotation3(pitch : f64, yaw : f64, roll : f64) -> Quaternion {
-        let p = pitch/2f64;
-        let y = yaw/2f64;
-        let r = roll/2f64;
+    pub fn rotation3(pitch : f32, yaw : f32, roll : f32) -> Quaternion {
+        let p = pitch/2f32;
+        let y = yaw/2f32;
+        let r = roll/2f32;
         let sp = p.sin();
         let sy = y.sin();
         let sr = r.sin();
@@ -59,21 +59,21 @@ impl Quaternion {
         let wx = w * x;
         let wy = w * y;
         let wz = w * z;
-        Matrix::new(&[1f64 - 2f64 * (yy + zz),        2f64 * (xy - wz),        2f64 * (xz + wy), 0f64,
-                             2f64 * (wy + wz), 1f64 - 2f64 * (xx + zz),        2f64 * (yz - wx), 0f64,
-                             2f64 * (xz - wy),        2f64 * (yz + wx), 1f64 - 2f64 * (xx + yy), 0f64,
-                                         0f64,                    0f64,                    0f64, 1f64])
+        Matrix::new(&[1f32 - 2f32 * (yy + zz),        2f32 * (xy - wz),        2f32 * (xz + wy), 0f32,
+                             2f32 * (wy + wz), 1f32 - 2f32 * (xx + zz),        2f32 * (yz - wx), 0f32,
+                             2f32 * (xz - wy),        2f32 * (yz + wx), 1f32 - 2f32 * (xx + yy), 0f32,
+                                         0f32,                    0f32,                    0f32, 1f32])
     }
 
-    pub fn to_angle_axis(&self) -> (f64, Vector) {
-        (self.w.acos() * 2f64, self.v.normalize())
+    pub fn to_angle_axis(&self) -> (f32, Vector) {
+        (self.w.acos() * 2f32, self.v.normalize())
     }
 
-    pub fn magnitude(&self) -> f64 {
+    pub fn magnitude(&self) -> f32 {
         self.magnitude_squared().sqrt()
     }
 
-    pub fn magnitude_squared(&self) -> f64 {
+    pub fn magnitude_squared(&self) -> f32 {
         self.v.dot(&self.v) + (self.w * self.w)
     }
 
@@ -85,7 +85,7 @@ impl Quaternion {
         self.v = self.v.reverse();
     }
 
-    pub fn dot(&self, q : &Quaternion) -> f64 {
+    pub fn dot(&self, q : &Quaternion) -> f32 {
         return self.v.dot(&q.v) + (self.w * q.w)
     }
 
@@ -93,7 +93,7 @@ impl Quaternion {
         if *v == Vector::zero() {
             *v
         } else {
-            self.mul_q(&Quaternion::new(v, 0f64)).mul_q(&self.conjugate()).v
+            self.mul_q(&Quaternion::new(v, 0f32)).mul_q(&self.conjugate()).v
         }
     }
 

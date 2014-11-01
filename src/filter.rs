@@ -1,35 +1,35 @@
 use std::num::Float;
 
 pub enum Filter {
-    BoxFilter(f64, f64),
-    TriangleFilter(f64, f64),
-    GaussianFilter(f64, f64, f64, f64, f64),
-    MitchellFilter(f64, f64, f64, f64),
-    LanczosSincFilter(f64, f64, f64),
+    BoxFilter(f32, f32),
+    TriangleFilter(f32, f32),
+    GaussianFilter(f32, f32, f32, f32, f32),
+    MitchellFilter(f32, f32, f32, f32),
+    LanczosSincFilter(f32, f32, f32),
 }
     
 impl Filter {
-    pub fn new_box(width : f64, height : f64) -> Filter {
+    pub fn new_box(width : f32, height : f32) -> Filter {
         BoxFilter(width, height)
     }
 
-    pub fn new_triangle(width : f64, height : f64) -> Filter {
+    pub fn new_triangle(width : f32, height : f32) -> Filter {
         TriangleFilter(width, height)
     }
 
-    pub fn new_gaussian(width : f64, height : f64, alpha : f64) -> Filter {
+    pub fn new_gaussian(width : f32, height : f32, alpha : f32) -> Filter {
         GaussianFilter(width, height, alpha, (-alpha*width*width).exp(), (-alpha*height*height).exp())
     }
 
-    pub fn new_mitchell(width : f64, height : f64, b : f64, c : f64) -> Filter {
+    pub fn new_mitchell(width : f32, height : f32, b : f32, c : f32) -> Filter {
         MitchellFilter(width, height, b, c)
     }
 
-    pub fn new_lanczos_sinc(width : f64, height : f64, tau : f64) -> Filter {
+    pub fn new_lanczos_sinc(width : f32, height : f32, tau : f32) -> Filter {
         LanczosSincFilter(width, height, tau)
     }
 
-    pub fn extent(&self) -> (f64, f64) {
+    pub fn extent(&self) -> (f32, f32) {
         match *self {
             BoxFilter(w, h) => (w, h),
             TriangleFilter(w, h) => (w, h),
@@ -39,46 +39,46 @@ impl Filter {
         }
     }
 
-    pub fn weight(&self, x : f64, y : f64) -> f64 {
+    pub fn weight(&self, x : f32, y : f32) -> f32 {
         let (w, h) = self.extent();
         if x.abs() > w || y.abs() > h {
-            0f64
+            0f32
         } else {
             match *self {
-                BoxFilter(_, _) => 1f64,
+                BoxFilter(_, _) => 1f32,
                 TriangleFilter(w, h) => {
-                    let tx = 1f64 - (x / w).abs();
-                    let ty = 1f64 - (y / h).abs();
-                    tx.max(0f64) * ty.max(0f64)
+                    let tx = 1f32 - (x / w).abs();
+                    let ty = 1f32 - (y / h).abs();
+                    tx.max(0f32) * ty.max(0f32)
                 },
                 GaussianFilter(_, _, a, bx, by) => {
                     let gx = (-a * x * x).exp() - bx;
                     let gy = (-a * y * y).exp() - by;
-                    gx.max(0f64) * gy.max(0f64)
+                    gx.max(0f32) * gy.max(0f32)
                 },
                 MitchellFilter(w, h, b, c) => {
-                    let helper = |x : f64| -> f64 {
-                        let x2 = (2f64*x).abs();
-                        if x2 > 1f64 {
-                            ( ( -1f64 * b -  6f64 * c) * x2 * x2 * x2
-                            + (  6f64 * b + 30f64 * c) * x2 * x2
-                            + (-12f64 * b - 48f64 * c) * x2
-                            + (  8f64 * b + 24f64 * c) ) / 6f64
+                    let helper = |x : f32| -> f32 {
+                        let x2 = (2f32*x).abs();
+                        if x2 > 1f32 {
+                            ( ( -1f32 * b -  6f32 * c) * x2 * x2 * x2
+                            + (  6f32 * b + 30f32 * c) * x2 * x2
+                            + (-12f32 * b - 48f32 * c) * x2
+                            + (  8f32 * b + 24f32 * c) ) / 6f32
                         } else {
-                            ( (  12f64 -  9f64 * b - 6f64 * c) * x2 * x2 * x2
-                            + ( -18f64 + 12f64 * b + 6f64 * c) * x2 * x2
-                            + (   6f64 -  2f64 * b) ) / 6f64
+                            ( (  12f32 -  9f32 * b - 6f32 * c) * x2 * x2 * x2
+                            + ( -18f32 + 12f32 * b + 6f32 * c) * x2 * x2
+                            + (   6f32 -  2f32 * b) ) / 6f32
                         }
                     };
 
                     helper(x/w) * helper(y/h)
                 },
                 LanczosSincFilter(w, h, t) => {
-                    let helper = |x : f64| -> f64 {
-                        if x < 0.00001f64 {
-                            1f64
-                        } else if x > 1f64 {
-                            0f64
+                    let helper = |x : f32| -> f32 {
+                        if x < 0.00001f32 {
+                            1f32
+                        } else if x > 1f32 {
+                            0f32
                         } else {
                             let xp = x * Float::pi();
                             let xpt = xp * t;

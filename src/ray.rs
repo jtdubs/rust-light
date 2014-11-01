@@ -26,7 +26,7 @@ impl Ray {
         Ray::new(&Point::origin(), &Vector::unit_z())
     }
 
-    pub fn at_time(&self, t : f64) -> Point {
+    pub fn at_time(&self, t : f32) -> Point {
         self.origin.add_v(&self.direction.mul_s(t))
     }
 
@@ -100,5 +100,5 @@ fn test_reverse() {
 
 #[test]
 fn test_at_time() {
-    assert_eq!(Ray::x_axis().at_time(3f64), Point::new(3f64, 0f64, 0f64));
+    assert_eq!(Ray::x_axis().at_time(3f32), Point::new(3f32, 0f32, 0f32));
 }

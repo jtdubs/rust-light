@@ -31,7 +31,7 @@ impl AABB {
         self.empty
     }
 
-    pub fn range_x(&self) -> Option<(f64, f64)> {
+    pub fn range_x(&self) -> Option<(f32, f32)> {
         if self.empty {
             None
         } else {
@@ -39,7 +39,7 @@ impl AABB {
         }
     }
 
-    pub fn range_y(&self) -> Option<(f64, f64)> {
+    pub fn range_y(&self) -> Option<(f32, f32)> {
         if self.empty {
             None
         } else {
@@ -47,7 +47,7 @@ impl AABB {
         }
     }
 
-    pub fn range_z(&self) -> Option<(f64, f64)> {
+    pub fn range_z(&self) -> Option<(f32, f32)> {
         if self.empty {
             None
         } else {
@@ -132,18 +132,18 @@ impl AABB {
         }
     }
 
-    pub fn surface_area(&self) -> f64 {
+    pub fn surface_area(&self) -> f32 {
         if self.empty {
-            0f64
+            0f32
         } else {
             let d = self.max.sub_p(&self.min);
-            2f64 * (d.x * d.y + d.x * d.y + d.y * d.z)
+            2f32 * (d.x * d.y + d.x * d.y + d.y * d.z)
         }
     }
 
-    pub fn volume(&self) -> f64 {
+    pub fn volume(&self) -> f32 {
         if self.empty {
-            0f64
+            0f32
         } else {
             let d = self.max.sub_p(&self.min);
             d.x * d.y * d.z
