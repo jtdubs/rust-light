@@ -2,6 +2,7 @@ use std::fmt::{Show,Formatter,Result};
 
 use point::Point;
 use transform::{Transform,Trans,TransMut};
+use ray::Ray;
 
 pub struct AABB {
     empty : bool,
@@ -158,6 +159,24 @@ impl AABB {
             Some([Point::new(n.x, n.y, n.z), Point::new(n.x, n.y, x.z), Point::new(n.x, x.y, n.z), Point::new(n.x, x.y, x.z),
                   Point::new(x.x, n.y, n.z), Point::new(x.x, n.y, x.z), Point::new(x.x, x.y, n.z), Point::new(x.x, x.y, x.z)])
         }
+    }
+
+    pub fn intersects(&self, r : &Ray) -> bool {
+        let tx1 = (self.min.x - r.origin.x) / r.direction.x;
+        let tx2 = (self.max.x - r.origin.x) / r.direction.x;
+        let mut tmin = tx1.min(tx2);
+        let mut tmax = tx1.max(tx2);
+        if tmin > tmax { return false; }
+        let ty1 = (self.min.y - r.origin.y) / r.direction.y;
+        let ty2 = (self.max.y - r.origin.y) / r.direction.y;
+        tmin = tmin.max(ty1.min(ty2));
+        tmax = tmax.min(ty1.max(ty2));
+        if tmin > tmax { return false; }
+        let tz1 = (self.min.z - r.origin.z) / r.direction.z;
+        let tz2 = (self.max.z - r.origin.z) / r.direction.z;
+        tmin = tmin.max(tz1.min(tz2));
+        tmax = tmax.min(tz1.max(tz2));
+        tmax >= tmin
     }
 }
 

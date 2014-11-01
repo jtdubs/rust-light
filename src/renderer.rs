@@ -1,14 +1,8 @@
 use scene::Scene;
 use sampler::Sampler;
-use aabb::AABB;
 
 pub fn render(s : &mut Scene) {
-    let mut bounds = AABB::new();
-    for p in s.primitives.iter() {
-        bounds.add_self_aabb(&p.world_bound());
-    }
-
-    let (min_z, max_z) = match bounds.range_z() {
+    let (min_z, max_z) = match s.bounds().range_z() {
         None => (0f64, 0f64),
         Some((n, x)) => (n, x),
     };

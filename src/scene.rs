@@ -1,10 +1,11 @@
 use camera::Camera;
 use primitive::Primitive;
 use ray::Ray;
+use aabb::AABB;
 
 pub struct Scene {
     pub camera : Camera,
-    pub primitives : Vec<Primitive>,
+    pub primitives : Vec<(AABB, Primitive)>,
 }
 
 impl Scene {
@@ -13,19 +14,29 @@ impl Scene {
     }
 
     pub fn add(&mut self, p : Primitive) {
-        self.primitives.push(p);
+        self.primitives.push((p.world_bound(), p));
+    }
+
+    pub fn bounds(&self) -> AABB {
+        let mut bounds = AABB::new();
+        for &(a, _) in self.primitives.iter() {
+            bounds.add_self_aabb(&a);
+        }
+        bounds
     }
 
     pub fn intersect(&self, r : &Ray) -> Option<f64> {
         let mut first_intersection = None;
 
-        for p in self.primitives.iter() {
-            match p.intersect(r) {
-                None => { },
-                Some(t) => {
-                    match first_intersection {
-                        None => first_intersection = Some(t),
-                        Some(t0) => if t < t0 { first_intersection = Some(t) },
+        for &(ref a, ref p) in self.primitives.iter() {
+            if a.intersects(r) {
+                match p.intersect(r) {
+                    None => { }
+                    Some(t) => {
+                        match first_intersection {
+                            None => first_intersection = Some(t),
+                            Some(t0) => if t < t0 { first_intersection = Some(t) },
+                        }
                     }
                 }
             }
