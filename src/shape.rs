@@ -77,9 +77,9 @@ impl Shape {
 
     pub fn new_unit_triangle() -> Shape {
         Shape::new_triangle(
-            &Point::origin().sub_v(&Vector::unit_x()).sub_v(&Vector::unit_y()),
-            &Point::origin().add_v(&Vector::unit_x()).sub_v(&Vector::unit_y()),
-            &Point::origin().add_v(&Vector::unit_y()))
+            &Point::origin().sub_v(&Vector::unit_x().div_s(2f64)).sub_v(&Vector::unit_y().div_s(2f64)),
+            &Point::origin().add_v(&Vector::unit_x().div_s(2f64)).sub_v(&Vector::unit_y().div_s(2f64)),
+            &Point::origin().add_v(&Vector::unit_y().div_s(2f64)))
     }
 
     pub fn new_unit_paraboloid() -> Shape {
@@ -170,7 +170,7 @@ impl Shape {
                 if ray.direction.z > 0.0001 {
                     let t = -ray.origin.z / ray.direction.z;
                     let d = ray.at_time(t).distance_squared(&Point::origin());
-                    if t >= 0f64 && d <= r { res.push(t); };
+                    if t >= 0f64 && d <= (r*r) { res.push(t); };
                 }
             },
             &Plane(_, hw, hd) => {
