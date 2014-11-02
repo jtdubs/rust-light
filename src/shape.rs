@@ -112,7 +112,6 @@ impl Shape {
         }
     }
 
-    // TODO: make speciailized version to only return first intersection, and maybe Vec is too heavy
     pub fn intersections(&self, r : &Ray) -> Vec<f32> {
         let mut res = Vec::new();
         let ray = r.transform(&self.get_transform().inverse());
@@ -248,17 +247,132 @@ impl Shape {
     }
 
     pub fn intersect(&self, r : &Ray) -> Option<f32> {
-        let ts = self.intersections(r);
-        if ts.len() == 0 {
-            None
-        } else {
-            Some(ts[0])
+        let ray = r.transform(&self.get_transform().inverse());
+
+        match self {
+            &Box(_, hw, hh, hd) => {
+                let tx1 = (-hw - ray.origin.x) / ray.direction.x;
+                let tx2 = (hw - ray.origin.x) / ray.direction.x;
+                let ty1 = (-hh - ray.origin.y) / ray.direction.y;
+                let ty2 = (hh - ray.origin.y) / ray.direction.y;
+                let tz1 = (-hd - ray.origin.z) / ray.direction.z;
+                let tz2 = (hd - ray.origin.z) / ray.direction.z;
+                let (t0x, t1x) = if tx1 < tx2 { (tx1, tx2) } else { (tx2, tx1) };
+                let (t0y, t1y) = if ty1 < ty2 { (ty1, ty2) } else { (ty2, ty1) };
+                let (t0z, t1z) = if tz1 < tz2 { (tz1, tz2) } else { (tz2, tz1) };
+
+                if t0x <= t1y && t0x <= t1z && t0y <= t1x && t0y <= t1z && t0z <= t1x && t0z <= t1y {
+                    let t0 = t0x.max(t0y).max(t0z);
+                    let t1 = t1x.min(t1y).min(t1z);
+
+                    if t0 >= 0f32 { return Some(t0); }
+                    if t1 >= 0f32 { return Some(t1); }
+                }
+
+                None
+            },
+            &Cone(_, r, h) => {
+                let a = (h * h * ray.direction.x * ray.direction.x + h * h * ray.direction.y * ray.direction.y) / (r * r) + (-ray.direction.z * ray.direction.z);
+                let b = (2f32 * h * h * ray.origin.x * ray.direction.x + 2f32 * h * h * ray.origin.y * ray.direction.y) / (r * r) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * h);
+                let c = (h * h * ray.origin.x * ray.origin.x + h * h * ray.origin.y * ray.origin.y) / (r * r) + (-ray.origin.z * ray.origin.z + 2f32 * ray.origin.z * h - h * h);
+                match quadratic(a, b, c) {
+                    None => { None }
+                    Some((t1, t2)) => {
+                        let z1 = ray.at_time(t1).z;
+                        if t1 >= 0f32 && z1 >= 0f32 && z1 <= h { return Some(t1); }
+                        let z2 = ray.at_time(t2).z;
+                        if t2 >= 0f32 && z2 >= 0f32 && z2 <= h { return Some(t2); }
+                        None
+                    }
+                }
+            },
+            &Cylinder(_, r, hh) => {
+                let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
+                let b = 2f32 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
+                let c = (ray.origin.x * ray.origin.x) + (ray.origin.y * ray.origin.y) - (r * r);
+                match quadratic(a, b, c) {
+                    None => { None },
+                    Some((t1, t2)) => {
+                        let z1 = ray.at_time(t1).z;
+                        if t1 >= 0f32 && z1 >= -hh && z1 <= hh { return Some(t1); }
+                        let z2 = ray.at_time(t2).z;
+                        if t2 >= 0f32 && z2 >= -hh && z2 <= hh { return Some(t2); }
+                        None
+                    },
+                }
+            },
+            &Disc(_, r) => {
+                if ray.direction.z.abs() < 0.0001 { return None; }
+                let t = -ray.origin.z / ray.direction.z;
+                let d = ray.at_time(t).distance_squared(&Point::origin());
+                if t >= 0f32 && d <= (r*r) { 
+                    Some(t)
+                } else {
+                    None
+                }
+            },
+            &Plane(_, hw, hd) => {
+                if ray.direction.z.abs() < 0.0001 { return None; }
+                let t = -ray.origin.z / ray.direction.z;
+                let p = ray.at_time(t);
+                if t >= 0f32 && p.x.abs() <= hw && p.y.abs() <= hd {
+                    Some(t)
+                } else { 
+                    None
+                }
+            },
+            &Sphere(_, r) => {
+                let a = ray.direction.magnitude_squared();
+                let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
+                let c = ray.origin.distance_squared(&Point::origin()) - (r * r);
+                match quadratic(a, b, c) {
+                    None => { None },
+                    Some((t1, t2)) => {
+                        if t1 >= 0f32 { return Some(t1); }
+                        if t2 >= 0f32 { return Some(t2); }
+                        None
+                    },
+                }
+            },
+            &Triangle(_, v0, v1, v2) => {
+                let e1 = v1.sub_p(&v0);
+                let e2 = v2.sub_p(&v0);
+                let h = ray.direction.cross(&e2);
+                let a = e1.dot(&h);
+                if a == 0f32 { return None; }
+                let f = 1f32 / a;
+                let s = ray.origin.sub_p(&v0);
+                let u = f * s.dot(&h);
+                if u < 0f32 || u > 1f32 { return None; }
+                let q = s.cross(&e1);
+                let v = f * ray.direction.dot(&q);
+                if v < 0f32 || (u + v) > 1f32 { return None; }
+                let t = f * e2.dot(&q);
+                Some(t)
+            },
+            &Paraboloid(_, r, h) => {
+                let a = (h * ray.direction.x * ray.direction.x + h * ray.direction.y * ray.direction.y) / (r * r);
+                let b = (2f32 * h * ray.origin.x * ray.direction.x + 2f32 * h * ray.origin.y * ray.direction.y) / (r * r) - ray.direction.z;
+                let c = (h * ray.origin.x * ray.origin.x + h * ray.origin.y * ray.origin.y) / (r * r) - ray.origin.z;
+                match quadratic(a, b, c) {
+                    None => { None },
+                    Some((t1, t2)) => {
+                        let z1 = ray.at_time(t1).z;
+                        if t1 >= 0f32 && z1 >= 0f32 && z1 <= h { return Some(t1); }
+                        let z2 = ray.at_time(t2).z;
+                        if t2 >= 0f32 && z2 >= 0f32 && z2 <= h { return Some(t2); }
+                        None
+                    },
+                }
+            },
         }
     }
 
     pub fn intersects(&self, r : &Ray) -> bool {
-        let ts = self.intersections(r);
-        ts.len() > 0
+        match self.intersect(r) {
+            None => false,
+            Some(_) => true,
+        }
     }
 }
 

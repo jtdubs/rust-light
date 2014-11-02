@@ -176,7 +176,7 @@ impl AABB {
         let tz2 = (self.max.z - r.origin.z) / r.direction.z;
         tmin = tmin.max(tz1.min(tz2));
         tmax = tmax.min(tz1.max(tz2));
-        tmax >= tmin
+        tmax >= tmin && tmin >= 0f32
     }
 }
 
