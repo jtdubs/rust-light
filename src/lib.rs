@@ -3,6 +3,8 @@ pub mod math;
 pub mod sampler;
 pub mod film;
 pub mod camera;
+pub mod perspective_camera;
+pub mod orthographic_camera;
 pub mod shape;
 pub mod vector;
 pub mod normal;

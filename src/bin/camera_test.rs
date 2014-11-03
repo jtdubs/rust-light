@@ -1,56 +1,49 @@
 extern crate light;
 
 use std::num::FloatMath;
-use light::camera::{Camera,PerspectiveCamera,OrthographicCamera};
+use light::camera::Camera;
+use light::perspective_camera::PerspectiveCamera;
+use light::orthographic_camera::OrthographicCamera;
 use light::film::Film;
 use light::filter::Filter;
 use light::ray::Ray;
 
-fn get_rays(c : &Camera) -> Vec<Ray> {
-    let (fw, fh) = c.get_film_size();
-    let mut res = Vec::with_capacity((fw * fh) as uint);
-    for x in range(0, fw) {
-        for y in range(0, fh) {
-            let r = c.cast((x as f32) + 0.5f32, (y as f32) + 0.5f32);
+fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
+    let mut res = Vec::with_capacity((f.width * f.height) as uint);
+    for x in range(0, f.width) {
+        for y in range(0, f.height) {
+            let r = c.cast(f, (x as f32) + 0.5f32, (y as f32) + 0.5f32);
             res.push(r);
         }
     }
     res
 }
 
-fn make_film() -> Film {
-    Film::new(16, 12, Filter::new_box(1f32, 1f32))
-}
-
 fn main() {
     println!("clf;");
-    draw_p(1, "Perspective (60)", &PerspectiveCamera::new(box make_film(), Float::frac_pi_3()));
-    draw_p(2, "Perspective (90)", &PerspectiveCamera::new(box make_film(), Float::frac_pi_2()));
-    draw_o(3, "Orthographic", &OrthographicCamera::new(box make_film(), 1f32));
+    let f = Film::new(16, 12, Filter::new_box(1f32, 1f32));
+    draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3()));
+    draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2()));
+    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32));
 }
 
-fn draw_p(ix : int, title : &str, c : &PerspectiveCamera) {
-    let (_, ifh) = c.get_film_size();
-    let fh = ifh as f32;
-
-    draw(ix, title, c, fh / ((c.fov_y / 2f32).tan() * 2f32))
+fn draw_p(ix : int, title : &str, f : &Film, c : &PerspectiveCamera) {
+    let fh = f.height as f32;
+    draw(ix, title, f, c, fh / ((c.fov_y / 2f32).tan() * 2f32))
 }
 
-fn draw_o(ix : int, title : &str, c : &OrthographicCamera) {
-    let (ifw, ifh) = c.get_film_size();
-    let fw = ifw as f32;
-    let fh = ifh as f32;
-
-    draw(ix, title, c, fw.min(fh))
+fn draw_o(ix : int, title : &str, f : &Film, c : &OrthographicCamera) {
+    let fw = f.width as f32;
+    let fh = f.height as f32;
+    draw(ix, title, f, c, fw.min(fh))
 }
 
-fn draw(ix : int, title : &str, c : &Camera, h : f32) {
-    let (ifw, ifh) = c.get_film_size();
-    let fw = ifw as f32;
-    let fh = ifh as f32;
+fn draw(ix : int, title : &str, f : &Film, c : &Camera, h : f32) {
+    let fw = f.width as f32;
+    let fh = f.height as f32;
     
     let dim = fw.max(fh).max(h) + 4f32;
-    let rays = get_rays(c);
+    let rays = get_rays(c, f);
     println!("figure ({});", ix);
     println!("x = linspace ({}, {}, {});", -fw / 2f32, fw / 2f32, fw + 1f32);
     println!("y = linspace ({}, {}, {});", -fh / 2f32, fh / 2f32, fh + 1f32);
