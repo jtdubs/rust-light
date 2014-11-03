@@ -22,8 +22,8 @@ fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
 fn main() {
     println!("clf;");
     let f = Film::new(16, 12, Filter::new_box(1f32, 1f32));
-    draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3()));
-    draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2()));
+    draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3(), (f.width as f32 / f.height as f32)));
+    draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2(), (f.width as f32 / f.height as f32)));
     draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32));
 }
 

@@ -23,7 +23,7 @@ fn main() {
     let pi_3 : f32 = Float::frac_pi_3();
 
     let ref mut film = Film::new(1280u32, 720u32, Filter::new_box(1f32, 1f32));
-    let ref camera = PerspectiveCamera::new(pi_3);
+    let ref camera = PerspectiveCamera::new(pi_3, (film.width as f32 / film.height as f32));
 
     let mut scene = Scene::new();
 
