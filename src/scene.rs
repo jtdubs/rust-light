@@ -3,13 +3,13 @@ use primitive::Primitive;
 use ray::Ray;
 use aabb::AABB;
 
-pub struct Scene {
+pub struct Scene<'a> {
     pub camera : Camera,
-    pub primitives : Vec<(AABB, Primitive)>,
+    pub primitives : Vec<(AABB, Primitive<'a>)>,
 }
 
-impl Scene {
-    pub fn new(c : Camera) -> Scene {
+impl<'a> Scene<'a> {
+    pub fn new(c : Camera) -> Scene<'a> {
         Scene { camera: c, primitives: Vec::new() }
     }
 

@@ -2,12 +2,12 @@ use shape::Shape;
 use ray::Ray;
 use aabb::AABB;
 
-pub struct Primitive {
-    pub shape : Shape,
+pub struct Primitive<'a> {
+    pub shape : Box<Shape + 'a>,
 }
 
-impl Primitive {
-    pub fn new(s : Shape) -> Primitive {
+impl<'a> Primitive<'a> {
+    pub fn new(s : Box<Shape + 'a>) -> Primitive<'a> {
         Primitive { shape: s }
     }
 
