@@ -1,6 +1,6 @@
 extern crate light;
 
-use light::camera::Camera;
+use light::camera::PerspectiveCamera;
 use light::film::Film;
 use light::filter::Filter;
 use light::scene::Scene;
@@ -23,7 +23,7 @@ fn main() {
 
     let mut scene = 
         Scene::new(
-            Camera::new_perspective(
+            box PerspectiveCamera::new(
                 box Film::new(1280u32, 720u32,
 //                    Filter::new_gaussian(2f32, 2f32, 0.25f32)), 
                     Filter::new_box(1f32, 1f32)), 

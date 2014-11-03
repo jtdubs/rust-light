@@ -1,7 +1,7 @@
 extern crate light;
 
 use std::num::FloatMath;
-use light::camera::{Camera,PerspectiveCamera,OrthoCamera};
+use light::camera::{Camera,PerspectiveCamera,OrthographicCamera};
 use light::film::Film;
 use light::filter::Filter;
 use light::ray::Ray;
@@ -24,21 +24,31 @@ fn make_film() -> Film {
 
 fn main() {
     println!("clf;");
-    draw(1, "Perspective (60)", &Camera::new_perspective(box make_film(), Float::frac_pi_3()));
-    draw(2, "Perspective (90)", &Camera::new_perspective(box make_film(), Float::frac_pi_2()));
-    draw(3, "Orthographic", &Camera::new_ortho(box make_film(), 1f32));
+    draw_p(1, "Perspective (60)", &PerspectiveCamera::new(box make_film(), Float::frac_pi_3()));
+    draw_p(2, "Perspective (90)", &PerspectiveCamera::new(box make_film(), Float::frac_pi_2()));
+    draw_o(3, "Orthographic", &OrthographicCamera::new(box make_film(), 1f32));
 }
 
-fn draw(ix : int, title : &str, c : &Camera) {
+fn draw_p(ix : int, title : &str, c : &PerspectiveCamera) {
+    let (_, ifh) = c.get_film_size();
+    let fh = ifh as f32;
+
+    draw(ix, title, c, fh / ((c.fov_y / 2f32).tan() * 2f32))
+}
+
+fn draw_o(ix : int, title : &str, c : &OrthographicCamera) {
+    let (ifw, ifh) = c.get_film_size();
+    let fw = ifw as f32;
+    let fh = ifh as f32;
+
+    draw(ix, title, c, fw.min(fh))
+}
+
+fn draw(ix : int, title : &str, c : &Camera, h : f32) {
     let (ifw, ifh) = c.get_film_size();
     let fw = ifw as f32;
     let fh = ifh as f32;
     
-    let h = match c {
-        &OrthoCamera(_, _, _) => fw.min(fh),
-        &PerspectiveCamera(_, _, fov_y) => fh / ((fov_y / 2f32).tan() * 2f32),
-    };
-
     let dim = fw.max(fh).max(h) + 4f32;
     let rays = get_rays(c);
     println!("figure ({});", ix);

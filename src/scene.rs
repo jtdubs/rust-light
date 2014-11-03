@@ -4,12 +4,12 @@ use ray::Ray;
 use aabb::AABB;
 
 pub struct Scene<'a> {
-    pub camera : Camera,
+    pub camera : Box<Camera + 'a>,
     pub primitives : Vec<(AABB, Primitive<'a>)>,
 }
 
 impl<'a> Scene<'a> {
-    pub fn new(c : Camera) -> Scene<'a> {
+    pub fn new(c : Box<Camera + 'a>) -> Scene<'a> {
         Scene { camera: c, primitives: Vec::new() }
     }
 
