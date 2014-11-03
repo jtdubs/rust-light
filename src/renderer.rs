@@ -10,12 +10,17 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
     };
 
     let mut sampler = Sampler::new();
+    let fw = film.width as f32;
+    let fh = film.height as f32;
+
     for x in range(0u32, film.width+1) {
         for y in range(0u32, film.height+1) {
             for &(dx, dy) in sampler.lhc_2d(8).iter() {
                 let fx = (x as f32) + dx;
                 let fy = (y as f32) + dy;
-                let r = camera.cast(film, fx, fy);
+                let cx = (fx / fw) * 2f32 - 1f32;
+                let cy = (fy / fh) * 2f32 - 1f32;
+                let r = camera.cast(cx, cy);
                 match scene.intersect(&r) {
                     None => film.add_sample(fx, fy, 0u8),
                     Some(t) => {

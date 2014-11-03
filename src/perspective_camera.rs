@@ -1,4 +1,3 @@
-use film::Film;
 use transform::{Transform,Trans,TransMut};
 use ray::Ray;
 use vector::Vector;
@@ -21,14 +20,9 @@ impl PerspectiveCamera {
 }
 
 impl Camera for PerspectiveCamera {
-    fn cast(&self, film : &Film, fx : f32, fy : f32) -> Ray {
-        let fw = film.width as f32;
-        let fh = film.height as f32;
-        let x = (fx / fw) * 2f32 - 1f32;
-        let y = (fy / fh) * 2f32 - 1f32;
+    fn cast(&self, x : f32, y : f32) -> Ray {
         let d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32).normalize();
-        let o = Point::origin();
-        Ray::new(&o, &d).transform(&self.t.inverse())
+        Ray::new(&Point::origin(), &d).transform(&self.t.inverse())
     }
 }
 

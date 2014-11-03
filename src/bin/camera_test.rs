@@ -12,7 +12,9 @@ fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
     let mut res = Vec::with_capacity((f.width * f.height) as uint);
     for x in range(0, f.width) {
         for y in range(0, f.height) {
-            let r = c.cast(f, (x as f32) + 0.5f32, (y as f32) + 0.5f32);
+            let cx = ((x as f32 + 0.5f32) / (f.width as f32)) * 2f32 - 1f32;
+            let cy = ((y as f32 + 0.5f32) / (f.height as f32)) * 2f32 - 1f32;
+            let r = c.cast(cx, cy);
             res.push(r);
         }
     }
@@ -24,7 +26,7 @@ fn main() {
     let f = Film::new(16, 12, Filter::new_box(1f32, 1f32));
     draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3(), (f.width as f32 / f.height as f32)));
     draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2(), (f.width as f32 / f.height as f32)));
-    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32));
+    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32, (f.width as f32 / f.height as f32)));
 }
 
 fn draw_p(ix : int, title : &str, f : &Film, c : &PerspectiveCamera) {

@@ -1,4 +1,3 @@
-use film::Film;
 use transform::{Transform,Trans,TransMut};
 use ray::Ray;
 use vector::Vector;
@@ -8,23 +7,19 @@ use camera::Camera;
 pub struct OrthographicCamera {
     t : Transform,
     pub scale : f32,
+    pub aspect_ratio : f32
 }
 
 impl OrthographicCamera {
-    pub fn new(scale : f32) -> OrthographicCamera {
-        OrthographicCamera { t: Transform::identity(), scale: scale }
+    pub fn new(scale : f32, aspect_ratio : f32) -> OrthographicCamera {
+        OrthographicCamera { t: Transform::identity(), scale: scale, aspect_ratio: aspect_ratio }
     }
 }
 
 impl Camera for OrthographicCamera {
-    fn cast(&self, film : &Film, fx : f32, fy : f32) -> Ray {
-        let fw = film.width as f32;
-        let fh = film.height as f32;
-        let x = fx - (fw / 2f32);
-        let y = fy - (fh / 2f32);
-        let d = Vector::unit_z();
-        let o = Point::new(x*self.scale, y*self.scale, 0f32);
-        Ray::new(&o, &d).transform(&self.t.inverse())
+    fn cast(&self, x : f32, y : f32) -> Ray {
+        let o = Point::new(x * self.scale * self.aspect_ratio, y * self.scale, 0f32);
+        Ray::new(&o, &Vector::unit_z()).transform(&self.t.inverse())
     }
 }
 
