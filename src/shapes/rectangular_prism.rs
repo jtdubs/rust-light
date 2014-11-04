@@ -2,7 +2,7 @@ use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct RectangularPrism {
     t : Transform,
@@ -34,7 +34,7 @@ impl Shape for RectangularPrism {
         self.bound().transform(&self.t)
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
@@ -52,14 +52,14 @@ impl Shape for RectangularPrism {
             let t0 = t0x.max(t0y).max(t0z);
             let t1 = t1x.min(t1y).min(t1z);
             
-            if t0 >= 0f32 { res.push(t0); }
-            if t1 >= 0f32 { res.push(t1); }
+            if t0 >= 0f32 { res.push(Intersection::new(r, t0, &r.at_time(t0))); }
+            if t1 >= 0f32 { res.push(Intersection::new(r, t1, &r.at_time(t1))); }
         }
         
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
@@ -76,8 +76,8 @@ impl Shape for RectangularPrism {
             let t0 = t0x.max(t0y).max(t0z);
             let t1 = t1x.min(t1y).min(t1z);
             
-            if t0 >= 0f32 { return Some(t0); }
-            if t1 >= 0f32 { return Some(t1); }
+            if t0 >= 0f32 { return Some(Intersection::new(r, t0, &r.at_time(t0))); }
+            if t1 >= 0f32 { return Some(Intersection::new(r, t1, &r.at_time(t1))); }
         }
         
         None

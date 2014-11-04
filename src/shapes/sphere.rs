@@ -3,7 +3,7 @@ use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use math::quadratic;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct Sphere {
     t : Transform,
@@ -33,7 +33,7 @@ impl Shape for Sphere {
         self.bound().transform(&self.t)
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
@@ -43,15 +43,15 @@ impl Shape for Sphere {
         match quadratic(a, b, c) {
             None => { },
             Some((t1, t2)) => {
-                if t1 >= 0f32 { res.push(t1); };
-                if t2 >= 0f32 { res.push(t2); };
+                if t1 >= 0f32 { res.push(Intersection::new(r, t1, &r.at_time(t1))); };
+                if t2 >= 0f32 { res.push(Intersection::new(r, t2, &r.at_time(t2))); };
             },
         }
 
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         let a = ray.direction.magnitude_squared();
@@ -60,8 +60,8 @@ impl Shape for Sphere {
         match quadratic(a, b, c) {
             None => { None },
             Some((t1, t2)) => {
-                if t1 >= 0f32 { return Some(t1); }
-                if t2 >= 0f32 { return Some(t2); }
+                if t1 >= 0f32 { return Some(Intersection::new(r, t1, &r.at_time(t1))); }
+                if t2 >= 0f32 { return Some(Intersection::new(r, t2, &r.at_time(t2))); }
                 None
             },
         }

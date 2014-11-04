@@ -1,21 +1,22 @@
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 use geometry::ray::Ray;
 use geometry::bounding_box::BoundingBox;
+use std::rc::Rc;
 
 pub struct Primitive<'a> {
-    pub shape : Box<Shape + 'a>,
+    pub shape : Rc<Box<Shape + 'a>>,
 }
 
 impl<'a> Primitive<'a> {
-    pub fn new(s : Box<Shape + 'a>) -> Primitive<'a> {
-        Primitive { shape: s }
+    pub fn new<'a>(s : Box<Shape + 'a>) -> Primitive<'a> {
+        Primitive { shape: Rc::new(s) }
     }
 
-    pub fn intersections(&self, r : &Ray) -> Vec<f32> {
+    pub fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         self.shape.intersections(r)
     }
 
-    pub fn intersect(&self, r : &Ray) -> Option<f32> {
+    pub fn intersect(&self, r : &Ray) -> Option<Intersection> {
         self.shape.intersect(r)
     }
 

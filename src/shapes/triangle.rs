@@ -3,7 +3,7 @@ use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use geometry::vector::Vector;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct Triangle {
     t : Transform,
@@ -38,7 +38,7 @@ impl Shape for Triangle {
         0.5f32 * self.b.sub_p(&self.a).cross(&self.c.sub_p(&self.a)).magnitude()
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
@@ -55,7 +55,9 @@ impl Shape for Triangle {
                 let v = f * ray.direction.dot(&q);
                 if v >= 0f32 && (u + v) <= 1f32 {
                     let t = f * e2.dot(&q);
-                    if t >= 0f32 { res.push(t); };
+                    if t >= 0f32 { 
+                        res.push(Intersection::new(r, t, &r.at_time(t))); 
+                    };
                 }
             }
         }
@@ -63,7 +65,7 @@ impl Shape for Triangle {
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         let e1 = self.b.sub_p(&self.a);
@@ -79,7 +81,8 @@ impl Shape for Triangle {
         let v = f * ray.direction.dot(&q);
         if v < 0f32 || (u + v) > 1f32 { return None; }
         let t = f * e2.dot(&q);
-        Some(t)
+
+        Some(Intersection::new(r, t, &r.at_time(t)))
     }
 }
 

@@ -2,7 +2,7 @@ use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct Plane {
     t : Transform,
@@ -33,27 +33,29 @@ impl Shape for Plane {
         4f32 * self.hw * self.hd
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
             let p = ray.at_time(t);
-            if t >= 0f32 && p.x.abs() <= self.hw && p.y.abs() <= self.hd { res.push(t); };
+            if t >= 0f32 && p.x.abs() <= self.hw && p.y.abs() <= self.hd { 
+                res.push(Intersection::new(r, t, &r.at_time(t)));
+            };
         }
         
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
         let p = ray.at_time(t);
         if t >= 0f32 && p.x.abs() <= self.hw && p.y.abs() <= self.hd {
-            Some(t)
+            Some(Intersection::new(r, t, &r.at_time(t)))
         } else { 
             None
         }

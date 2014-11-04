@@ -3,7 +3,7 @@ use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use math::quadratic;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct Cone {
     t : Transform,
@@ -34,7 +34,7 @@ impl Shape for Cone {
         self.r * (self.r * self.r + self.h * self.h).sqrt() * Float::pi()
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
@@ -44,17 +44,21 @@ impl Shape for Cone {
         match quadratic(a, b, c) {
             None => { }
             Some((t1, t2)) => {
-                let z1 = ray.at_time(t1).z;
-                let z2 = ray.at_time(t2).z;
-                if t1 >= 0f32 && z1 >= 0f32 && z1 <= self.h { res.push(t1); };
-                if t2 >= 0f32 && z2 >= 0f32 && z2 <= self.h { res.push(t2); };
+                let p1 = ray.at_time(t1);
+                let p2 = ray.at_time(t2);
+                if t1 >= 0f32 && p1.z >= 0f32 && p1.z <= self.h {
+                    res.push(Intersection::new(r, t1, &r.at_time(t1))); 
+                };
+                if t2 >= 0f32 && p2.z >= 0f32 && p2.z <= self.h {
+                    res.push(Intersection::new(r, t2, &r.at_time(t2))); 
+                };
             }
         }
 
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         let a = (self.h * self.h * ray.direction.x * ray.direction.x + self.h * self.h * ray.direction.y * ray.direction.y) / (self.r * self.r) + (-ray.direction.z * ray.direction.z);
@@ -63,10 +67,16 @@ impl Shape for Cone {
         match quadratic(a, b, c) {
             None => { None }
             Some((t1, t2)) => {
-                let z1 = ray.at_time(t1).z;
-                if t1 >= 0f32 && z1 >= 0f32 && z1 <= self.h { return Some(t1); }
-                let z2 = ray.at_time(t2).z;
-                if t2 >= 0f32 && z2 >= 0f32 && z2 <= self.h { return Some(t2); }
+                let p1 = ray.at_time(t1);
+                let z1 = p1.z;
+                if t1 >= 0f32 && z1 >= 0f32 && z1 <= self.h {
+                    return Some(Intersection::new(r, t1, &r.at_time(t1)));
+                }
+                let p2 = ray.at_time(t2);
+                let z2 = p2.z;
+                if t2 >= 0f32 && z2 >= 0f32 && z2 <= self.h { 
+                    return Some(Intersection::new(r, t2, &r.at_time(t2)));
+                }
                 None
             }
         }

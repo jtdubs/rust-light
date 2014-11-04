@@ -2,7 +2,7 @@ use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
-use shapes::shape::Shape;
+use shapes::shape::{Shape,Intersection};
 
 pub struct Disc {
     t : Transform,
@@ -32,27 +32,31 @@ impl Shape for Disc {
         2f32 * self.r * self.r * Float::pi()
     }
 
-    fn intersections(&self, r : &Ray) -> Vec<f32> {
+    fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
         let ray = r.transform(&self.t.inverse());
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
-            let d = ray.at_time(t).distance_squared(&Point::origin());
-            if t >= 0f32 && d <= (self.r * self.r) { res.push(t); };
+            let p = ray.at_time(t);
+            let d = p.distance_squared(&Point::origin());
+            if t >= 0f32 && d <= (self.r * self.r) { 
+                res.push(Intersection::new(r, t, &r.at_time(t)));
+            };
         }
 
         res
     }
 
-    fn intersect(&self, r : &Ray) -> Option<f32> {
+    fn intersect(&self, r : &Ray) -> Option<Intersection> {
         let ray = r.transform(&self.t.inverse());
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
-        let d = ray.at_time(t).distance_squared(&Point::origin());
+        let p = ray.at_time(t);
+        let d = p.distance_squared(&Point::origin());
         if t >= 0f32 && d <= (self.r * self.r) { 
-            Some(t)
+            Some(Intersection::new(r, t, &r.at_time(t)))
         } else {
             None
         }
