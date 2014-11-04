@@ -1,8 +1,8 @@
 use std::fmt::{Show,Formatter,Result};
 
-use vector::Vector;
-use point::Point;
-use transform::{Transform,Trans,TransMut};
+use geometry::vector::Vector;
+use geometry::point::Point;
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Ray {
     pub origin    : Point,

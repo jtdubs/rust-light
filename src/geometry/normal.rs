@@ -1,7 +1,7 @@
 use std::fmt::{Show,Formatter,Result};
 
-use vector::Vector;
-use transform::{Transform,Trans,TransMut};
+use geometry::vector::Vector;
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Normal {
     pub x : f32,

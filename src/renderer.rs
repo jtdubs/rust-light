@@ -1,7 +1,7 @@
 use scene::Scene;
 use sampler::Sampler;
 use film::Film;
-use camera::Camera;
+use cameras::camera::Camera;
 
 pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
     let (min_z, max_z) = match scene.bounds().range_z() {

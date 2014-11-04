@@ -1,5 +1,5 @@
-use shape::Shape;
-use ray::Ray;
+use shapes::shape::Shape;
+use geometry::ray::Ray;
 use aabb::AABB;
 
 pub struct Primitive<'a> {

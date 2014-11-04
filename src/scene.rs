@@ -1,5 +1,5 @@
 use primitive::Primitive;
-use ray::Ray;
+use geometry::ray::Ray;
 use aabb::AABB;
 
 pub struct Scene<'a> {

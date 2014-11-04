@@ -1,21 +1,21 @@
 extern crate light;
 
-use light::perspective_camera::PerspectiveCamera;
+use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
 use light::filter::Filter;
 use light::scene::Scene;
-use light::sphere::Sphere;
-use light::cylinder::Cylinder;
-use light::disc::Disc;
-use light::rectangular_prism::RectangularPrism;
-use light::plane::Plane;
-use light::triangle::Triangle;
-use light::cone::Cone;
-use light::paraboloid::Paraboloid;
+use light::shapes::sphere::Sphere;
+use light::shapes::cylinder::Cylinder;
+use light::shapes::disc::Disc;
+use light::shapes::rectangular_prism::RectangularPrism;
+use light::shapes::plane::Plane;
+use light::shapes::triangle::Triangle;
+use light::shapes::cone::Cone;
+use light::shapes::paraboloid::Paraboloid;
 use light::primitive::Primitive;
 use light::renderer::render;
-use light::vector::Vector;
-use light::transform::Trans;
+use light::geometry::vector::Vector;
+use light::geometry::transform::Trans;
 
 fn main() {
     let pi_4 : f32 = Float::frac_pi_4();

@@ -1,9 +1,9 @@
-use transform::{Transform,Trans,TransMut};
+use geometry::transform::{Transform,Trans,TransMut};
 use aabb::AABB;
-use ray::Ray;
-use point::Point;
-use vector::Vector;
-use shape::Shape;
+use geometry::ray::Ray;
+use geometry::point::Point;
+use geometry::vector::Vector;
+use shapes::shape::Shape;
 
 pub struct Triangle {
     t : Transform,

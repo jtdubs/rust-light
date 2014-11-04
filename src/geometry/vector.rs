@@ -1,8 +1,8 @@
 use std::num::FloatMath;
 use std::fmt::{Show,Formatter,Result};
 
-use normal::Normal;
-use transform::{Transform,Trans,TransMut};
+use geometry::normal::Normal;
+use geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Vector {
     pub x : f32,

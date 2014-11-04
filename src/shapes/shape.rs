@@ -1,6 +1,6 @@
-use transform::{Trans,TransMut};
+use geometry::transform::{Trans,TransMut};
 use aabb::AABB;
-use ray::Ray;
+use geometry::ray::Ray;
 
 pub trait Shape : Trans + TransMut {
     fn bound(&self) -> AABB;

@@ -1,9 +1,9 @@
-use transform::{Transform,Trans,TransMut};
+use geometry::transform::{Transform,Trans,TransMut};
 use aabb::AABB;
-use ray::Ray;
-use point::Point;
+use geometry::ray::Ray;
+use geometry::point::Point;
 use math::quadratic;
-use shape::Shape;
+use shapes::shape::Shape;
 
 pub struct Cone {
     t : Transform,

@@ -1,8 +1,8 @@
 use std::fmt::{Show,Formatter,Result};
 
-use point::Point;
-use transform::{Transform,Trans,TransMut};
-use ray::Ray;
+use geometry::point::Point;
+use geometry::transform::{Transform,Trans,TransMut};
+use geometry::ray::Ray;
 
 pub struct AABB {
     empty : bool,

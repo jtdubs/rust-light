@@ -1,8 +1,8 @@
-use transform::{Transform,Trans,TransMut};
+use geometry::transform::{Transform,Trans,TransMut};
 use aabb::AABB;
-use ray::Ray;
-use point::Point;
-use shape::Shape;
+use geometry::ray::Ray;
+use geometry::point::Point;
+use shapes::shape::Shape;
 
 pub struct Disc {
     t : Transform,

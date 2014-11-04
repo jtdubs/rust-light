@@ -1,12 +1,12 @@
 extern crate light;
 
 use std::num::FloatMath;
-use light::camera::Camera;
-use light::perspective_camera::PerspectiveCamera;
-use light::orthographic_camera::OrthographicCamera;
+use light::cameras::camera::Camera;
+use light::cameras::perspective::PerspectiveCamera;
+use light::cameras::orthographic::OrthographicCamera;
 use light::film::Film;
 use light::filter::Filter;
-use light::ray::Ray;
+use light::geometry::ray::Ray;
 
 fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
     let mut res = Vec::with_capacity((f.width * f.height) as uint);

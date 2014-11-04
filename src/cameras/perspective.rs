@@ -1,8 +1,8 @@
-use transform::{Transform,Trans,TransMut};
-use ray::Ray;
-use vector::Vector;
-use point::Point;
-use camera::Camera;
+use geometry::transform::{Transform,Trans,TransMut};
+use geometry::ray::Ray;
+use geometry::vector::Vector;
+use geometry::point::Point;
+use cameras::camera::Camera;
 
 pub struct PerspectiveCamera {
     t : Transform,
