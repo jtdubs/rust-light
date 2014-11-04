@@ -40,7 +40,7 @@ impl Film {
     }
 
     fn get_pixel(&mut self, x : u32, y : u32) -> &mut Pixel {
-        self.pixels.get_mut((y * self.width + x) as uint)
+        &mut self.pixels[(y * self.width + x) as uint]
     }
 
     pub fn add_sample(&mut self, x : f32, y : f32, v : u8) {

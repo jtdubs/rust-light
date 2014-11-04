@@ -11,7 +11,7 @@ impl<'a> Scene<'a> {
         Scene { primitives: Vec::new() }
     }
 
-    pub fn add(&mut self, p : Primitive) {
+    pub fn add(&mut self, p : Primitive<'a>) {
         self.primitives.push((p.world_bound(), p));
     }
 
