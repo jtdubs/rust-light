@@ -21,7 +21,9 @@ impl PerspectiveCamera {
 
 impl Camera for PerspectiveCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
-        let d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32).normalize();
+        let mut d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32);
+        let m = d.magnitude();
+        d.div_self_s(m);
         Ray::new(&Point::origin(), &d).transform(&self.t.inverse())
     }
 }

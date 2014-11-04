@@ -39,7 +39,7 @@ impl Sampler {
         let ns = 1f32 / nf;
         let mut v = Vec::<f32>::with_capacity(n);
         for x in std::iter::range(0u, n) {
-            let r = (ns * (x as f32)) + (self.range.sample::<XorShiftRng>(rng) * ns);
+            let r = ns * (x as f32 + self.range.sample::<XorShiftRng>(rng));
             v.push(r);
         }
         v

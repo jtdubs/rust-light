@@ -9,6 +9,8 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
         Some((n, x)) => (n, x),
     };
 
+    let depth = max_z - min_z;
+
     let mut sampler = Sampler::new();
     let fw = film.width as f32;
     let fh = film.height as f32;
@@ -23,8 +25,8 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
                 let r = camera.cast(cx, cy);
                 match scene.intersect(&r) {
                     None => film.add_sample(fx, fy, 0u8),
-                    Some(t) => {
-                        let z = ((max_z - r.at_time(t).z) / (max_z - min_z)).min(1f32).max(0f32);
+                    Some(i) => {
+                        let z = (max_z - i.point.z) / depth;
                         film.add_sample(fx, fy, (z * 255f32) as u8)
                     }
                 }
