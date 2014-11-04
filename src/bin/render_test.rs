@@ -2,7 +2,7 @@ extern crate light;
 
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
-use light::filter::Filter;
+use light::filters::box_filter::BoxFilter;
 use light::scene::Scene;
 use light::shapes::sphere::Sphere;
 use light::shapes::cylinder::Cylinder;
@@ -22,7 +22,7 @@ fn main() {
     let pi_2 : f32 = Float::frac_pi_2();
     let pi_3 : f32 = Float::frac_pi_3();
 
-    let ref mut film = Film::new(1280u32, 720u32, Filter::new_box(1f32, 1f32));
+    let ref mut film = Film::new(1280u32, 720u32, box BoxFilter::new(1f32, 1f32));
     let ref camera = PerspectiveCamera::new(pi_3, (film.width as f32 / film.height as f32));
 
     let mut scene = Scene::new();

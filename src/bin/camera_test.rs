@@ -5,7 +5,7 @@ use light::cameras::camera::Camera;
 use light::cameras::perspective::PerspectiveCamera;
 use light::cameras::orthographic::OrthographicCamera;
 use light::film::Film;
-use light::filter::Filter;
+use light::filters::box_filter::BoxFilter;
 use light::geometry::ray::Ray;
 
 fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
@@ -23,7 +23,7 @@ fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
 
 fn main() {
     println!("clf;");
-    let f = Film::new(16, 12, Filter::new_box(1f32, 1f32));
+    let f = Film::new(16, 12, box BoxFilter::new(1f32, 1f32));
     draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3(), (f.width as f32 / f.height as f32)));
     draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2(), (f.width as f32 / f.height as f32)));
     draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32, (f.width as f32 / f.height as f32)));
