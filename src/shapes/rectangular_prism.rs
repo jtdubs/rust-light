@@ -1,5 +1,5 @@
 use geometry::transform::{Transform,Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use shapes::shape::Shape;
@@ -22,15 +22,15 @@ impl RectangularPrism {
 }
 
 impl Shape for RectangularPrism {
-    fn bound(&self) -> AABB {
-        AABB::for_points([Point::new(-self.hw, -self.hh, -self.hd), Point::new(self.hw, self.hh, self.hd)])
+    fn bound(&self) -> BoundingBox {
+        BoundingBox::for_points([Point::new(-self.hw, -self.hh, -self.hd), Point::new(self.hw, self.hh, self.hd)])
     }
 
     fn surface_area(&self) -> f32 {
         (8f32 * self.hd * self.hw) + (8f32 * self.hd * self.hh) + (8f32 * self.hw * self.hh)
     }
 
-    fn world_bound(&self) -> AABB {
+    fn world_bound(&self) -> BoundingBox {
         self.bound().transform(&self.t)
     }
 

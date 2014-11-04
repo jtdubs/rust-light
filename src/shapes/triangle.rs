@@ -1,5 +1,5 @@
 use geometry::transform::{Transform,Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use geometry::vector::Vector;
@@ -26,11 +26,11 @@ impl Triangle {
 }
 
 impl Shape for Triangle {
-    fn bound(&self) -> AABB {
-        AABB::for_points([self.a, self.b, self.c])
+    fn bound(&self) -> BoundingBox {
+        BoundingBox::for_points([self.a, self.b, self.c])
     }
 
-    fn world_bound(&self) -> AABB {
+    fn world_bound(&self) -> BoundingBox {
         self.bound().transform(&self.t)
     }
 

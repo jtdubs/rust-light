@@ -4,23 +4,23 @@ use geometry::point::Point;
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::ray::Ray;
 
-pub struct AABB {
+pub struct BoundingBox {
     empty : bool,
     min   : Point,
     max   : Point,
 }
 
-impl AABB {
-    pub fn new() -> AABB {
-        AABB { empty: true, min: Point::origin(), max: Point::origin() }
+impl BoundingBox {
+    pub fn new() -> BoundingBox {
+        BoundingBox { empty: true, min: Point::origin(), max: Point::origin() }
     }
 
-    pub fn for_point(p : &Point) -> AABB {
-        AABB { empty: false, min: *p, max: *p }
+    pub fn for_point(p : &Point) -> BoundingBox {
+        BoundingBox { empty: false, min: *p, max: *p }
     }
 
-    pub fn for_points(ps : &[Point]) -> AABB {
-        let mut r = AABB::new();
+    pub fn for_points(ps : &[Point]) -> BoundingBox {
+        let mut r = BoundingBox::new();
         for p in ps.iter() {
             r.add_self_point(p);
         }
@@ -56,15 +56,15 @@ impl AABB {
     }
         
 
-    pub fn add_point(&self, p : &Point) -> AABB {
+    pub fn add_point(&self, p : &Point) -> BoundingBox {
         if self.empty {
-            AABB::for_point(p)
+            BoundingBox::for_point(p)
         } else {
-            AABB { empty: false, min: Point::new(self.min.x.min(p.x), self.min.y.min(p.y), self.min.z.min(p.z)), max: Point::new(self.max.x.max(p.x), self.max.y.max(p.y), self.max.z.max(p.z)) }
+            BoundingBox { empty: false, min: Point::new(self.min.x.min(p.x), self.min.y.min(p.y), self.min.z.min(p.z)), max: Point::new(self.max.x.max(p.x), self.max.y.max(p.y), self.max.z.max(p.z)) }
         }
     }
 
-    pub fn add_points(&self, ps : &[Point]) -> AABB {
+    pub fn add_points(&self, ps : &[Point]) -> BoundingBox {
         let mut r = self.clone();
         for p in ps.iter() {
             r.add_self_point(p);
@@ -93,17 +93,17 @@ impl AABB {
         }
     }
 
-    pub fn union(&self, a : &AABB) -> AABB {
+    pub fn union(&self, a : &BoundingBox) -> BoundingBox {
         if self.empty {
             *a
         } else if a.empty {
             *self
         } else {
-            AABB { empty: false, min: Point::new(self.min.x.min(a.min.x), self.min.y.min(a.min.y), self.min.z.min(a.min.z)), max: Point::new(self.max.x.max(a.max.x), self.max.y.max(a.max.y), self.max.z.max(a.max.z)) }
+            BoundingBox { empty: false, min: Point::new(self.min.x.min(a.min.x), self.min.y.min(a.min.y), self.min.z.min(a.min.z)), max: Point::new(self.max.x.max(a.max.x), self.max.y.max(a.max.y), self.max.z.max(a.max.z)) }
         }
     }
 
-    pub fn add_self_aabb(&mut self, a : &AABB) {
+    pub fn add_self_bounding_box(&mut self, a : &BoundingBox) {
         if self.empty {
             self.clone_from(a)
         } else { 
@@ -116,7 +116,7 @@ impl AABB {
         }
     }
 
-    pub fn overlaps(&self, a : &AABB) -> bool {
+    pub fn overlaps(&self, a : &BoundingBox) -> bool {
         if self.empty || a.empty {
             false
         } else {
@@ -162,6 +162,8 @@ impl AABB {
     }
 
     pub fn intersects(&self, r : &Ray) -> bool {
+        if self.empty { return false; }
+
         let mut tmin : f32;
         let mut tmax : f32;
 
@@ -200,48 +202,48 @@ impl AABB {
     }
 }
 
-impl Show for AABB {
+impl Show for BoundingBox {
     fn fmt(&self, f : &mut Formatter) -> Result {
-        writeln!(f, "AABB {{ min: {}, max: {} }}", self.min, self.max)
+        writeln!(f, "BoundingBox {{ min: {}, max: {} }}", self.min, self.max)
     }
 }
 
-impl Clone for AABB {
-    fn clone(&self) -> AABB {
-        AABB { empty: self.empty, min: self.min, max: self.max }
+impl Clone for BoundingBox {
+    fn clone(&self) -> BoundingBox {
+        BoundingBox { empty: self.empty, min: self.min, max: self.max }
     }
 
-    fn clone_from(&mut self, source: &AABB) {
+    fn clone_from(&mut self, source: &BoundingBox) {
         self.empty = source.empty;
         self.min.clone_from(&source.min);
         self.max.clone_from(&source.max);
     }
 }
 
-impl PartialEq for AABB {
-    fn eq(&self, other: &AABB) -> bool {
+impl PartialEq for BoundingBox {
+    fn eq(&self, other: &BoundingBox) -> bool {
         (self.empty && other.empty) || (self.min == other.min && self.max == other.max)
     }
 
-    fn ne(&self, other: &AABB) -> bool {
+    fn ne(&self, other: &BoundingBox) -> bool {
         self.empty != other.empty || self.min != other.min || self.max != other.max
     }
 }
 
-impl Trans for AABB {
-    fn transform(&self, t : &Transform) -> AABB {
+impl Trans for BoundingBox {
+    fn transform(&self, t : &Transform) -> BoundingBox {
         match self.corners() {
             None => *self,
-            Some(cs) => AABB::for_points(cs.iter().map(|c| { c.transform(t) }).collect::<Vec<Point>>().as_slice())
+            Some(cs) => BoundingBox::for_points(cs.iter().map(|c| { c.transform(t) }).collect::<Vec<Point>>().as_slice())
         }
     }
 }
 
-impl TransMut for AABB {
+impl TransMut for BoundingBox {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&c.transform(t))
     }
 }
 
-// TODO: test AABB
+// TODO: test BoundingBox

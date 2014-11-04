@@ -1,5 +1,5 @@
 use geometry::transform::{Transform,Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use shapes::shape::Shape;
@@ -20,11 +20,11 @@ impl Disc {
 }
 
 impl Shape for Disc {
-    fn bound(&self) -> AABB {
-        AABB::for_points([Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, 0f32)])
+    fn bound(&self) -> BoundingBox {
+        BoundingBox::for_points([Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, 0f32)])
     }
 
-    fn world_bound(&self) -> AABB {
+    fn world_bound(&self) -> BoundingBox {
         self.bound().transform(&self.t)
     }
 

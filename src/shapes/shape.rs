@@ -1,10 +1,10 @@
 use geometry::transform::{Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 
 pub trait Shape : Trans + TransMut {
-    fn bound(&self) -> AABB;
-    fn world_bound(&self) -> AABB;
+    fn bound(&self) -> BoundingBox;
+    fn world_bound(&self) -> BoundingBox;
 
     fn surface_area(&self) -> f32;
 

@@ -1,4 +1,3 @@
-pub mod aabb;
 pub mod cameras {
     pub mod camera;
     pub mod orthographic;
@@ -14,6 +13,7 @@ pub mod filters {
 }
 pub mod film;
 pub mod geometry {
+    pub mod bounding_box;
     pub mod matrix;
     pub mod normal;
     pub mod point;

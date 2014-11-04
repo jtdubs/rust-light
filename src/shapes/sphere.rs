@@ -1,5 +1,5 @@
 use geometry::transform::{Transform,Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use math::quadratic;
@@ -21,15 +21,15 @@ impl Sphere {
 }
 
 impl Shape for Sphere {
-    fn bound(&self) -> AABB {
-        AABB::for_points([Point::new(-self.r, -self.r, -self.r), Point::new(self.r, self.r, self.r)])
+    fn bound(&self) -> BoundingBox {
+        BoundingBox::for_points([Point::new(-self.r, -self.r, -self.r), Point::new(self.r, self.r, self.r)])
     }
 
     fn surface_area(&self) -> f32 {
         4f32 * self.r * self.r * Float::pi()
     }
 
-    fn world_bound(&self) -> AABB {
+    fn world_bound(&self) -> BoundingBox {
         self.bound().transform(&self.t)
     }
 

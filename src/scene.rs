@@ -1,9 +1,9 @@
 use primitive::Primitive;
 use geometry::ray::Ray;
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 
 pub struct Scene<'a> {
-    pub primitives : Vec<(AABB, Primitive<'a>)>,
+    pub primitives : Vec<(BoundingBox, Primitive<'a>)>,
 }
 
 impl<'a> Scene<'a> {
@@ -15,10 +15,10 @@ impl<'a> Scene<'a> {
         self.primitives.push((p.world_bound(), p));
     }
 
-    pub fn bounds(&self) -> AABB {
-        let mut bounds = AABB::new();
+    pub fn bounds(&self) -> BoundingBox {
+        let mut bounds = BoundingBox::new();
         for &(a, _) in self.primitives.iter() {
-            bounds.add_self_aabb(&a);
+            bounds.add_self_bounding_box(&a);
         }
         bounds
     }

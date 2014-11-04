@@ -1,5 +1,5 @@
 use geometry::transform::{Transform,Trans,TransMut};
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
 use geometry::point::Point;
 use math::quadratic;
@@ -22,11 +22,11 @@ impl Cylinder {
 }
 
 impl Shape for Cylinder {
-    fn bound(&self) -> AABB {
-        AABB::for_points([Point::new(-self.r, -self.r, -self.hh), Point::new(self.r, self.r, self.hh)])
+    fn bound(&self) -> BoundingBox {
+        BoundingBox::for_points([Point::new(-self.r, -self.r, -self.hh), Point::new(self.r, self.r, self.hh)])
     }
 
-    fn world_bound(&self) -> AABB {
+    fn world_bound(&self) -> BoundingBox {
         self.bound().transform(&self.t)
     }
 

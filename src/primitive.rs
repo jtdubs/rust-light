@@ -1,6 +1,6 @@
 use shapes::shape::Shape;
 use geometry::ray::Ray;
-use aabb::AABB;
+use geometry::bounding_box::BoundingBox;
 
 pub struct Primitive<'a> {
     pub shape : Box<Shape + 'a>,
@@ -23,11 +23,11 @@ impl<'a> Primitive<'a> {
         self.shape.intersects(r)
     }
 
-    pub fn bound(&self) -> AABB {
+    pub fn bound(&self) -> BoundingBox {
         self.shape.bound()
     }
 
-    pub fn world_bound(&self) -> AABB {
+    pub fn world_bound(&self) -> BoundingBox {
         self.shape.world_bound()
     }
 }
