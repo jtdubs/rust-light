@@ -17,7 +17,7 @@ impl Transform {
     }
 
     pub fn scaling(v : &Vector) -> Transform {
-        Transform { m: Matrix::scaling(v), n: Matrix::scaling(&Vector::new(1f32/v.x, 1f32/v.y, 1f32/v.z)) }
+        Transform { m: Matrix::scaling(v), n: Matrix::scaling(&Vector::new(1f32 / v.x, 1f32 / v.y, 1f32 / v.z)) }
     }
 
     pub fn rotation_q(q : &Quaternion) -> Transform {
