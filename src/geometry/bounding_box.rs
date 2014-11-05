@@ -136,7 +136,7 @@ impl BoundingBox {
         if self.empty {
             0f32
         } else {
-            let d = self.max.sub_p(&self.min);
+            let d = self.max - self.min;
             2f32 * (d.x * d.y + d.x * d.y + d.y * d.z)
         }
     }
@@ -145,7 +145,7 @@ impl BoundingBox {
         if self.empty {
             0f32
         } else {
-            let d = self.max.sub_p(&self.min);
+            let d = self.max - self.min;
             d.x * d.y * d.z
         }
     }

@@ -31,12 +31,12 @@ impl Shape for RectangularPrism {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound() * self.t
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -60,7 +60,7 @@ impl Shape for RectangularPrism {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -86,12 +86,12 @@ impl Shape for RectangularPrism {
 
 impl Trans for RectangularPrism {
     fn transform(&self, t : &Transform) -> RectangularPrism {
-        RectangularPrism { t: t.compose(&self.t), hw: self.hw, hh: self.hh, hd: self.hd }
+        RectangularPrism { t: t + self.t, hw: self.hw, hh: self.hh, hd: self.hd }
     }
 }
 
 impl TransMut for RectangularPrism {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }

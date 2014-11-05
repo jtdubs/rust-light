@@ -19,12 +19,12 @@ impl OrthographicCamera {
 impl Camera for OrthographicCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
         let o = Point::new(x * self.scale * self.aspect_ratio, y * self.scale, 0f32);
-        Ray::new(&o, &Vector::unit_z()).transform(&self.t.inverse())
+        Ray::new(&o, &Vector::unit_z()) * -self.t
     }
 }
 
 impl TransMut for OrthographicCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }

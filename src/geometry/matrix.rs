@@ -77,7 +77,6 @@ impl Matrix {
                             0f32,       0f32,        0f32, 1f32])
     }
 
-
     pub fn transpose(&self) -> Matrix {
         Matrix::new(&[self[0], self[4], self[ 8], self[12],
                       self[1], self[5], self[ 9], self[13],
@@ -245,6 +244,78 @@ impl PartialEq for Matrix {
 
     fn ne(&self, other: &Matrix) -> bool {
         self.m != other.m
+    }
+}
+
+impl Add<Matrix, Matrix> for Matrix {
+    fn add(&self, m : &Matrix) -> Matrix {
+        self.add_m(m)
+    }
+}
+
+impl Sub<Matrix, Matrix> for Matrix {
+    fn sub(&self, m : &Matrix) -> Matrix {
+        self.sub_m(m)
+    }
+}
+
+impl Mul<Matrix, Matrix> for Matrix {
+    fn mul(&self, m : &Matrix) -> Matrix {
+        self.mul_m(m)
+    }
+}
+
+impl Mul<f32, Matrix> for Matrix {
+    fn mul(&self, s : &f32) -> Matrix {
+        self.mul_s(*s)
+    }
+}
+
+impl Mul<Matrix, Matrix> for f32 {
+    fn mul(&self, m : &Matrix) -> Matrix {
+        m.mul_s(*self)
+    }
+}
+
+impl Div<f32, Matrix> for Matrix {
+    fn div(&self, s : &f32) -> Matrix {
+        self.div_s(*s)
+    }
+}
+
+impl Mul<Vector, Vector> for Matrix {
+    fn mul(&self, v : &Vector) -> Vector {
+        self.mul_v(v)
+    }
+}
+
+impl Mul<Point, Point> for Matrix {
+    fn mul(&self, p : &Point) -> Point {
+        self.mul_p(p)
+    }
+}
+
+impl Mul<Normal, Normal> for Matrix {
+    fn mul(&self, n : &Normal) -> Normal {
+        self.mul_n(n)
+    }
+}
+
+impl Mul<Matrix, Vector> for Vector {
+    fn mul(&self, m : &Matrix) -> Vector {
+        m.premul_v(self)
+    }
+}
+
+impl Mul<Matrix, Point> for Point {
+    fn mul(&self, m : &Matrix) -> Point {
+        m.premul_p(self)
+    }
+}
+
+impl Mul<Matrix, Normal> for Normal {
+    fn mul(&self, m : &Matrix) -> Normal {
+        m.premul_n(self)
     }
 }
 

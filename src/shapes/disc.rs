@@ -25,7 +25,7 @@ impl Shape for Disc {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound() * self.t
     }
 
     fn surface_area(&self) -> f32 {
@@ -34,7 +34,7 @@ impl Shape for Disc {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
@@ -49,7 +49,7 @@ impl Shape for Disc {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
@@ -65,13 +65,13 @@ impl Shape for Disc {
 
 impl Trans for Disc {
     fn transform(&self, t : &Transform) -> Disc {
-        Disc { t: t.compose(&self.t), r: self.r }
+        Disc { t: t + self.t, r: self.r }
     }
 }
 
 impl TransMut for Disc {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }
 

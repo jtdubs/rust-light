@@ -27,11 +27,11 @@ impl Ray {
     }
 
     pub fn at_time(&self, t : f32) -> Point {
-        self.origin.add_v(&self.direction.mul_s(t))
+        self.origin + (self.direction * t)
     }
 
     pub fn reverse(&self) -> Ray {
-        Ray::new(&self.origin, &self.direction.reverse())
+        Ray::new(&self.origin, &-self.direction)
     }
 
     pub fn reverse_self(&mut self) {

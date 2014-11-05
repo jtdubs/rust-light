@@ -1,4 +1,4 @@
-use geometry::transform::{Transform,Trans,TransMut};
+use geometry::transform::{Transform,TransMut};
 use geometry::ray::Ray;
 use geometry::vector::Vector;
 use geometry::point::Point;
@@ -21,15 +21,13 @@ impl PerspectiveCamera {
 
 impl Camera for PerspectiveCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
-        let mut d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32);
-        let m = d.magnitude();
-        d.div_self_s(m);
-        Ray::new(&Point::origin(), &d).transform(&self.t.inverse())
+        let d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32).normalize();
+        Ray::new(&Point::origin(), &d) * -self.t
     }
 }
 
 impl TransMut for PerspectiveCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }

@@ -49,7 +49,7 @@ impl Vector {
 
     pub fn normalize(&self) -> Vector {
         let m = self.magnitude();
-        if m == 0f32 { *self } else { self.div_s(m) }
+        if m == 0f32 { *self } else { self / m }
     }
 
     pub fn normalize_self(&mut self) {
@@ -174,6 +174,42 @@ impl TransMut for Vector {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&t.transformation_matrix().mul_v(&c))
+    }
+}
+
+impl Add<Vector, Vector> for Vector {
+    fn add(&self, v : &Vector) -> Vector {
+        self.add_v(v)
+    }
+}
+
+impl Sub<Vector, Vector> for Vector {
+    fn sub(&self, v : &Vector) -> Vector {
+        self.sub_v(v)
+    }
+}
+
+impl Mul<f32, Vector> for Vector {
+    fn mul(&self, s : &f32) -> Vector {
+        self.mul_s(*s)
+    }
+}
+
+impl Mul<Vector, Vector> for f32 {
+    fn mul(&self, v : &Vector) -> Vector {
+        v.mul_s(*self)
+    }
+}
+
+impl Div<f32, Vector> for Vector {
+    fn div(&self, s : &f32) -> Vector {
+        self.div_s(*s)
+    }
+}
+
+impl Neg<Vector> for Vector {
+    fn neg(&self) -> Vector {
+        self.reverse()
     }
 }
 

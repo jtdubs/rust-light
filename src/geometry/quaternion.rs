@@ -158,4 +158,34 @@ impl PartialEq for Quaternion {
     }
 }
 
+impl Neg<Quaternion> for Quaternion {
+    fn neg(&self) -> Quaternion {
+        self.conjugate()
+    }
+}
+
+impl Mul<Quaternion, Quaternion> for Quaternion {
+    fn mul(&self, q : &Quaternion) -> Quaternion {
+        self.mul_q(q)
+    }
+}
+
+impl Mul<Vector, Vector> for Quaternion {
+    fn mul(&self, v : &Vector) -> Vector {
+        self.mul_v(v)
+    }
+}
+
+impl Sub<Quaternion, Quaternion> for Quaternion {
+    fn sub(&self, q : &Quaternion) -> Quaternion {
+        self.sub_q(q)
+    }
+}
+
+impl Add<Quaternion, Quaternion> for Quaternion {
+    fn add(&self, q : &Quaternion) -> Quaternion {
+        self.add_q(q)
+    }
+}
+
 // TODO: test that the _self methods get the same result as the non-_self methods

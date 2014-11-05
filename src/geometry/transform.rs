@@ -63,6 +63,18 @@ impl Transform {
     }
 }
 
+impl Neg<Transform> for Transform {
+    fn neg(&self) -> Transform {
+        self.inverse()
+    }
+}
+
+impl Add<Transform, Transform> for Transform {
+    fn add(&self, t : &Transform) -> Transform {
+        self.compose(t)
+    }
+}
+
 pub trait Trans {
     fn transform(&self, t : &Transform) -> Self;
 
@@ -84,6 +96,12 @@ pub trait Trans {
 
     fn rotate3(&self, pitch : f32, yaw : f32, roll : f32) -> Self {
         self.transform(&Transform::rotation3(pitch, yaw, roll))
+    }
+}
+
+impl<T : Trans> Mul<Transform, T> for T {
+    fn mul(&self, t : &Transform) -> T {
+        self.transform(t)
     }
 }
 

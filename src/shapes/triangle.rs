@@ -31,7 +31,7 @@ impl Shape for Triangle {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound() * self.t
     }
 
     fn surface_area(&self) -> f32 {
@@ -40,7 +40,7 @@ impl Shape for Triangle {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -66,7 +66,7 @@ impl Shape for Triangle {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -88,13 +88,13 @@ impl Shape for Triangle {
 
 impl Trans for Triangle {
     fn transform(&self, t : &Transform) -> Triangle {
-        Triangle { t: t.compose(&self.t), a: self.a, b: self.b, c: self.c }
+        Triangle { t: t + self.t, a: self.a, b: self.b, c: self.c }
     }
 }
 
 impl TransMut for Triangle {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }
 

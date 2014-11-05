@@ -100,6 +100,24 @@ impl TransMut for Point {
     }
 }
 
+impl Sub<Point, Vector> for Point {
+    fn sub(&self, p : &Point) -> Vector {
+        self.sub_p(p)
+    }
+}
+
+impl Sub<Vector, Point> for Point {
+    fn sub(&self, v : &Vector) -> Point {
+        self.sub_v(v)
+    }
+}
+
+impl Add<Vector, Point> for Point {
+    fn add(&self, v : &Vector) -> Point {
+        self.add_v(v)
+    }
+}
+
 #[test]
 fn test_accessors() {
     assert_eq!(Point::new(1f32, 2f32, 3f32).x, 1f32);

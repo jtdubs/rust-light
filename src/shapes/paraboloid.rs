@@ -27,7 +27,7 @@ impl Shape for Paraboloid {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound() * self.t
     }
 
     fn surface_area(&self) -> f32 {
@@ -36,7 +36,7 @@ impl Shape for Paraboloid {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let a = (self.h * ray.direction.x * ray.direction.x + self.h * ray.direction.y * ray.direction.y) / (self.r * self.r);
         let b = (2f32 * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) - ray.direction.z;
@@ -61,7 +61,7 @@ impl Shape for Paraboloid {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let a = (self.h * ray.direction.x * ray.direction.x + self.h * ray.direction.y * ray.direction.y) / (self.r * self.r);
         let b = (2f32 * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) - ray.direction.z;
@@ -87,13 +87,13 @@ impl Shape for Paraboloid {
 
 impl Trans for Paraboloid {
     fn transform(&self, t : &Transform) -> Paraboloid {
-        Paraboloid { t: t.compose(&self.t), r: self.r, h: self.h }
+        Paraboloid { t: t + self.t, r: self.r, h: self.h }
     }
 }
 
 impl TransMut for Paraboloid {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }
 

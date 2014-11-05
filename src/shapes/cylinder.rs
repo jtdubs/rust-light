@@ -27,7 +27,7 @@ impl Shape for Cylinder {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound() * self.t
     }
 
     fn surface_area(&self) -> f32 {
@@ -36,7 +36,7 @@ impl Shape for Cylinder {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
         let b = 2f32 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
@@ -61,7 +61,7 @@ impl Shape for Cylinder {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t.inverse());
+        let ray = r * -self.t;
 
         let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
         let b = 2f32 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
@@ -87,13 +87,13 @@ impl Shape for Cylinder {
 
 impl Trans for Cylinder {
     fn transform(&self, t : &Transform) -> Cylinder {
-        Cylinder { t: t.compose(&self.t), r: self.r, hh: self.hh }
+        Cylinder { t: t + self.t, r: self.r, hh: self.hh }
     }
 }
 
 impl TransMut for Cylinder {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t.compose(&self.t);
+        self.t = t + self.t;
     }
 }
 

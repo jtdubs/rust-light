@@ -152,6 +152,42 @@ impl TransMut for Normal {
     }
 }
 
+impl Add<Normal, Normal> for Normal {
+    fn add(&self, n : &Normal) -> Normal {
+        self.add_n(n)
+    }
+}
+
+impl Sub<Normal, Normal> for Normal {
+    fn sub(&self, n : &Normal) -> Normal {
+        self.sub_n(n)
+    }
+}
+
+impl Mul<f32, Normal> for Normal {
+    fn mul(&self, s : &f32) -> Normal {
+        self.mul_s(*s)
+    }
+}
+
+impl Mul<Normal, Normal> for f32 {
+    fn mul(&self, n : &Normal) -> Normal {
+        n.mul_s(*self)
+    }
+}
+
+impl Div<f32, Normal> for Normal {
+    fn div(&self, s : &f32) -> Normal {
+        self.div_s(*s)
+    }
+}
+
+impl Neg<Normal> for Normal {
+    fn neg(&self) -> Normal {
+        self.reverse()
+    }
+}
+
 #[test]
 fn test_accessors() {
     assert_eq!(Normal::new(1f32, 2f32, 3f32).x, 1f32);
