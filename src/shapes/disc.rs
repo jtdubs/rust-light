@@ -65,7 +65,7 @@ impl Shape for Disc {
 
 impl Trans for Disc {
     fn transform(&self, t : &Transform) -> Disc {
-        Disc { t: t + self.t, r: self.r }
+        Disc { t: t + self.t, .. *self }
     }
 }
 

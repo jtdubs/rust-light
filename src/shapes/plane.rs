@@ -64,7 +64,7 @@ impl Shape for Plane {
 
 impl Trans for Plane {
     fn transform(&self, t : &Transform) -> Plane {
-        Plane { t: t + self.t, hw: self.hw, hd: self.hd }
+        Plane { t: t + self.t, .. *self }
     }
 }
 

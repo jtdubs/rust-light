@@ -87,7 +87,7 @@ impl Shape for Paraboloid {
 
 impl Trans for Paraboloid {
     fn transform(&self, t : &Transform) -> Paraboloid {
-        Paraboloid { t: t + self.t, r: self.r, h: self.h }
+        Paraboloid { t: t + self.t, .. *self }
     }
 }
 

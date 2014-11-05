@@ -210,7 +210,7 @@ impl Show for BoundingBox {
 
 impl Clone for BoundingBox {
     fn clone(&self) -> BoundingBox {
-        BoundingBox { empty: self.empty, min: self.min, max: self.max }
+        BoundingBox { .. *self }
     }
 
     fn clone_from(&mut self, source: &BoundingBox) {

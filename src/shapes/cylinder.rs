@@ -87,7 +87,7 @@ impl Shape for Cylinder {
 
 impl Trans for Cylinder {
     fn transform(&self, t : &Transform) -> Cylinder {
-        Cylinder { t: t + self.t, r: self.r, hh: self.hh }
+        Cylinder { t: t + self.t, .. *self }
     }
 }
 

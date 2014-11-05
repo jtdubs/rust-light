@@ -88,7 +88,7 @@ impl Shape for Triangle {
 
 impl Trans for Triangle {
     fn transform(&self, t : &Transform) -> Triangle {
-        Triangle { t: t + self.t, a: self.a, b: self.b, c: self.c }
+        Triangle { t: t + self.t, .. *self }
     }
 }
 

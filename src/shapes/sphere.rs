@@ -70,7 +70,7 @@ impl Shape for Sphere {
 
 impl Trans for Sphere {
     fn transform(&self, t : &Transform) -> Sphere {
-        Sphere { t: t + self.t, r: self.r }
+        Sphere { t: t + self.t, .. *self }
     }
 }
 

@@ -85,7 +85,7 @@ impl Shape for Cone {
 
 impl Trans for Cone {
     fn transform(&self, t : &Transform) -> Cone {
-        Cone { t: t + self.t, r: self.r, h: self.h }
+        Cone { t: t + self.t, .. *self }
     }
 }
 

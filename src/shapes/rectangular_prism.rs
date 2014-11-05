@@ -86,7 +86,7 @@ impl Shape for RectangularPrism {
 
 impl Trans for RectangularPrism {
     fn transform(&self, t : &Transform) -> RectangularPrism {
-        RectangularPrism { t: t + self.t, hw: self.hw, hh: self.hh, hd: self.hd }
+        RectangularPrism { t: t + self.t, .. *self }
     }
 }
 
