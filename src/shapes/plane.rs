@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -17,6 +19,12 @@ impl Plane {
 
     pub fn unit() -> Plane {
         Plane::new(1f32, 1f32)
+    }
+}
+
+impl Default for Plane {
+    fn default() -> Plane {
+        Plane::unit()
     }
 }
 

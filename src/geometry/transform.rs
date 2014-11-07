@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::matrix::Matrix;
 use geometry::vector::Vector;
 use geometry::quaternion::Quaternion;
@@ -60,6 +62,12 @@ impl Transform {
 
     pub fn inverse_transformation_matrix(&self) -> &Matrix {
         &self.n
+    }
+}
+
+impl Default for Transform {
+    fn default() -> Transform {
+        Transform::identity()
     }
 }
 

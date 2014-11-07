@@ -1,4 +1,8 @@
+// TODO: organize pixels in rectangular patches to improve cache coherency
+
 extern crate lodepng;
+
+use std::default::Default;
 
 use filters::filter::Filter;
 
@@ -17,6 +21,12 @@ pub struct Film<'a> {
 impl Pixel {
     fn new() -> Pixel {
         Pixel { sum: 0f32, weight_sum: 0f32 }
+    }
+}
+
+impl Default for Pixel {
+    fn default() -> Pixel {
+        Pixel::new()
     }
 }
 

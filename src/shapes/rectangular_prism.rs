@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -18,6 +20,12 @@ impl RectangularPrism {
 
     pub fn unit() -> RectangularPrism {
         RectangularPrism::new(1f32, 1f32, 1f32)
+    }
+}
+
+impl Default for RectangularPrism {
+    fn default() -> RectangularPrism {
+        RectangularPrism::unit()
     }
 }
 

@@ -1,4 +1,5 @@
 use std::fmt::{Show,Formatter,Result};
+use std::default::Default;
 use std::num::FloatMath;
 
 use geometry::matrix::Matrix;
@@ -155,6 +156,12 @@ impl PartialEq for Quaternion {
 
     fn ne(&self, other: &Quaternion) -> bool {
         self.v != other.v || self.w != other.w
+    }
+}
+
+impl Default for Quaternion {
+    fn default() -> Quaternion {
+        Quaternion::identity()
     }
 }
 

@@ -1,4 +1,5 @@
 use std::fmt::{Show,Formatter,Result};
+use std::default::Default;
 
 use geometry::vector::Vector;
 use geometry::transform::{Transform,Trans,TransMut};
@@ -8,7 +9,7 @@ pub struct Normal {
     pub y : f32,
     pub z : f32,
 }
- 
+
 impl Normal {
     pub fn new(x : f32, y : f32, z : f32) -> Normal {
         Normal { x: x, y: y, z: z }
@@ -136,6 +137,12 @@ impl PartialEq for Normal {
 
     fn ne(&self, other: &Normal) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
+    }
+}
+
+impl Default for Normal {
+    fn default() -> Normal {
+        Normal::new(0f32, 0f32, 0f32)
     }
 }
 

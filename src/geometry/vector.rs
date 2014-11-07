@@ -1,4 +1,5 @@
 use std::num::FloatMath;
+use std::default::Default;
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::normal::Normal;
@@ -161,6 +162,12 @@ impl PartialEq for Vector {
 
     fn ne(&self, other: &Vector) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
+    }
+}
+
+impl Default for Vector {
+    fn default() -> Vector {
+        Vector::zero()
     }
 }
 

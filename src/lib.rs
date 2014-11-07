@@ -1,3 +1,4 @@
+pub mod blocked_array;
 pub mod cameras;
 pub mod filters;
 pub mod film;

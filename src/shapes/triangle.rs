@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -22,6 +24,12 @@ impl Triangle {
             &Point::origin().sub_v(&Vector::unit_x().div_s(2f32)).sub_v(&Vector::unit_y().div_s(2f32)),
             &Point::origin().add_v(&Vector::unit_x().div_s(2f32)).sub_v(&Vector::unit_y().div_s(2f32)),
             &Point::origin().add_v(&Vector::unit_y().div_s(2f32)))
+    }
+}
+
+impl Default for Triangle {
+    fn default() -> Triangle {
+        Triangle::unit()
     }
 }
 

@@ -1,4 +1,5 @@
 use std::fmt::{Show,Formatter,Result};
+use std::default::Default;
 
 use geometry::vector::Vector;
 use geometry::transform::{Transform,Trans,TransMut};
@@ -84,6 +85,12 @@ impl PartialEq for Point {
 
     fn ne(&self, other: &Point) -> bool {
         self.x != other.x || self.y != other.y || self.z != other.z
+    }
+}
+
+impl Default for Point {
+    fn default() -> Point {
+        Point::origin()
     }
 }
 

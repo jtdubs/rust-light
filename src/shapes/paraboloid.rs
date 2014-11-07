@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -18,6 +20,12 @@ impl Paraboloid {
 
     pub fn unit() -> Paraboloid {
         Paraboloid::new(1f32, 1f32)
+    }
+}
+
+impl Default for Paraboloid {
+    fn default() -> Paraboloid {
+        Paraboloid::unit()
     }
 }
 

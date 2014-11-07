@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -16,6 +18,12 @@ impl Disc {
 
     pub fn unit() -> Disc {
         Disc::new(1f32)
+    }
+}
+
+impl Default for Disc {
+    fn default() -> Disc {
+        Disc::unit()
     }
 }
 

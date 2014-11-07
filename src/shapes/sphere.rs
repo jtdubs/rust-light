@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -17,6 +19,12 @@ impl Sphere {
 
     pub fn unit() -> Sphere {
         Sphere::new(1f32)
+    }
+}
+
+impl Default for Sphere {
+    fn default() -> Sphere {
+        Sphere::unit()
     }
 }
 

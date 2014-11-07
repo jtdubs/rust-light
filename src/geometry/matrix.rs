@@ -1,4 +1,5 @@
 use std::fmt::{Show,Formatter,Result};
+use std::default::Default;
 
 use geometry::vector::Vector;
 use geometry::point::Point;
@@ -244,6 +245,12 @@ impl PartialEq for Matrix {
 
     fn ne(&self, other: &Matrix) -> bool {
         self.m != other.m
+    }
+}
+
+impl Default for Matrix {
+    fn default() -> Matrix {
+        Matrix::zero()
     }
 }
 

@@ -1,3 +1,4 @@
+use std::default::Default;
 use std::fmt::{Show,Formatter,Result};
 
 use geometry::point::Point;
@@ -12,7 +13,11 @@ pub struct BoundingBox {
 
 impl BoundingBox {
     pub fn new() -> BoundingBox {
-        BoundingBox { empty: true, min: Point::origin(), max: Point::origin() }
+        BoundingBox { 
+            empty: true,
+            min: Point::origin(),
+            max: Point::origin(),
+        }
     }
 
     pub fn for_point(p : &Point) -> BoundingBox {
@@ -243,6 +248,12 @@ impl TransMut for BoundingBox {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
         self.clone_from(&c.transform(t))
+    }
+}
+
+impl Default for BoundingBox {
+    fn default() -> BoundingBox {
+        BoundingBox::new()
     }
 }
 

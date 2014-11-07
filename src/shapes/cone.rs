@@ -1,3 +1,5 @@
+use std::default::Default;
+
 use geometry::transform::{Transform,Trans,TransMut};
 use geometry::bounding_box::BoundingBox;
 use geometry::ray::Ray;
@@ -18,6 +20,12 @@ impl Cone {
 
     pub fn unit() -> Cone {
         Cone::new(1f32, 1f32)
+    }
+}
+
+impl Default for Cone {
+    fn default() -> Cone {
+        Cone::unit()
     }
 }
 
