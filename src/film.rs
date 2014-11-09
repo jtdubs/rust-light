@@ -12,8 +12,8 @@ pub struct Pixel {
 }
 
 pub struct Film<'a> {
-    pub width : u32,
-    pub height : u32,
+    pub width : uint,
+    pub height : uint,
     filter : Box<Filter + 'a>,
     pixels : Vec<Pixel>,
 }
@@ -31,8 +31,13 @@ impl Default for Pixel {
 }
 
 impl<'a> Film<'a> {
-    pub fn new(width : u32, height : u32, f : Box<Filter + 'a>) -> Film<'a> {
-        Film { width: width, height: height, filter: f, pixels: Vec::<Pixel>::from_fn((width * height) as uint, |_| Pixel::new()) }
+    pub fn new(width : uint, height : uint, f : Box<Filter + 'a>) -> Film<'a> {
+        Film {
+            width: width, 
+            height: height, 
+            filter: f, 
+            pixels: Vec::from_fn(width * height, |_| { Default::default() })
+        }
     }
 
     pub fn new_1080(f : Box<Filter + 'a>) -> Film<'a> { Film::new(1920, 1080, f) }
@@ -49,20 +54,24 @@ impl<'a> Film<'a> {
         (((-ex).floor() as int, (-ey).floor() as int), ((self.width as f32 + ex).ceil() as int, (self.height as f32 + ey).ceil() as int))
     }
 
-    fn get_pixel(&mut self, x : u32, y : u32) -> &mut Pixel {
-        &mut self.pixels[(y * self.width + x) as uint]
+    fn get_pixel(&self, x : uint, y : uint) -> &Pixel {
+        &self.pixels[y * self.width + x]
+    }
+
+    fn get_pixel_mut(&mut self, x : uint, y : uint) -> &mut Pixel {
+        &mut self.pixels[y * self.width + x]
     }
 
     pub fn add_sample(&mut self, x : f32, y : f32, v : u8) {
         let (ex, ey) = self.filter.extent();
-        let min_x = (x - 0.5f32 - ex).ceil().max(0f32) as u32;
-        let min_y = (y - 0.5f32 - ey).ceil().max(0f32) as u32;
-        let max_x = (x - 0.5f32 + ex).floor().min(self.width as f32 - 1f32) as u32;
-        let max_y = (y - 0.5f32 + ey).floor().min(self.height as f32 - 1f32) as u32;
+        let min_x = (x - 0.5f32 - ex).ceil().max(0f32) as uint;
+        let min_y = (y - 0.5f32 - ey).ceil().max(0f32) as uint;
+        let max_x = (x - 0.5f32 + ex).floor().min(self.width as f32 - 1f32) as uint;
+        let max_y = (y - 0.5f32 + ey).floor().min(self.height as f32 - 1f32) as uint;
         for ux in range(min_x, max_x+1) {
             for uy in range(min_y, max_y+1) {
                 let w = self.filter.weight(ux as f32 - x - 0.5, uy as f32 - y - 0.5);
-                let p = self.get_pixel(ux, uy);
+                let p = self.get_pixel_mut(ux, uy);
                 p.sum = p.sum + (v as f32 * w);
                 p.weight_sum = p.weight_sum + w;
             }
@@ -70,7 +79,15 @@ impl<'a> Film<'a> {
     }
 
     pub fn save(&self, path : &Path) -> Result<(), &str> {
-        match lodepng::encode_file(path, self.pixels.iter().map(|p| { (p.sum / p.weight_sum).round() as u8 }).collect::<Vec<u8>>().as_slice(), self.width, self.height, lodepng::LCT_GREY, 8) {
+        let mut pixels = Vec::<u8>::new();
+        for y in range(0, self.height) {
+            for x in range(0, self.width) {
+                let p = self.get_pixel(x, y);
+                pixels.push((p.sum / p.weight_sum).round() as u8);
+            }
+        }
+
+        match lodepng::encode_file(path, pixels.as_slice(), self.width as u32, self.height as u32, lodepng::LCT_GREY, 8) {
             Err(_) => Err("encoding failure"),
             Ok(_) => Ok(()),
         }
