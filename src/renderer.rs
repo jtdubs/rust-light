@@ -15,8 +15,8 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
     let fw = film.width as f32;
     let fh = film.height as f32;
 
-    for x in range(0u, film.width+1) {
-        for y in range(0u, film.height+1) {
+    for x in range(0u, film.width) {
+        for y in range(0u, film.height) {
             for &(dx, dy) in sampler.lhc_2d(8).iter() {
                 let fx = (x as f32) + dx;
                 let fy = (y as f32) + dy;
