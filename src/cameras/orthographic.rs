@@ -25,6 +25,6 @@ impl Camera for OrthographicCamera {
 
 impl TransMut for OrthographicCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

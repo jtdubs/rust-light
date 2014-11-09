@@ -43,7 +43,7 @@ impl Shape for Sphere {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -60,7 +60,7 @@ impl Shape for Sphere {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -78,12 +78,12 @@ impl Shape for Sphere {
 
 impl Trans for Sphere {
     fn transform(&self, t : &Transform) -> Sphere {
-        Sphere { t: t + self.t, .. *self }
+        Sphere { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for Sphere {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

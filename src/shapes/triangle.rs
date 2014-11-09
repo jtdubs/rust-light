@@ -48,7 +48,7 @@ impl Shape for Triangle {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -74,7 +74,7 @@ impl Shape for Triangle {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -96,13 +96,13 @@ impl Shape for Triangle {
 
 impl Trans for Triangle {
     fn transform(&self, t : &Transform) -> Triangle {
-        Triangle { t: t + self.t, .. *self }
+        Triangle { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for Triangle {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }
 

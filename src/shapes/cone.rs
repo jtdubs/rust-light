@@ -44,7 +44,7 @@ impl Shape for Cone {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = (self.h * self.h * ray.direction.x * ray.direction.x + self.h * self.h * ray.direction.y * ray.direction.y) / (self.r * self.r) + (-ray.direction.z * ray.direction.z);
         let b = (2f32 * self.h * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * self.h);
@@ -67,7 +67,7 @@ impl Shape for Cone {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = (self.h * self.h * ray.direction.x * ray.direction.x + self.h * self.h * ray.direction.y * ray.direction.y) / (self.r * self.r) + (-ray.direction.z * ray.direction.z);
         let b = (2f32 * self.h * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * self.h);
@@ -93,12 +93,12 @@ impl Shape for Cone {
 
 impl Trans for Cone {
     fn transform(&self, t : &Transform) -> Cone {
-        Cone { t: t + self.t, .. *self }
+        Cone { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for Cone {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

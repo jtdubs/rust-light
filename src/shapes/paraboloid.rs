@@ -44,7 +44,7 @@ impl Shape for Paraboloid {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = (self.h * ray.direction.x * ray.direction.x + self.h * ray.direction.y * ray.direction.y) / (self.r * self.r);
         let b = (2f32 * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) - ray.direction.z;
@@ -69,7 +69,7 @@ impl Shape for Paraboloid {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let a = (self.h * ray.direction.x * ray.direction.x + self.h * ray.direction.y * ray.direction.y) / (self.r * self.r);
         let b = (2f32 * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) - ray.direction.z;
@@ -95,13 +95,13 @@ impl Shape for Paraboloid {
 
 impl Trans for Paraboloid {
     fn transform(&self, t : &Transform) -> Paraboloid {
-        Paraboloid { t: t + self.t, .. *self }
+        Paraboloid { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for Paraboloid {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }
 

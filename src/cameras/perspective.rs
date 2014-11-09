@@ -28,6 +28,6 @@ impl Camera for PerspectiveCamera {
 
 impl TransMut for PerspectiveCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

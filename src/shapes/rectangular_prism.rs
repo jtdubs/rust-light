@@ -44,7 +44,7 @@ impl Shape for RectangularPrism {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -68,7 +68,7 @@ impl Shape for RectangularPrism {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -94,12 +94,12 @@ impl Shape for RectangularPrism {
 
 impl Trans for RectangularPrism {
     fn transform(&self, t : &Transform) -> RectangularPrism {
-        RectangularPrism { t: t + self.t, .. *self }
+        RectangularPrism { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for RectangularPrism {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

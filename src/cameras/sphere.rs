@@ -40,6 +40,6 @@ impl Camera for SphereCamera {
 
 impl TransMut for SphereCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

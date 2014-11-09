@@ -43,7 +43,7 @@ impl Shape for Plane {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
@@ -57,7 +57,7 @@ impl Shape for Plane {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r * -self.t;
+        let ray = (*r) * -self.t;
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
@@ -72,12 +72,12 @@ impl Shape for Plane {
 
 impl Trans for Plane {
     fn transform(&self, t : &Transform) -> Plane {
-        Plane { t: t + self.t, .. *self }
+        Plane { t: *t + self.t, .. *self }
     }
 }
 
 impl TransMut for Plane {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = t + self.t;
+        self.t = *t + self.t;
     }
 }

@@ -50,7 +50,7 @@ impl Vector {
 
     pub fn normalize(&self) -> Vector {
         let m = self.magnitude();
-        if m == 0f32 { *self } else { self / m }
+        if m == 0f32 { *self } else { *self / m }
     }
 
     pub fn normalize_self(&mut self) {
