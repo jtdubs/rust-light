@@ -31,7 +31,6 @@ impl Filter for CachingFilter {
     fn weight(&self, x : f32, y : f32) -> f32 {
         let xa = x.abs();
         let ya = y.abs();
-        if xa > self.w || ya > self.h { return 0f32; }
         let sx = (xa * 15f32 / self.w) as uint;
         let sy = (ya * 15f32 / self.h) as uint;
         self.cache[sy * 16 + sx]
