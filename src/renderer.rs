@@ -14,14 +14,16 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
     let mut sampler = Sampler::new();
     let fw = film.width as f32;
     let fh = film.height as f32;
+    let x_scale = 2f32 / fw;
+    let y_scale = 2f32 / fh;
 
-    for x in range(0u, film.width) {
-        for y in range(0u, film.height) {
+    for x in range(0f32, fw) {
+        for y in range(0f32, fh) {
             for &(dx, dy) in sampler.lhc_2d(8).iter() {
-                let fx = (x as f32) + dx;
-                let fy = (y as f32) + dy;
-                let cx = (fx / fw) * 2f32 - 1f32;
-                let cy = (fy / fh) * 2f32 - 1f32;
+                let fx = x + dx;
+                let fy = y + dy;
+                let cx = fx * x_scale - 1f32;
+                let cy = fy * y_scale - 1f32;
                 let r = camera.cast(cx, cy);
                 match scene.intersect(&r) {
                     None => film.add_sample(fx, fy, 0u8),
