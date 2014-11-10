@@ -3,13 +3,21 @@ use filters::filter::Filter;
 pub struct CachingFilter {
     w : f32,
     h : f32,
-    cache : [f32, ..256]
+    cache : [f32, ..256],
+    x_scale : f32,
+    y_scale : f32,
 }
 
 impl CachingFilter {
     pub fn new(f : &Filter) -> CachingFilter {
         let (w, h) = f.extent();
-        let mut cf = CachingFilter { w: w, h: h, cache: [0f32, ..256] };
+        let mut cf = CachingFilter {
+            w: w,
+            h: h, 
+            cache: [0f32, ..256] ,
+            x_scale: 15f32 / w,
+            y_scale: 15f32 * 16f32 / h,
+        };
         for x in range(0u, 16u) {
             let fx = x as f32;
             for y in range(0u, 16u) {
@@ -29,10 +37,8 @@ impl Filter for CachingFilter {
     }
 
     fn weight(&self, x : f32, y : f32) -> f32 {
-        let xa = x.abs();
-        let ya = y.abs();
-        let sx = (xa * 15f32 / self.w) as uint;
-        let sy = (ya * 15f32 / self.h) as uint;
-        self.cache[sy * 16 + sx]
+        let sx = (x.abs() * self.x_scale) as uint;
+        let sy = (y.abs() * self.y_scale) as uint;
+        self.cache[sx + sy]
     }
 }
