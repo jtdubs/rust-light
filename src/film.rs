@@ -65,14 +65,14 @@ impl<'a> Film<'a> {
     // TODO: verify add_sample is walking the right range and picking the right weights
     pub fn add_sample(&mut self, x : f32, y : f32, v : u8) {
         let (ex, ey) = self.filter.extent();
-        let min_x = (x + 0.5f32 - ex).ceil().max(0f32) as uint;
-        let min_y = (y + 0.5f32 - ey).ceil().max(0f32) as uint;
-        let max_x = (x - 0.5f32 + ex).floor().min(self.width as f32 - 1f32) as uint;
-        let max_y = (y - 0.5f32 + ey).floor().min(self.height as f32 - 1f32) as uint;
+        let min_x = (x - 0.5f32 - ex).ceil().max(0f32) as uint;
+        let min_y = (y - 0.5f32 - ey).ceil().max(0f32) as uint;
+        let max_x = (x + 0.5f32 + ex).floor().min(self.width as f32 - 1f32) as uint;
+        let max_y = (y + 0.5f32 + ey).floor().min(self.height as f32 - 1f32) as uint;
         let ox = 0.5f32 - x;
         let oy = 0.5f32 - y;
-        for ux in range(min_x, max_x+1) {
-            for uy in range(min_y, max_y+1) {
+        for ux in range(min_x, max_x) {
+            for uy in range(min_y, max_y) {
                 let w = self.filter.weight(ux as f32 + ox, uy as f32 + oy);
                 let p = self.get_pixel_mut(ux, uy);
                 p.sum = p.sum + (v as f32 * w);
