@@ -1,16 +1,17 @@
-use std::fmt::{Show,Formatter,Result};
 use std::default::Default;
+use std::ops::{Add,Sub,Mul,Div,Index};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::vector::Vector;
 use geometry::point::Point;
 use geometry::normal::Normal;
 
 pub struct Matrix {
-    m : [f32, ..16],
+    m : [f32; 16],
 }
 
 impl Matrix {
-    pub fn new(m : &[f32, ..16]) -> Matrix {
+    pub fn new(m : &[f32; 16]) -> Matrix {
         Matrix { m: *m }
     }
 
@@ -117,7 +118,7 @@ impl Matrix {
     }
 
     pub fn mul_self_s(&mut self, s : f32) {
-        for ix in range(0u, 16u) {
+        for ix in 0..16 {
             self.m[ix] = self.m[ix] * s
         }
     }
@@ -130,7 +131,7 @@ impl Matrix {
     }
 
     pub fn div_self_s(&mut self, s : f32) {
-        for ix in range(0u, 16u) {
+        for ix in 0..16 {
             self.m[ix] = self.m[ix] / s
         }
     }
@@ -143,7 +144,7 @@ impl Matrix {
     }
 
     pub fn add_self_m(&mut self, m : &Matrix) {
-        for ix in range(0u, 16u) {
+        for ix in 0..16 {
             self.m[ix] = self.m[ix] + m[ix]
         }
     }
@@ -156,7 +157,7 @@ impl Matrix {
     }
 
     pub fn sub_self_m(&mut self, m : &Matrix) {
-        for ix in range(0u, 16u) {
+        for ix in 0..16 {
             self.m[ix] = self.m[ix] - m[ix]
         }
     }
@@ -210,13 +211,14 @@ impl Matrix {
     }
 }
 
-impl Index<uint, f32> for Matrix {
-    fn index(&self, index : &uint) -> &f32 {
+impl Index<u32> for Matrix {
+    type Output = f32;
+    fn index(&self, index : &u32) -> &Self::Output {
         &self.m[*index]
     }
 }
 
-impl Show for Matrix {
+impl Display for Matrix {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]\n[{}\t{}\t{}\t{}]",
                  self[ 0], self[ 1], self[ 2], self[ 3],
@@ -232,7 +234,7 @@ impl Clone for Matrix {
     }
 
     fn clone_from(&mut self, source: &Matrix) {
-        for ix in range(0u, 16u) {
+        for ix in 0..16 {
             self.m[ix] = source.m[ix]
         }
     }
@@ -254,73 +256,85 @@ impl Default for Matrix {
     }
 }
 
-impl Add<Matrix, Matrix> for Matrix {
+impl Add<Matrix> for Matrix {
+    type Output = Matrix;
     fn add(&self, m : &Matrix) -> Matrix {
         self.add_m(m)
     }
 }
 
-impl Sub<Matrix, Matrix> for Matrix {
+impl Sub<Matrix> for Matrix {
+    type Output = Matrix;
     fn sub(&self, m : &Matrix) -> Matrix {
         self.sub_m(m)
     }
 }
 
-impl Mul<Matrix, Matrix> for Matrix {
+impl Mul<Matrix> for Matrix {
+    type Output = Matrix;
     fn mul(&self, m : &Matrix) -> Matrix {
         self.mul_m(m)
     }
 }
 
-impl Mul<f32, Matrix> for Matrix {
+impl Mul<f32> for Matrix {
+    type Output = Matrix;
     fn mul(&self, s : &f32) -> Matrix {
         self.mul_s(*s)
     }
 }
 
-impl Mul<Matrix, Matrix> for f32 {
+impl Mul<Matrix> for f32 {
+    type Output = Matrix;
     fn mul(&self, m : &Matrix) -> Matrix {
         m.mul_s(*self)
     }
 }
 
-impl Div<f32, Matrix> for Matrix {
+impl Div<f32> for Matrix {
+    type Output = Matrix;
     fn div(&self, s : &f32) -> Matrix {
         self.div_s(*s)
     }
 }
 
-impl Mul<Vector, Vector> for Matrix {
+impl Mul<Vector> for Matrix {
+    type Output = Vector;
     fn mul(&self, v : &Vector) -> Vector {
         self.mul_v(v)
     }
 }
 
-impl Mul<Point, Point> for Matrix {
+impl Mul<Point> for Matrix {
+    type Output = Point;
     fn mul(&self, p : &Point) -> Point {
         self.mul_p(p)
     }
 }
 
-impl Mul<Normal, Normal> for Matrix {
+impl Mul<Normal> for Matrix {
+    type Output = Normal;
     fn mul(&self, n : &Normal) -> Normal {
         self.mul_n(n)
     }
 }
 
-impl Mul<Matrix, Vector> for Vector {
+impl Mul<Matrix> for Vector {
+    type Output = Vector;
     fn mul(&self, m : &Matrix) -> Vector {
         m.premul_v(self)
     }
 }
 
-impl Mul<Matrix, Point> for Point {
+impl Mul<Matrix> for Point {
+    type Output = Point;
     fn mul(&self, m : &Matrix) -> Point {
         m.premul_p(self)
     }
 }
 
-impl Mul<Matrix, Normal> for Normal {
+impl Mul<Matrix> for Normal {
+    type Output = Normal;
     fn mul(&self, m : &Matrix) -> Normal {
         m.premul_n(self)
     }
@@ -333,7 +347,7 @@ fn test_access() {
                            8f32,  9f32, 10f32, 11f32,
                           12f32, 13f32, 14f32, 15f32]);
 
-    for ix in range(0u, 16u) {
+    for ix in 0..16 {
         assert_eq!(l[ix], ix as f32);
     }
 }

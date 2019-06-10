@@ -1,5 +1,5 @@
 use std::default::Default;
-use std::fmt::{Show,Formatter,Result};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::point::Point;
 use geometry::transform::{Transform,Trans,TransMut};
@@ -155,7 +155,7 @@ impl BoundingBox {
         }
     }
 
-    pub fn corners(&self) -> Option<[Point, ..8]> {
+    pub fn corners(&self) -> Option<[Point; 8]> {
         if self.empty {
             None
         } else {
@@ -207,7 +207,7 @@ impl BoundingBox {
     }
 }
 
-impl Show for BoundingBox {
+impl Display for BoundingBox {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "BoundingBox {{ min: {}, max: {} }}", self.min, self.max)
     }

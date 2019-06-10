@@ -1,17 +1,16 @@
-use std::num::next_power_of_two;
 use std::default::Default;
 
 pub struct BlockedArray<T> {
     storage : Vec<T>,
-    storage_width : uint,
-    width : uint,
-    height : uint,
+    storage_width : u32,
+    width : u32,
+    height : u32,
 }
 
 impl<T : Default> BlockedArray<T> {
-    pub fn new(width : uint, height : uint) -> BlockedArray<T> {
-        let storage_width = next_power_of_two(width);
-        let storage_height = next_power_of_two(height);
+    pub fn new(width : u32, height : u32) -> BlockedArray<T> {
+        let storage_width = width.next_power_of_two();
+        let storage_height = height.next_power_of_two();
         BlockedArray { 
             storage: Vec::from_fn(storage_width * storage_height, |_| { Default::default() }),
             storage_width: storage_width,
@@ -20,15 +19,15 @@ impl<T : Default> BlockedArray<T> {
         }
     }
 
-    pub fn get_width(&self) -> uint {
+    pub fn get_width(&self) -> u32 {
         self.width
     }
 
-    pub fn get_height(&self) -> uint {
+    pub fn get_height(&self) -> u32 {
         self.height
     }
 
-    pub fn get(&self, x : uint, y : uint) -> &T {
+    pub fn get(&self, x : u32, y : u32) -> &T {
         assert!(x < self.width);
         assert!(y < self.height);
         let bx = x >> 2;
@@ -39,7 +38,7 @@ impl<T : Default> BlockedArray<T> {
         &self.storage[idx]
     }
 
-    pub fn get_mut(&mut self, x : uint, y : uint) -> &mut T {
+    pub fn get_mut(&mut self, x : u32, y : u32) -> &mut T {
         assert!(x < self.width);
         assert!(y < self.height);
         let bx = x >> 2;

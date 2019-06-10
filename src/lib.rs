@@ -4,7 +4,6 @@ pub mod filters;
 pub mod film;
 pub mod geometry;
 pub mod math;
-pub mod primitive;
 pub mod renderer;
 pub mod sampler;
 pub mod scene;

@@ -1,4 +1,5 @@
 use std::default::Default;
+use std::ops::{Add,Neg};
 
 use geometry::matrix::Matrix;
 use geometry::vector::Vector;
@@ -71,13 +72,15 @@ impl Default for Transform {
     }
 }
 
-impl Neg<Transform> for Transform {
+impl Neg for Transform {
+    type Output=Transform;
     fn neg(&self) -> Transform {
         self.inverse()
     }
 }
 
-impl Add<Transform, Transform> for Transform {
+impl Add<Transform> for Transform {
+    type Output=Transform;
     fn add(&self, t : &Transform) -> Transform {
         self.compose(t)
     }
@@ -107,11 +110,12 @@ pub trait Trans {
     }
 }
 
-impl<T : Trans> Mul<Transform, T> for T {
-    fn mul(&self, t : &Transform) -> T {
-        self.transform(t)
-    }
-}
+// impl<T : Trans> Mul<Transform> for T {
+//     type Output=T;
+//     fn mul(&self, t : &Transform) -> T {
+//         self.transform(t)
+//     }
+// }
 
 pub trait TransMut {
     fn transform_self(&mut self, t : &Transform);

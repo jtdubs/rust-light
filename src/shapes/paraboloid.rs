@@ -39,7 +39,7 @@ impl Shape for Paraboloid {
     }
 
     fn surface_area(&self) -> f32 {
-        (self.r / (self.h * self.h)) * ((self.r * self.r + 4f32 * self.h * self.h) * 1.5f32 - self.r * self.r * self.r) * Float::frac_pi_6()
+        (self.r / (self.h * self.h)) * ((self.r * self.r + 4f32 * self.h * self.h) * 1.5f32 - self.r * self.r * self.r) * core::f32::consts::FRAC_PI_6
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {

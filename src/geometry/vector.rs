@@ -1,6 +1,6 @@
-use std::num::FloatMath;
 use std::default::Default;
-use std::fmt::{Show,Formatter,Result};
+use std::ops::{Add,Sub,Mul,Div,Neg};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::normal::Normal;
 use geometry::transform::{Transform,Trans,TransMut};
@@ -137,7 +137,7 @@ impl Vector {
     }
 }
 
-impl Show for Vector {
+impl Display for Vector {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "<{}, {}, {}>", self.x, self.y, self.z)
     }
@@ -184,37 +184,43 @@ impl TransMut for Vector {
     }
 }
 
-impl Add<Vector, Vector> for Vector {
+impl Add<Vector> for Vector {
+    type Output=Vector;
     fn add(&self, v : &Vector) -> Vector {
         self.add_v(v)
     }
 }
 
-impl Sub<Vector, Vector> for Vector {
+impl Sub<Vector> for Vector {
+    type Output=Vector;
     fn sub(&self, v : &Vector) -> Vector {
         self.sub_v(v)
     }
 }
 
-impl Mul<f32, Vector> for Vector {
+impl Mul<f32> for Vector {
+    type Output=Vector;
     fn mul(&self, s : &f32) -> Vector {
         self.mul_s(*s)
     }
 }
 
-impl Mul<Vector, Vector> for f32 {
+impl Mul<Vector> for f32 {
+    type Output=Vector;
     fn mul(&self, v : &Vector) -> Vector {
         v.mul_s(*self)
     }
 }
 
-impl Div<f32, Vector> for Vector {
+impl Div<f32> for Vector {
+    type Output=Vector;
     fn div(&self, s : &f32) -> Vector {
         self.div_s(*s)
     }
 }
 
-impl Neg<Vector> for Vector {
+impl Neg for Vector {
+    type Output=Vector;
     fn neg(&self) -> Vector {
         self.reverse()
     }

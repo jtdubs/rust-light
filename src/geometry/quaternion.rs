@@ -1,6 +1,6 @@
-use std::fmt::{Show,Formatter,Result};
 use std::default::Default;
-use std::num::FloatMath;
+use std::ops::{Add,Sub,Mul,Neg};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::matrix::Matrix;
 use geometry::vector::Vector;
@@ -132,7 +132,7 @@ impl Quaternion {
     }
 }
 
-impl Show for Quaternion {
+impl Display for Quaternion {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "{{{}, {}, {}, {}}}", self.v.x, self.v.y, self.v.z, self.w)
     }
@@ -165,31 +165,36 @@ impl Default for Quaternion {
     }
 }
 
-impl Neg<Quaternion> for Quaternion {
+impl Neg for Quaternion {
+    type Output=Quaternion;
     fn neg(&self) -> Quaternion {
         self.conjugate()
     }
 }
 
-impl Mul<Quaternion, Quaternion> for Quaternion {
+impl Mul<Quaternion> for Quaternion {
+    type Output=Quaternion;
     fn mul(&self, q : &Quaternion) -> Quaternion {
         self.mul_q(q)
     }
 }
 
-impl Mul<Vector, Vector> for Quaternion {
+impl Mul<Vector> for Quaternion {
+    type Output=Vector;
     fn mul(&self, v : &Vector) -> Vector {
         self.mul_v(v)
     }
 }
 
-impl Sub<Quaternion, Quaternion> for Quaternion {
+impl Sub<Quaternion> for Quaternion {
+    type Output=Quaternion;
     fn sub(&self, q : &Quaternion) -> Quaternion {
         self.sub_q(q)
     }
 }
 
-impl Add<Quaternion, Quaternion> for Quaternion {
+impl Add<Quaternion> for Quaternion {
+    type Output=Quaternion;
     fn add(&self, q : &Quaternion) -> Quaternion {
         self.add_q(q)
     }

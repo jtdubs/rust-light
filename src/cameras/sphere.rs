@@ -16,8 +16,8 @@ impl SphereCamera {
 
 impl Camera for SphereCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
-        let h = x * Float::pi();
-        let v = y * Float::frac_pi_2();
+        let h = x * core::f32::consts::PI;
+        let v = y * core::f32::consts::FRAC_PI_2;
 
         let d = Vector::new(h.sin() * v.cos(), v.sin(), h.cos() * v.cos());
         Ray::new(&Point::origin(), &d) * -self.t

@@ -34,7 +34,7 @@ impl Shape for Sphere {
     }
 
     fn surface_area(&self) -> f32 {
-        4f32 * self.r * self.r * Float::pi()
+        4f32 * self.r * self.r * core::f32::consts::PI
     }
 
     fn world_bound(&self) -> BoundingBox {

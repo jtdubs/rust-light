@@ -39,7 +39,7 @@ impl Shape for Cylinder {
     }
 
     fn surface_area(&self) -> f32 {
-        4f32 * self.r * self.hh * Float::pi()
+        4f32 * self.r * self.hh * core::f32::consts::PI
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {

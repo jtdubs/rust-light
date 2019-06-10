@@ -1,5 +1,6 @@
-use std::fmt::{Show,Formatter,Result};
 use std::default::Default;
+use std::ops::{Add,Sub};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::vector::Vector;
 use geometry::transform::{Transform,Trans,TransMut};
@@ -72,7 +73,7 @@ impl Clone for Point {
     }
 }
 
-impl Show for Point {
+impl Display for Point {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "({}, {}, {})", self.x, self.y, self.z)
     }
@@ -107,19 +108,22 @@ impl TransMut for Point {
     }
 }
 
-impl Sub<Point, Vector> for Point {
+impl Sub<Point> for Point {
+    type Output=Vector;
     fn sub(&self, p : &Point) -> Vector {
         self.sub_p(p)
     }
 }
 
-impl Sub<Vector, Point> for Point {
+impl Sub<Vector> for Point {
+    type Output=Point;
     fn sub(&self, v : &Vector) -> Point {
         self.sub_v(v)
     }
 }
 
-impl Add<Vector, Point> for Point {
+impl Add<Vector> for Point {
+    type Output=Point;
     fn add(&self, v : &Vector) -> Point {
         self.add_v(v)
     }

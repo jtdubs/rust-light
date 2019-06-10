@@ -1,4 +1,4 @@
-use std::fmt::{Show,Formatter,Result};
+use std::fmt::{Display,Formatter,Result};
 
 use geometry::vector::Vector;
 use geometry::point::Point;
@@ -39,7 +39,7 @@ impl Ray {
     }
 }
 
-impl Show for Ray {
+impl Display for Ray {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "Ray {{ origin: {}, direction: {} }}", self.origin, self.direction)
     }

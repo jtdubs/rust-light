@@ -1,4 +1,3 @@
-use std::num::Float;
 use filters::filter::Filter;
 
 pub struct GaussianFilter {

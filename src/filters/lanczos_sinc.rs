@@ -1,4 +1,3 @@
-use std::num::Float;
 use filters::filter::Filter;
 
 pub struct LanczosSincFilter {
@@ -31,7 +30,7 @@ impl Filter for LanczosSincFilter {
                 } else if x > 1f32 {
                     0f32
                 } else {
-                    let xp = x * Float::pi();
+                    let xp = x * std::f32::consts::PI;
                     let xpt = xp * self.tau;
                     let sinc = xpt.sin() / xpt;
                     let lanczos = xp.sin() / xp;

@@ -37,7 +37,7 @@ impl Shape for Disc {
     }
 
     fn surface_area(&self) -> f32 {
-        2f32 * self.r * self.r * Float::pi()
+        2f32 * self.r * self.r * core::f32::consts::PI
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {

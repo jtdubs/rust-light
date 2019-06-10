@@ -1,18 +1,18 @@
-use primitive::Primitive;
 use geometry::ray::Ray;
 use geometry::bounding_box::BoundingBox;
 use shapes::shape::Intersection;
+use shapes::shape::Shape;
 
-pub struct Scene<'a> {
-    pub primitives : Vec<(BoundingBox, Primitive<'a>)>,
+pub struct Scene {
+    pub primitives : Vec<(BoundingBox, Box<&'static Shape>)>
 }
 
-impl<'a> Scene<'a> {
-    pub fn new() -> Scene<'a> {
+impl Scene {
+    pub fn new() -> Scene {
         Scene { primitives: Vec::new() }
     }
 
-    pub fn add(&mut self, p : Primitive<'a>) {
+    pub fn add<T : Shape>(&mut self, p : T) {
         self.primitives.push((p.world_bound(), p));
     }
 

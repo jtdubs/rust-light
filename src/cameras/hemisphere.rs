@@ -16,8 +16,8 @@ impl HemisphereCamera {
 
 impl Camera for HemisphereCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
-        let h = x * Float::frac_pi_2();
-        let v = y * Float::frac_pi_2();
+        let h = x * core::f32::consts::FRAC_PI_2;
+        let v = y * core::f32::consts::FRAC_PI_2;
 
         let d = Vector::new(h.sin() * v.cos(), v.sin(), h.cos() * v.cos());
         Ray::new(&Point::origin(), &d) * -self.t
