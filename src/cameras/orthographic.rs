@@ -1,8 +1,8 @@
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::ray::Ray;
-use geometry::vector::Vector;
-use geometry::point::Point;
-use cameras::camera::Camera;
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::ray::Ray;
+use crate::geometry::vector::Vector;
+use crate::geometry::point::Point;
+use crate::cameras::camera::Camera;
 
 pub struct OrthographicCamera {
     t : Transform,
@@ -19,7 +19,7 @@ impl OrthographicCamera {
 impl Camera for OrthographicCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
         let o = Point::new(x * self.scale * self.aspect_ratio, y * self.scale, 0f32);
-        Ray::new(&o, &Vector::unit_z()) * -self.t
+        Ray::new(&o, &Vector::unit_z()).transform(&-self.t)
     }
 }
 

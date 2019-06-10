@@ -1,11 +1,11 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use math::quadratic;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::math::quadratic;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Cylinder {
     t : Transform,
@@ -31,11 +31,11 @@ impl Default for Cylinder {
 
 impl Shape for Cylinder {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.r, -self.r, -self.hh), Point::new(self.r, self.r, self.hh)])
+        BoundingBox::for_points(&[Point::new(-self.r, -self.r, -self.hh), Point::new(self.r, self.r, self.hh)])
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn surface_area(&self) -> f32 {
@@ -44,7 +44,7 @@ impl Shape for Cylinder {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
         let b = 2f32 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
@@ -69,7 +69,7 @@ impl Shape for Cylinder {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
         let b = 2f32 * ((ray.direction.x * ray.origin.x) + (ray.direction.y * ray.origin.y));
@@ -94,6 +94,8 @@ impl Shape for Cylinder {
 }
 
 impl Trans for Cylinder {
+    type Output=Cylinder;
+
     fn transform(&self, t : &Transform) -> Cylinder {
         Cylinder { t: *t + self.t, .. *self }
     }

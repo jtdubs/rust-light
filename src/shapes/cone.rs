@@ -1,11 +1,11 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use math::quadratic;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::math::quadratic;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Cone {
     t : Transform,
@@ -31,11 +31,11 @@ impl Default for Cone {
 
 impl Shape for Cone {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, self.h)])
+        BoundingBox::for_points(&[Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, self.h)])
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn surface_area(&self) -> f32 {
@@ -44,7 +44,7 @@ impl Shape for Cone {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = (self.h * self.h * ray.direction.x * ray.direction.x + self.h * self.h * ray.direction.y * ray.direction.y) / (self.r * self.r) + (-ray.direction.z * ray.direction.z);
         let b = (2f32 * self.h * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * self.h);
@@ -67,7 +67,7 @@ impl Shape for Cone {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = (self.h * self.h * ray.direction.x * ray.direction.x + self.h * self.h * ray.direction.y * ray.direction.y) / (self.r * self.r) + (-ray.direction.z * ray.direction.z);
         let b = (2f32 * self.h * self.h * ray.origin.x * ray.direction.x + 2f32 * self.h * self.h * ray.origin.y * ray.direction.y) / (self.r * self.r) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * self.h);
@@ -92,6 +92,8 @@ impl Shape for Cone {
 }
 
 impl Trans for Cone {
+    type Output=Cone;
+
     fn transform(&self, t : &Transform) -> Cone {
         Cone { t: *t + self.t, .. *self }
     }

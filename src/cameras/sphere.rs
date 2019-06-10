@@ -1,8 +1,8 @@
-use geometry::transform::{Transform,TransMut};
-use geometry::ray::Ray;
-use geometry::vector::Vector;
-use geometry::point::Point;
-use cameras::camera::Camera;
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::ray::Ray;
+use crate::geometry::vector::Vector;
+use crate::geometry::point::Point;
+use crate::cameras::camera::Camera;
 
 pub struct SphereCamera {
     t : Transform,
@@ -20,7 +20,7 @@ impl Camera for SphereCamera {
         let v = y * core::f32::consts::FRAC_PI_2;
 
         let d = Vector::new(h.sin() * v.cos(), v.sin(), h.cos() * v.cos());
-        Ray::new(&Point::origin(), &d) * -self.t
+        Ray::new(&Point::origin(), &d).transform(&-self.t)
 
 
 /*                                       h  h.sin()  h.cos()      v  v.sin()  v.cos()

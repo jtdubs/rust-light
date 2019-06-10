@@ -2,8 +2,8 @@ use std::default::Default;
 use std::ops::{Add,Sub,Mul,Div,Neg};
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::normal::Normal;
-use geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::normal::Normal;
+use crate::geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Vector {
     pub x : f32,
@@ -172,6 +172,8 @@ impl Default for Vector {
 }
 
 impl Trans for Vector {
+    type Output = Vector;
+
     fn transform(&self, t : &Transform) -> Vector {
         t.transformation_matrix().mul_v(self)
     }
@@ -186,42 +188,42 @@ impl TransMut for Vector {
 
 impl Add<Vector> for Vector {
     type Output=Vector;
-    fn add(&self, v : &Vector) -> Vector {
-        self.add_v(v)
+    fn add(self, v : Vector) -> Vector {
+        self.add_v(&v)
     }
 }
 
 impl Sub<Vector> for Vector {
     type Output=Vector;
-    fn sub(&self, v : &Vector) -> Vector {
-        self.sub_v(v)
+    fn sub(self, v : Vector) -> Vector {
+        self.sub_v(&v)
     }
 }
 
 impl Mul<f32> for Vector {
     type Output=Vector;
-    fn mul(&self, s : &f32) -> Vector {
-        self.mul_s(*s)
+    fn mul(self, s : f32) -> Vector {
+        self.mul_s(s)
     }
 }
 
 impl Mul<Vector> for f32 {
     type Output=Vector;
-    fn mul(&self, v : &Vector) -> Vector {
-        v.mul_s(*self)
+    fn mul(self, v : Vector) -> Vector {
+        v.mul_s(self)
     }
 }
 
 impl Div<f32> for Vector {
     type Output=Vector;
-    fn div(&self, s : &f32) -> Vector {
-        self.div_s(*s)
+    fn div(self, s : f32) -> Vector {
+        self.div_s(s)
     }
 }
 
 impl Neg for Vector {
     type Output=Vector;
-    fn neg(&self) -> Vector {
+    fn neg(self) -> Vector {
         self.reverse()
     }
 }

@@ -2,9 +2,9 @@ use std::default::Default;
 use std::ops::{Add,Sub,Mul,Div,Index};
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::vector::Vector;
-use geometry::point::Point;
-use geometry::normal::Normal;
+use crate::geometry::vector::Vector;
+use crate::geometry::point::Point;
+use crate::geometry::normal::Normal;
 
 pub struct Matrix {
     m : [f32; 16],
@@ -16,7 +16,7 @@ impl Matrix {
     }
 
     pub fn zero() -> Matrix {
-        Matrix::new(&[0f32, ..16])
+        Matrix::new(&[0f32; 16])
     }
 
     pub fn identity() -> Matrix {
@@ -144,7 +144,7 @@ impl Matrix {
     }
 
     pub fn add_self_m(&mut self, m : &Matrix) {
-        for ix in 0..16 {
+        for ix in 0..16usize {
             self.m[ix] = self.m[ix] + m[ix]
         }
     }
@@ -211,10 +211,10 @@ impl Matrix {
     }
 }
 
-impl Index<u32> for Matrix {
+impl Index<usize> for Matrix {
     type Output = f32;
-    fn index(&self, index : &u32) -> &Self::Output {
-        &self.m[*index]
+    fn index(&self, index : usize) -> &Self::Output {
+        &self.m[index]
     }
 }
 
@@ -258,85 +258,85 @@ impl Default for Matrix {
 
 impl Add<Matrix> for Matrix {
     type Output = Matrix;
-    fn add(&self, m : &Matrix) -> Matrix {
-        self.add_m(m)
+    fn add(self, m : Matrix) -> Matrix {
+        self.add_m(&m)
     }
 }
 
 impl Sub<Matrix> for Matrix {
     type Output = Matrix;
-    fn sub(&self, m : &Matrix) -> Matrix {
-        self.sub_m(m)
+    fn sub(self, m : Matrix) -> Matrix {
+        self.sub_m(&m)
     }
 }
 
 impl Mul<Matrix> for Matrix {
     type Output = Matrix;
-    fn mul(&self, m : &Matrix) -> Matrix {
-        self.mul_m(m)
+    fn mul(self, m : Matrix) -> Matrix {
+        self.mul_m(&m)
     }
 }
 
 impl Mul<f32> for Matrix {
     type Output = Matrix;
-    fn mul(&self, s : &f32) -> Matrix {
-        self.mul_s(*s)
+    fn mul(self, s : f32) -> Matrix {
+        self.mul_s(s)
     }
 }
 
 impl Mul<Matrix> for f32 {
     type Output = Matrix;
-    fn mul(&self, m : &Matrix) -> Matrix {
-        m.mul_s(*self)
+    fn mul(self, m : Matrix) -> Matrix {
+        m.mul_s(self)
     }
 }
 
 impl Div<f32> for Matrix {
     type Output = Matrix;
-    fn div(&self, s : &f32) -> Matrix {
-        self.div_s(*s)
+    fn div(self, s : f32) -> Matrix {
+        self.div_s(s)
     }
 }
 
 impl Mul<Vector> for Matrix {
     type Output = Vector;
-    fn mul(&self, v : &Vector) -> Vector {
-        self.mul_v(v)
+    fn mul(self, v : Vector) -> Vector {
+        self.mul_v(&v)
     }
 }
 
 impl Mul<Point> for Matrix {
     type Output = Point;
-    fn mul(&self, p : &Point) -> Point {
-        self.mul_p(p)
+    fn mul(self, p : Point) -> Point {
+        self.mul_p(&p)
     }
 }
 
 impl Mul<Normal> for Matrix {
     type Output = Normal;
-    fn mul(&self, n : &Normal) -> Normal {
-        self.mul_n(n)
+    fn mul(self, n : Normal) -> Normal {
+        self.mul_n(&n)
     }
 }
 
 impl Mul<Matrix> for Vector {
     type Output = Vector;
-    fn mul(&self, m : &Matrix) -> Vector {
-        m.premul_v(self)
+    fn mul(self, m : Matrix) -> Vector {
+        m.premul_v(&self)
     }
 }
 
 impl Mul<Matrix> for Point {
     type Output = Point;
-    fn mul(&self, m : &Matrix) -> Point {
-        m.premul_p(self)
+    fn mul(self, m : Matrix) -> Point {
+        m.premul_p(&self)
     }
 }
 
 impl Mul<Matrix> for Normal {
     type Output = Normal;
-    fn mul(&self, m : &Matrix) -> Normal {
-        m.premul_n(self)
+    fn mul(self, m : Matrix) -> Normal {
+        m.premul_n(&self)
     }
 }
 

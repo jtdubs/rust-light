@@ -1,8 +1,8 @@
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::vector::Vector;
-use geometry::point::Point;
-use geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::vector::Vector;
+use crate::geometry::point::Point;
+use crate::geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Ray {
     pub origin    : Point,
@@ -67,6 +67,8 @@ impl PartialEq for Ray {
 }
 
 impl Trans for Ray {
+    type Output = Ray;
+
     fn transform(&self, t : &Transform) -> Ray {
         Ray::new(&self.origin.transform(t), &self.direction.transform(t))
     }

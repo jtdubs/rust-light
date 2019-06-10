@@ -1,10 +1,12 @@
-use geometry::ray::Ray;
-use geometry::bounding_box::BoundingBox;
-use shapes::shape::Intersection;
-use shapes::shape::Shape;
+use std::rc::{Rc};
+
+use crate::geometry::ray::Ray;
+use crate::geometry::bounding_box::BoundingBox;
+use crate::shapes::shape::Intersection;
+use crate::shapes::shape::Shape;
 
 pub struct Scene {
-    pub primitives : Vec<(BoundingBox, Box<&'static Shape>)>
+    pub primitives : Vec<(BoundingBox, Rc<dyn Shape>)>
 }
 
 impl Scene {
@@ -12,8 +14,8 @@ impl Scene {
         Scene { primitives: Vec::new() }
     }
 
-    pub fn add<T : Shape>(&mut self, p : T) {
-        self.primitives.push((p.world_bound(), p));
+    pub fn add<T : Shape + 'static>(&mut self, p : T) {
+        self.primitives.push((p.world_bound(), Rc::new(p)));
     }
 
     pub fn bounds(&self) -> BoundingBox {

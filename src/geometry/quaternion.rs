@@ -2,8 +2,8 @@ use std::default::Default;
 use std::ops::{Add,Sub,Mul,Neg};
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::matrix::Matrix;
-use geometry::vector::Vector;
+use crate::geometry::matrix::Matrix;
+use crate::geometry::vector::Vector;
 
 pub struct Quaternion {
     v : Vector,
@@ -167,36 +167,36 @@ impl Default for Quaternion {
 
 impl Neg for Quaternion {
     type Output=Quaternion;
-    fn neg(&self) -> Quaternion {
+    fn neg(self) -> Quaternion {
         self.conjugate()
     }
 }
 
 impl Mul<Quaternion> for Quaternion {
     type Output=Quaternion;
-    fn mul(&self, q : &Quaternion) -> Quaternion {
-        self.mul_q(q)
+    fn mul(self, q : Quaternion) -> Quaternion {
+        self.mul_q(&q)
     }
 }
 
 impl Mul<Vector> for Quaternion {
     type Output=Vector;
-    fn mul(&self, v : &Vector) -> Vector {
-        self.mul_v(v)
+    fn mul(self, v : Vector) -> Vector {
+        self.mul_v(&v)
     }
 }
 
 impl Sub<Quaternion> for Quaternion {
     type Output=Quaternion;
-    fn sub(&self, q : &Quaternion) -> Quaternion {
-        self.sub_q(q)
+    fn sub(self, q : Quaternion) -> Quaternion {
+        self.sub_q(&q)
     }
 }
 
 impl Add<Quaternion> for Quaternion {
     type Output=Quaternion;
-    fn add(&self, q : &Quaternion) -> Quaternion {
-        self.add_q(q)
+    fn add(self, q : Quaternion) -> Quaternion {
+        self.add_q(&q)
     }
 }
 

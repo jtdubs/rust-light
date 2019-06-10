@@ -1,9 +1,9 @@
 use std::default::Default;
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::point::Point;
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::ray::Ray;
 
 pub struct BoundingBox {
     empty : bool,
@@ -236,6 +236,7 @@ impl PartialEq for BoundingBox {
 }
 
 impl Trans for BoundingBox {
+    type Output=BoundingBox;
     fn transform(&self, t : &Transform) -> BoundingBox {
         match self.corners() {
             None => *self,

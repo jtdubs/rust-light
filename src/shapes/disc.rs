@@ -1,10 +1,10 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Disc {
     t : Transform,
@@ -29,11 +29,11 @@ impl Default for Disc {
 
 impl Shape for Disc {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, 0f32)])
+        BoundingBox::for_points(&[Point::new(-self.r, -self.r, 0f32), Point::new(self.r, self.r, 0f32)])
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn surface_area(&self) -> f32 {
@@ -42,7 +42,7 @@ impl Shape for Disc {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
@@ -57,7 +57,7 @@ impl Shape for Disc {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
@@ -72,6 +72,8 @@ impl Shape for Disc {
 }
 
 impl Trans for Disc {
+    type Output=Disc;
+
     fn transform(&self, t : &Transform) -> Disc {
         Disc { t: *t + self.t, .. *self }
     }

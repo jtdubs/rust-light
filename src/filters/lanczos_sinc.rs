@@ -1,4 +1,4 @@
-use filters::filter::Filter;
+use crate::filters::filter::Filter;
 
 pub struct LanczosSincFilter {
     width : f32,

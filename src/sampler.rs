@@ -1,56 +1,52 @@
 extern crate rand;
 
-use std::ops::{Range};
 use rand::prelude::*;
-use math::{radical_inverse,sobol,van_der_corput};
+use rand::distributions::uniform::{Uniform};
+
+use crate::math::{radical_inverse,sobol,van_der_corput};
 
 pub struct Sampler {
-    range : Range<f32>
+    range : Uniform<f32>
 }
 
 impl Sampler {
     pub fn new() -> Sampler {
-        Sampler { range: Range::new(0f32, 1f32) }
+        Sampler { range: Uniform::new_inclusive(0f32, 1f32) }
     }
 
     pub fn uniform_1d(&mut self, n : u32) -> Vec<f32> {
-        let mut r = Vec::<f32>::with_capacity(n);
-        thread_rng().fill(r);
-        r
+        let rng = thread_rng();
+        rng.sample_iter(&self.range).take(n as usize).collect()
     }
 
     pub fn uniform_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
-        let rng = &mut self.rng;
-        let mut r = Vec::<(f32, f32)>::with_capacity(n);
-        for _ in 0..n {
-            r.push((self.range.sample::<XorShiftRng>(rng), self.range.sample::<XorShiftRng>(rng)));
-        }
-        r
+        let rng = thread_rng();
+        rng.sample_iter(&self.range).zip(rng.sample_iter(&self.range)).take(n as usize).collect()
     }
 
     pub fn strata_1d(&mut self, n : u32) -> Vec<f32> {
-        let rng = &mut self.rng;
+        let rng = thread_rng();
         let nf = n as f32;
         let ns = 1f32 / nf;
-        let mut v = Vec::<f32>::with_capacity(n);
+        let mut v = Vec::<f32>::with_capacity(n as usize);
         for x in 0..n {
-            let r = ns * (x as f32 + self.range.sample::<XorShiftRng>(rng));
+            let r = ns * (x as f32 + rng.sample(self.range));
             v.push(r);
         }
         v
     }
 
     pub fn strata_2d(&mut self, w : u32, h : u32) -> Vec<(f32, f32)> {
-        let rng = &mut self.rng;
+        let rng = thread_rng();
         let wf = w as f32;
         let hf = h as f32;
         let ws = 1f32 / wf;
         let hs = 1f32 / hf;
-        let mut v = Vec::<(f32, f32)>::with_capacity(w * h);
+        let mut v = Vec::<(f32, f32)>::with_capacity(w as usize * h as usize);
         for x in 0..w {
             for y in 0..h {
-                let rx = (ws * (x as f32)) + (self.range.sample::<XorShiftRng>(rng) * ws);
-                let ry = (hs * (y as f32)) + (self.range.sample::<XorShiftRng>(rng) * hs);
+                let rx = (ws * (x as f32)) + (rng.sample(self.range) * ws);
+                let ry = (hs * (y as f32)) + (rng.sample(self.range) * hs);
                 v.push((rx, ry));
             }
         }
@@ -60,7 +56,7 @@ impl Sampler {
     pub fn strata_centers_1d(&mut self, n : u32) -> Vec<f32> {
         let nf = n as f32;
         let ns = 1f32 / nf;
-        let mut v = Vec::<f32>::with_capacity(n);
+        let mut v = Vec::<f32>::with_capacity(n as usize);
         for x in 0..n {
             let r = (ns * (x as f32)) + (ns / 2f32);
             v.push(r);
@@ -73,7 +69,7 @@ impl Sampler {
         let hf = h as f32;
         let ws = 1f32 / wf;
         let hs = 1f32 / hf;
-        let mut v = Vec::<(f32, f32)>::with_capacity(w * h);
+        let mut v = Vec::<(f32, f32)>::with_capacity(w as usize * h as usize);
         for x in 0..w {
             for y in 0..h {
                 let rx = (ws * (x as f32)) + (ws / 2f32);
@@ -85,7 +81,7 @@ impl Sampler {
     }
 
     pub fn halton_1d(&mut self, n : u32) -> Vec<f32> {
-        let mut v = Vec::<f32>::with_capacity(n);
+        let mut v = Vec::<f32>::with_capacity(n as usize);
         for x in 0..n {
             v.push(radical_inverse(x, 2));
         }
@@ -93,7 +89,7 @@ impl Sampler {
     }
 
     pub fn halton_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
-        let mut v = Vec::<(f32, f32)>::with_capacity(n);
+        let mut v = Vec::<(f32, f32)>::with_capacity(n as usize);
         for x in 0..n {
             v.push((radical_inverse(x, 2), radical_inverse(x, 3)));
         }
@@ -101,7 +97,7 @@ impl Sampler {
     }
 
     pub fn hammersley_1d(&mut self, n : u32) -> Vec<f32> {
-        let mut v = Vec::<f32>::with_capacity(n);
+        let mut v = Vec::<f32>::with_capacity(n as usize);
         for x in 0..n {
             v.push((x as f32) / (n as f32));
         }
@@ -109,7 +105,7 @@ impl Sampler {
     }
 
     pub fn hammersley_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
-        let mut v = Vec::<(f32, f32)>::with_capacity(n);
+        let mut v = Vec::<(f32, f32)>::with_capacity(n as usize);
         for x in 0..n {
             v.push((radical_inverse(x, 2), (x as f32) / (n as f32)));
         }
@@ -117,20 +113,22 @@ impl Sampler {
     }
 
     pub fn lhc_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
+        let rng = thread_rng();
+
         let xs = self.strata_1d(n);
         let mut ys = self.strata_1d(n);
         let ys2 = ys.as_mut_slice();
-        self.rng.shuffle(ys2);
+        rng.shuffle(ys2);
         
-        let mut v = Vec::<(f32, f32)>::with_capacity(n);
+        let mut v = Vec::<(f32, f32)>::with_capacity(n as usize);
         for x in 0..n {
-            v.push((xs[x], ys2[x]));
+            v.push((xs[x as usize], ys2[x as usize]));
         }
         v
     }
 
     pub fn s02_2d(&mut self, s1 : u32, s2 : u32, n : u32) -> Vec<(f32, f32)> {
-        let mut v = Vec::<(f32, f32)>::with_capacity(n);
+        let mut v = Vec::<(f32, f32)>::with_capacity(n as usize);
         for x in 0..n {
             v.push((van_der_corput(x as u32, s1), sobol(x as u32, s2)));
         }

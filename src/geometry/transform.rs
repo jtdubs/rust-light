@@ -1,9 +1,9 @@
 use std::default::Default;
 use std::ops::{Add,Neg};
 
-use geometry::matrix::Matrix;
-use geometry::vector::Vector;
-use geometry::quaternion::Quaternion;
+use crate::geometry::matrix::Matrix;
+use crate::geometry::vector::Vector;
+use crate::geometry::quaternion::Quaternion;
 
 pub struct Transform {
     m : Matrix,
@@ -74,38 +74,40 @@ impl Default for Transform {
 
 impl Neg for Transform {
     type Output=Transform;
-    fn neg(&self) -> Transform {
+    fn neg(self) -> Transform {
         self.inverse()
     }
 }
 
 impl Add<Transform> for Transform {
     type Output=Transform;
-    fn add(&self, t : &Transform) -> Transform {
-        self.compose(t)
+    fn add(self, t : Transform) -> Transform {
+        self.compose(&t)
     }
 }
 
 pub trait Trans {
-    fn transform(&self, t : &Transform) -> Self;
+    type Output;
 
-    fn translate(&self, v : &Vector) -> Self {
+    fn transform(&self, t : &Transform) -> Self::Output;
+
+    fn translate(&self, v : &Vector) -> Self::Output {
         self.transform(&Transform::translation(v))
     }
 
-    fn scale(&self, v : &Vector) -> Self {
+    fn scale(&self, v : &Vector) -> Self::Output {
         self.transform(&Transform::scaling(v))
     }
 
-    fn rotate_q(&self, q : &Quaternion) -> Self {
+    fn rotate_q(&self, q : &Quaternion) -> Self::Output {
         self.transform(&Transform::rotation_q(q))
     }
 
-    fn rotate(&self, angle : f32, axis : &Vector) -> Self {
+    fn rotate(&self, angle : f32, axis : &Vector) -> Self::Output {
         self.transform(&Transform::rotation(angle, axis))
     }
 
-    fn rotate3(&self, pitch : f32, yaw : f32, roll : f32) -> Self {
+    fn rotate3(&self, pitch : f32, yaw : f32, roll : f32) -> Self::Output {
         self.transform(&Transform::rotation3(pitch, yaw, roll))
     }
 }

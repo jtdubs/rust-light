@@ -1,4 +1,4 @@
-use filters::filter::Filter;
+use crate::filters::filter::Filter;
 
 pub struct CachingFilter {
     w : f32,
@@ -14,7 +14,7 @@ impl CachingFilter {
         let mut cf = CachingFilter {
             w: w,
             h: h, 
-            cache: [0f32, ..256] ,
+            cache: [0f32; 256] ,
             x_scale: 15f32 / w,
             y_scale: 15f32 * 16f32 / h,
         };
@@ -37,8 +37,8 @@ impl Filter for CachingFilter {
     }
 
     fn weight(&self, x : f32, y : f32) -> f32 {
-        let sx = (x.abs() * self.x_scale) as u32;
-        let sy = (y.abs() * self.y_scale) as u32;
+        let sx = (x.abs() * self.x_scale) as usize;
+        let sy = (y.abs() * self.y_scale) as usize;
         self.cache[sx + sy]
     }
 }

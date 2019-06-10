@@ -1,11 +1,11 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use geometry::vector::Vector;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::geometry::vector::Vector;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Triangle {
     t : Transform,
@@ -35,11 +35,11 @@ impl Default for Triangle {
 
 impl Shape for Triangle {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([self.a, self.b, self.c])
+        BoundingBox::for_points(&[self.a, self.b, self.c])
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn surface_area(&self) -> f32 {
@@ -48,7 +48,7 @@ impl Shape for Triangle {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -74,7 +74,7 @@ impl Shape for Triangle {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let e1 = self.b.sub_p(&self.a);
         let e2 = self.c.sub_p(&self.a);
@@ -95,6 +95,8 @@ impl Shape for Triangle {
 }
 
 impl Trans for Triangle {
+    type Output=Triangle;
+
     fn transform(&self, t : &Transform) -> Triangle {
         Triangle { t: *t + self.t, .. *self }
     }

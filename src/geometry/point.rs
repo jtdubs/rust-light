@@ -2,8 +2,8 @@ use std::default::Default;
 use std::ops::{Add,Sub};
 use std::fmt::{Display,Formatter,Result};
 
-use geometry::vector::Vector;
-use geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::vector::Vector;
+use crate::geometry::transform::{Transform,Trans,TransMut};
 
 pub struct Point {
     pub x : f32,
@@ -96,6 +96,8 @@ impl Default for Point {
 }
 
 impl Trans for Point {
+    type Output=Point;
+
     fn transform(&self, t : &Transform) -> Point {
         t.transformation_matrix().mul_p(self)
     }
@@ -110,22 +112,22 @@ impl TransMut for Point {
 
 impl Sub<Point> for Point {
     type Output=Vector;
-    fn sub(&self, p : &Point) -> Vector {
-        self.sub_p(p)
+    fn sub(self, p : Point) -> Vector {
+        self.sub_p(&p)
     }
 }
 
 impl Sub<Vector> for Point {
     type Output=Point;
-    fn sub(&self, v : &Vector) -> Point {
-        self.sub_v(v)
+    fn sub(self, v : Vector) -> Point {
+        self.sub_v(&v)
     }
 }
 
 impl Add<Vector> for Point {
     type Output=Point;
-    fn add(&self, v : &Vector) -> Point {
-        self.add_v(v)
+    fn add(self, v : Vector) -> Point {
+        self.add_v(&v)
     }
 }
 

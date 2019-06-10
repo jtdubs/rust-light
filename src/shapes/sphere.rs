@@ -1,11 +1,11 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use math::quadratic;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::math::quadratic;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Sphere {
     t : Transform,
@@ -30,7 +30,7 @@ impl Default for Sphere {
 
 impl Shape for Sphere {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.r, -self.r, -self.r), Point::new(self.r, self.r, self.r)])
+        BoundingBox::for_points(&[Point::new(-self.r, -self.r, -self.r), Point::new(self.r, self.r, self.r)])
     }
 
     fn surface_area(&self) -> f32 {
@@ -38,12 +38,12 @@ impl Shape for Sphere {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -60,7 +60,7 @@ impl Shape for Sphere {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -77,6 +77,8 @@ impl Shape for Sphere {
 }
 
 impl Trans for Sphere {
+    type Output=Sphere;
+
     fn transform(&self, t : &Transform) -> Sphere {
         Sphere { t: *t + self.t, .. *self }
     }

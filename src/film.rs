@@ -5,7 +5,7 @@ extern crate lodepng;
 use std::default::Default;
 use std::path::Path;
 
-use filters::filter::Filter;
+use crate::filters::filter::Filter;
 
 pub struct Pixel {
     sum : f32,
@@ -37,7 +37,7 @@ impl<'a> Film<'a> {
             width: width, 
             height: height, 
             filter: f, 
-            pixels: Vec::from_fn(width * height, |_| { Default::default() })
+            pixels: Vec::with_capacity((width * height) as usize) // , |_| { Default::default() })
         }
     }
 
@@ -56,11 +56,11 @@ impl<'a> Film<'a> {
     }
 
     fn get_pixel(&self, x : u32, y : u32) -> &Pixel {
-        &self.pixels[y * self.width + x]
+        &self.pixels[(y * self.width + x) as usize]
     }
 
     fn get_pixel_mut(&mut self, x : u32, y : u32) -> &mut Pixel {
-        &mut self.pixels[y * self.width + x]
+        &mut self.pixels[(y * self.width + x) as usize]
     }
 
     // TODO: verify add_sample is walking the right range and picking the right weights
@@ -92,7 +92,7 @@ impl<'a> Film<'a> {
             }
         }
 
-        match lodepng::encode_file(path, pixels.as_slice(), self.width as u32, self.height as u32, lodepng::ffi::ColorType::GREY, 8) {
+        match lodepng::encode_file(path, pixels.as_slice(), self.width as usize, self.height as usize, lodepng::ffi::ColorType::GREY, 8) {
             Err(_) => Err("encoding failure"),
             Ok(_) => Ok(()),
         }

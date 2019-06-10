@@ -1,10 +1,10 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Plane {
     t : Transform,
@@ -30,11 +30,11 @@ impl Default for Plane {
 
 impl Shape for Plane {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.hw, -self.hd, 0f32), Point::new(self.hw, self.hd, 0f32)])
+        BoundingBox::for_points(&[Point::new(-self.hw, -self.hd, 0f32), Point::new(self.hw, self.hd, 0f32)])
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn surface_area(&self) -> f32 {
@@ -43,7 +43,7 @@ impl Shape for Plane {
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         if ray.direction.z > 0.0001 {
             let t = -ray.origin.z / ray.direction.z;
@@ -57,7 +57,7 @@ impl Shape for Plane {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         if ray.direction.z.abs() < 0.0001 { return None; }
         let t = -ray.origin.z / ray.direction.z;
@@ -71,6 +71,8 @@ impl Shape for Plane {
 }
 
 impl Trans for Plane {
+    type Output=Plane;
+
     fn transform(&self, t : &Transform) -> Plane {
         Plane { t: *t + self.t, .. *self }
     }

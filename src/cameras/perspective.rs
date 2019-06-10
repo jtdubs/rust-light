@@ -1,8 +1,8 @@
-use geometry::transform::{Transform,TransMut};
-use geometry::ray::Ray;
-use geometry::vector::Vector;
-use geometry::point::Point;
-use cameras::camera::Camera;
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::ray::Ray;
+use crate::geometry::vector::Vector;
+use crate::geometry::point::Point;
+use crate::cameras::camera::Camera;
 
 pub struct PerspectiveCamera {
     t : Transform,
@@ -22,7 +22,7 @@ impl PerspectiveCamera {
 impl Camera for PerspectiveCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
         let d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32).normalize();
-        Ray::new(&Point::origin(), &d) * -self.t
+        Ray::new(&Point::origin(), &d).transform(&-self.t)
     }
 }
 

@@ -1,10 +1,10 @@
 use std::default::Default;
 
-use geometry::transform::{Transform,Trans,TransMut};
-use geometry::bounding_box::BoundingBox;
-use geometry::ray::Ray;
-use geometry::point::Point;
-use shapes::shape::{Shape,Intersection};
+use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::ray::Ray;
+use crate::geometry::point::Point;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct RectangularPrism {
     t : Transform,
@@ -31,7 +31,7 @@ impl Default for RectangularPrism {
 
 impl Shape for RectangularPrism {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points([Point::new(-self.hw, -self.hh, -self.hd), Point::new(self.hw, self.hh, self.hd)])
+        BoundingBox::for_points(&[Point::new(-self.hw, -self.hh, -self.hd), Point::new(self.hw, self.hh, self.hd)])
     }
 
     fn surface_area(&self) -> f32 {
@@ -39,12 +39,12 @@ impl Shape for RectangularPrism {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound() * self.t
+        self.bound().transform(&self.t)
     }
 
     fn intersections(&self, r : &Ray) -> Vec<Intersection> {
         let mut res = Vec::new();
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -68,7 +68,7 @@ impl Shape for RectangularPrism {
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = (*r) * -self.t;
+        let ray = r.transform(&-self.t);
 
         let tx1 = (-self.hw - ray.origin.x) / ray.direction.x;
         let tx2 = (self.hw - ray.origin.x) / ray.direction.x;
@@ -93,6 +93,8 @@ impl Shape for RectangularPrism {
 }
 
 impl Trans for RectangularPrism {
+    type Output=RectangularPrism;
+
     fn transform(&self, t : &Transform) -> RectangularPrism {
         RectangularPrism { t: *t + self.t, .. *self }
     }
