@@ -33,11 +33,13 @@ impl Default for Pixel {
 
 impl<'a> Film<'a> {
     pub fn new(width : u32, height : u32, f : Box<Filter + 'a>) -> Film<'a> {
+        let mut v : Vec<Pixel> = Vec::new();
+        v.resize_with((width * height) as usize, || Default::default());
         Film {
             width: width, 
             height: height, 
             filter: f, 
-            pixels: Vec::with_capacity((width * height) as usize) // , |_| { Default::default() })
+            pixels: v
         }
     }
 
@@ -73,8 +75,8 @@ impl<'a> Film<'a> {
         let ox = 0.5f32 - x;
         let oy = 0.5f32 - y;
         let vf = v as f32;
-        for ux in min_x..max_x {
-            for uy in min_y..max_y {
+        for ux in min_x..=max_x {
+            for uy in min_y..=max_y {
                 let w = self.filter.weight(ux as f32 + ox, uy as f32 + oy);
                 let p = self.get_pixel_mut(ux, uy);
                 p.sum = p.sum + (vf * w);

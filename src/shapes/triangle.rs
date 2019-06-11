@@ -7,6 +7,7 @@ use crate::geometry::point::Point;
 use crate::geometry::vector::Vector;
 use crate::shapes::shape::{Shape,Intersection};
 
+#[derive(Copy, Clone)]
 pub struct Triangle {
     t : Transform,
     a : Point,

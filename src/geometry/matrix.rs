@@ -6,6 +6,7 @@ use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
 use crate::geometry::normal::Normal;
 
+#[derive(Copy, Clone)]
 pub struct Matrix {
     m : [f32; 16],
 }
@@ -225,18 +226,6 @@ impl Display for Matrix {
                  self[ 4], self[ 5], self[ 6], self[ 7],
                  self[ 8], self[ 9], self[10], self[11],
                  self[12], self[13], self[14], self[15])
-    }
-}
-
-impl Clone for Matrix {
-    fn clone(&self) -> Matrix {
-        Matrix::new(&self.m)
-    }
-
-    fn clone_from(&mut self, source: &Matrix) {
-        for ix in 0..16 {
-            self.m[ix] = source.m[ix]
-        }
     }
 }
 

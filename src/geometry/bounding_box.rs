@@ -5,6 +5,7 @@ use crate::geometry::point::Point;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 use crate::geometry::ray::Ray;
 
+#[derive(Copy, Clone)]
 pub struct BoundingBox {
     empty : bool,
     min   : Point,
@@ -210,18 +211,6 @@ impl BoundingBox {
 impl Display for BoundingBox {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "BoundingBox {{ min: {}, max: {} }}", self.min, self.max)
-    }
-}
-
-impl Clone for BoundingBox {
-    fn clone(&self) -> BoundingBox {
-        BoundingBox { .. *self }
-    }
-
-    fn clone_from(&mut self, source: &BoundingBox) {
-        self.empty = source.empty;
-        self.min.clone_from(&source.min);
-        self.max.clone_from(&source.max);
     }
 }
 

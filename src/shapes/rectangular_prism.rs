@@ -6,6 +6,7 @@ use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
 use crate::shapes::shape::{Shape,Intersection};
 
+#[derive(Copy, Clone)]
 pub struct RectangularPrism {
     t : Transform,
     hw : f32,

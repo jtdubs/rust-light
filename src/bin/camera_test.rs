@@ -1,6 +1,5 @@
 extern crate light;
 
-use std::num::FloatMath;
 use light::cameras::camera::Camera;
 use light::cameras::perspective::PerspectiveCamera;
 use light::cameras::orthographic::OrthographicCamera;
@@ -9,9 +8,9 @@ use light::filters::box_filter::BoxFilter;
 use light::geometry::ray::Ray;
 
 fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
-    let mut res = Vec::with_capacity((f.width * f.height) as uint);
-    for x in range(0, f.width) {
-        for y in range(0, f.height) {
+    let mut res = Vec::with_capacity((f.width * f.height) as usize);
+    for x in 0..f.width {
+        for y in 0..f.height {
             let cx = ((x as f32 + 0.5f32) / (f.width as f32)) * 2f32 - 1f32;
             let cy = ((y as f32 + 0.5f32) / (f.height as f32)) * 2f32 - 1f32;
             let r = c.cast(cx, cy);
@@ -23,24 +22,24 @@ fn get_rays(c : &Camera, f : &Film) -> Vec<Ray> {
 
 fn main() {
     println!("clf;");
-    let f = Film::new(16, 12, box BoxFilter::new(1f32, 1f32));
-    draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(Float::frac_pi_3(), (f.width as f32 / f.height as f32)));
-    draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(Float::frac_pi_2(), (f.width as f32 / f.height as f32)));
-    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32, (f.width as f32 / f.height as f32)));
+    let f = Film::new(16, 12, Box::new(BoxFilter::new(1f32, 1f32)));
+    draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(std::f32::consts::FRAC_PI_3, f.width as f32 / f.height as f32));
+    draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(std::f32::consts::FRAC_PI_2, f.width as f32 / f.height as f32));
+    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32, f.width as f32 / f.height as f32));
 }
 
-fn draw_p(ix : int, title : &str, f : &Film, c : &PerspectiveCamera) {
+fn draw_p(ix : usize, title : &str, f : &Film, c : &PerspectiveCamera) {
     let fh = f.height as f32;
     draw(ix, title, f, c, fh / ((c.fov_y / 2f32).tan() * 2f32))
 }
 
-fn draw_o(ix : int, title : &str, f : &Film, c : &OrthographicCamera) {
+fn draw_o(ix : usize, title : &str, f : &Film, c : &OrthographicCamera) {
     let fw = f.width as f32;
     let fh = f.height as f32;
     draw(ix, title, f, c, fw.min(fh))
 }
 
-fn draw(ix : int, title : &str, f : &Film, c : &Camera, h : f32) {
+fn draw(ix : usize, title : &str, f : &Film, c : &Camera, h : f32) {
     let fw = f.width as f32;
     let fh = f.height as f32;
     

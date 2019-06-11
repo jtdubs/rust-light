@@ -15,17 +15,19 @@ impl Sampler {
     }
 
     pub fn uniform_1d(&mut self, n : u32) -> Vec<f32> {
-        let rng = thread_rng();
+        let mut rng = thread_rng();
         rng.sample_iter(&self.range).take(n as usize).collect()
     }
 
     pub fn uniform_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
-        let rng = thread_rng();
-        rng.sample_iter(&self.range).zip(rng.sample_iter(&self.range)).take(n as usize).collect()
+        let mut rng = thread_rng();
+        let l : Vec<f32> = rng.sample_iter(&self.range).take(n as usize).collect();
+        let r : Vec<f32> = rng.sample_iter(&self.range).take(n as usize).collect();
+        l.iter().zip(r.iter()).map(|(&x, &y)| (x, y)).collect()
     }
 
     pub fn strata_1d(&mut self, n : u32) -> Vec<f32> {
-        let rng = thread_rng();
+        let mut rng = thread_rng();
         let nf = n as f32;
         let ns = 1f32 / nf;
         let mut v = Vec::<f32>::with_capacity(n as usize);
@@ -37,7 +39,7 @@ impl Sampler {
     }
 
     pub fn strata_2d(&mut self, w : u32, h : u32) -> Vec<(f32, f32)> {
-        let rng = thread_rng();
+        let mut rng = thread_rng();
         let wf = w as f32;
         let hf = h as f32;
         let ws = 1f32 / wf;
@@ -113,7 +115,7 @@ impl Sampler {
     }
 
     pub fn lhc_2d(&mut self, n : u32) -> Vec<(f32, f32)> {
-        let rng = thread_rng();
+        let mut rng = thread_rng();
 
         let xs = self.strata_1d(n);
         let mut ys = self.strata_1d(n);

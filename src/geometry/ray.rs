@@ -4,6 +4,7 @@ use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
+#[derive(Copy, Clone)]
 pub struct Ray {
     pub origin    : Point,
     pub direction : Vector,
@@ -42,17 +43,6 @@ impl Ray {
 impl Display for Ray {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "Ray {{ origin: {}, direction: {} }}", self.origin, self.direction)
-    }
-}
-
-impl Clone for Ray {
-    fn clone(&self) -> Ray {
-        Ray::new(&self.origin, &self.direction)
-    }
-
-    fn clone_from(&mut self, source: &Ray) {
-        self.origin = source.origin;
-        self.direction = source.direction;
     }
 }
 

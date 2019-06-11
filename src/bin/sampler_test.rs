@@ -14,7 +14,7 @@ pub fn main() {
     draw(1, 2, 3, 6, None, "Hammersley", &s.hammersley_2d(100));
 }
 
-fn draw(f : int, w : int, h : int, ix : int, grid : Option<(int, int)>, title : &str, samples : &Vec<(f32, f32)>) {
+fn draw(f : u32, w : u32, h : u32, ix : u32, grid : Option<(i32, i32)>, title : &str, samples : &Vec<(f32, f32)>) {
     println!("figure ({});", f);
     println!("subplot ({}, {}, {});", w, h, ix);
     match grid {
@@ -44,6 +44,6 @@ fn draw(f : int, w : int, h : int, ix : int, grid : Option<(int, int)>, title : 
         print!("{}, ", y);
     }
     println!("];");
-    println!("scatter(xs, ys, 1, \"black\");");
+    println!("scatter(xs, ys, 1);");
     println!("hold off;");
 }

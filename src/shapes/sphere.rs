@@ -7,6 +7,7 @@ use crate::geometry::point::Point;
 use crate::math::quadratic;
 use crate::shapes::shape::{Shape,Intersection};
 
+#[derive(Copy, Clone)]
 pub struct Sphere {
     t : Transform,
     r : f32

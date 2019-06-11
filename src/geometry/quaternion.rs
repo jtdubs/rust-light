@@ -5,6 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::matrix::Matrix;
 use crate::geometry::vector::Vector;
 
+#[derive(Copy, Clone)]
 pub struct Quaternion {
     v : Vector,
     w : f32
@@ -135,17 +136,6 @@ impl Quaternion {
 impl Display for Quaternion {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "{{{}, {}, {}, {}}}", self.v.x, self.v.y, self.v.z, self.w)
-    }
-}
-
-impl Clone for Quaternion {
-    fn clone(&self) -> Quaternion {
-        Quaternion::new(&self.v, self.w)
-    }
-
-    fn clone_from(&mut self, source: &Quaternion) {
-        self.v = source.v;
-        self.w = source.w;
     }
 }
 

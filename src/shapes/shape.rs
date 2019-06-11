@@ -3,6 +3,7 @@ use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
 
+#[derive(Copy, Clone)]
 pub struct Intersection {
     pub ray : Ray,
     pub time : f32,

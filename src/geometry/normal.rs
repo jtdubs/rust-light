@@ -5,6 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::vector::Vector;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
+#[derive(Copy, Clone)]
 pub struct Normal {
     pub x : f32,
     pub y : f32,
@@ -116,18 +117,6 @@ impl Normal {
 impl Display for Normal {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "[{}, {}, {}]", self.x, self.y, self.z)
-    }
-}
-
-impl Clone for Normal {
-    fn clone(&self) -> Normal {
-        Normal::new(self.x, self.y, self.z)
-    }
-
-    fn clone_from(&mut self, source: &Normal) {
-        self.x = source.x;
-        self.y = source.y;
-        self.z = source.z;
     }
 }
 

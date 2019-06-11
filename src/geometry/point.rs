@@ -5,6 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::vector::Vector;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
+#[derive(Copy, Clone)]
 pub struct Point {
     pub x : f32,
     pub y : f32,
@@ -58,18 +59,6 @@ impl Point {
 
     pub fn sub_p(&self, o : &Point) -> Vector {
         Vector::new(self.x - o.x, self.y - o.y, self.z - o.z)
-    }
-}
-
-impl Clone for Point {
-    fn clone(&self) -> Point {
-        Point::new(self.x, self.y, self.z)
-    }
-
-    fn clone_from(&mut self, source: &Point) {
-        self.x = source.x;
-        self.y = source.y;
-        self.z = source.z;
     }
 }
 
