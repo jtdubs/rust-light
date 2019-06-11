@@ -7,3 +7,4 @@ perf.data.old
 out/
 perf.data
 perf.data.old
+*.swp
