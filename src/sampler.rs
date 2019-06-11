@@ -24,7 +24,7 @@ impl Sampler {
         let mut rng = thread_rng();
         let l : Vec<f32> = rng.sample_iter(&self.range).take(n as usize).collect();
         let r : Vec<f32> = rng.sample_iter(&self.range).take(n as usize).collect();
-        l.iter().zip(r.iter()).map(|(&x, &y)| (x, y)).collect()
+        l.into_iter().zip(r.into_iter()).collect()
     }
 
     pub fn strata_1d(&mut self, n : u32) -> Vec<f32> {

@@ -17,8 +17,9 @@ fn main() {
     // let pi_2 : f32 = std::f32::consts::FRAC_PI_2;
     let pi_3 : f32 = std::f32::consts::FRAC_PI_3;
 
-    let ref mut film = Film::new(640, 480, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
-    // let ref mut film = Film::new(1280, 720, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
+    // let ref mut film = Film::new(320, 240, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
+    // let ref mut film = Film::new(640, 480, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
+    let ref mut film = Film::new(1280, 720, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
     let ref camera = PerspectiveCamera::new(pi_3, film.width as f32 / film.height as f32);
 
     let mut scene = Scene::new();

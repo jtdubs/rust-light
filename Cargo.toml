@@ -6,6 +6,4 @@ edition = "2018"
 
 [dependencies]
 rand = "0.6"
-
-[dependencies.lodepng]
-git = "https://github.com/pornel/lodepng-rust.git"
+png = "0.14.1"
