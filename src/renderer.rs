@@ -1,9 +1,10 @@
 use crate::scene::Scene;
 use crate::sampler::Sampler;
 use crate::film::Film;
+use crate::filters::filter::Filter;
 use crate::cameras::camera::Camera;
 
-pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
+pub fn render<F : Filter>(camera : &Camera, film : &mut Film<F>, scene : &mut Scene) {
     let (min_z, max_z) = match scene.bounds().range_z() {
         None => (0f32, 0f32),
         Some((n, x)) => (n, x),

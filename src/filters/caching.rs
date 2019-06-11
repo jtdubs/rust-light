@@ -30,10 +30,12 @@ impl CachingFilter {
 }
 
 impl Filter for CachingFilter {
+    #[inline]
     fn extent(&self) -> (f32, f32) {
         (self.w, self.h)
     }
 
+    #[inline]
     fn weight(&self, x : f32, y : f32) -> f32 {
         let xa = x.abs();
         let ya = y.abs();
