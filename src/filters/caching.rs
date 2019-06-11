@@ -14,16 +14,14 @@ impl CachingFilter {
         let mut cf = CachingFilter {
             w: w,
             h: h, 
-            cache: [0f32; 256] ,
+            cache: [0f32; 256],
             x_scale: 15f32 / w,
-            y_scale: 15f32 * 16f32 / h,
+            y_scale: (16f32 * 15f32) / h
         };
         for x in 0..16 {
-            let fx = x as f32;
             for y in 0..16 {
-                let fy = y as f32;
-                let sx = (fx / 15f32) * w;
-                let sy = (fy / 15f32) * h;
+                let sx = (x as f32 / 15f32) * w;
+                let sy = (y as f32 / 15f32) * h;
                 cf.cache[y * 16 + x] = f.weight(sx, sy);
             }
         };
@@ -37,8 +35,14 @@ impl Filter for CachingFilter {
     }
 
     fn weight(&self, x : f32, y : f32) -> f32 {
-        let sx = (x.abs() * self.x_scale) as usize;
-        let sy = (y.abs() * self.y_scale) as usize;
-        self.cache[sx + sy]
+        let xa = x.abs();
+        let ya = y.abs();
+        if xa > self.w || ya > self.h {
+            0f32
+        } else {
+            let sx = (xa * self.x_scale) as usize;
+            let sy = (ya * self.y_scale) as usize;
+            self.cache[sx + sy]
+        }
     }
 }

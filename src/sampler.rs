@@ -1,6 +1,7 @@
 extern crate rand;
 
 use rand::prelude::*;
+use rand::seq::SliceRandom;
 use rand::distributions::uniform::{Uniform};
 
 use crate::math::{radical_inverse,sobol,van_der_corput};
@@ -30,6 +31,7 @@ impl Sampler {
         let mut rng = thread_rng();
         let nf = n as f32;
         let ns = 1f32 / nf;
+
         let mut v = Vec::<f32>::with_capacity(n as usize);
         for x in 0..n {
             let r = ns * (x as f32 + rng.sample(self.range));
@@ -119,14 +121,9 @@ impl Sampler {
 
         let xs = self.strata_1d(n);
         let mut ys = self.strata_1d(n);
-        let ys2 = ys.as_mut_slice();
-        rng.shuffle(ys2);
-        
-        let mut v = Vec::<(f32, f32)>::with_capacity(n as usize);
-        for x in 0..n {
-            v.push((xs[x as usize], ys2[x as usize]));
-        }
-        v
+        ys.shuffle(&mut rng);
+
+        xs.into_iter().zip(ys.into_iter()).collect()
     }
 
     pub fn s02_2d(&mut self, s1 : u32, s2 : u32, n : u32) -> Vec<(f32, f32)> {

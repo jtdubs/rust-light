@@ -12,10 +12,10 @@ pub struct Pixel {
     weight_sum : f32
 }
 
-pub struct Film<'a> {
+pub struct Film {
     pub width : u32,
     pub height : u32,
-    filter : Box<Filter + 'a>,
+    filter : Box<Filter>,
     pixels : Vec<Pixel>,
 }
 
@@ -31,8 +31,8 @@ impl Default for Pixel {
     }
 }
 
-impl<'a> Film<'a> {
-    pub fn new(width : u32, height : u32, f : Box<Filter + 'a>) -> Film<'a> {
+impl Film {
+    pub fn new(width : u32, height : u32, f : Box<Filter>) -> Film {
         let mut v : Vec<Pixel> = Vec::new();
         v.resize_with((width * height) as usize, || Default::default());
         Film {
@@ -43,23 +43,23 @@ impl<'a> Film<'a> {
         }
     }
 
-    pub fn new_1080(f : Box<Filter + 'a>) -> Film<'a> { Film::new(1920, 1080, f) }
-    pub fn new_720(f : Box<Filter + 'a>) -> Film<'a> { Film::new(1280, 720, f) }
-    pub fn new_480(f : Box<Filter + 'a>) -> Film<'a> { Film::new(720, 480, f) }
-    pub fn new_2k(f : Box<Filter + 'a>) -> Film<'a> { Film::new(2048, 1080, f) }
-    pub fn new_4k(f : Box<Filter + 'a>) -> Film<'a> { Film::new(4096, 2160, f) }
-    pub fn new_8k(f : Box<Filter + 'a>) -> Film<'a> { Film::new(8192, 4608, f) }
-    pub fn new_qvga(f : Box<Filter + 'a>) -> Film<'a> { Film::new(320, 240, f) }
-    pub fn new_vga(f : Box<Filter + 'a>) -> Film<'a> { Film::new(640, 480, f) }
+    pub fn new_1080(f : Box<Filter>) -> Film { Film::new(1920, 1080, f) }
+    pub fn new_720(f : Box<Filter>) -> Film { Film::new(1280, 720, f) }
+    pub fn new_480(f : Box<Filter>) -> Film { Film::new(720, 480, f) }
+    pub fn new_2k(f : Box<Filter>) -> Film { Film::new(2048, 1080, f) }
+    pub fn new_4k(f : Box<Filter>) -> Film { Film::new(4096, 2160, f) }
+    pub fn new_8k(f : Box<Filter>) -> Film { Film::new(8192, 4608, f) }
+    pub fn new_qvga(f : Box<Filter>) -> Film { Film::new(320, 240, f) }
+    pub fn new_vga(f : Box<Filter>) -> Film { Film::new(640, 480, f) }
 
     pub fn sample_bounds(&self) -> ((i32, i32), (i32, i32)) {
         let (ex, ey) = self.filter.extent();
         (((-ex).floor() as i32, (-ey).floor() as i32), ((self.width as f32 + ex).ceil() as i32, (self.height as f32 + ey).ceil() as i32))
     }
 
-    fn get_pixel(&self, x : u32, y : u32) -> &Pixel {
-        &self.pixels[(y * self.width + x) as usize]
-    }
+    // fn get_pixel(&self, x : u32, y : u32) -> &Pixel {
+    //     &self.pixels[(y * self.width + x) as usize]
+    // }
 
     fn get_pixel_mut(&mut self, x : u32, y : u32) -> &mut Pixel {
         &mut self.pixels[(y * self.width + x) as usize]
@@ -86,13 +86,7 @@ impl<'a> Film<'a> {
     }
 
     pub fn save(&self, path : &Path) -> Result<(), &str> {
-        let mut pixels = Vec::<u8>::new();
-        for y in 0..self.height {
-            for x in 0..self.width {
-                let p = self.get_pixel(x, y);
-                pixels.push((p.sum / p.weight_sum).round() as u8);
-            }
-        }
+        let pixels : Vec<u8> = self.pixels.iter().map(|p| (p.sum / p.weight_sum).round() as u8).collect();
 
         match lodepng::encode_file(path, pixels.as_slice(), self.width as usize, self.height as usize, lodepng::ffi::ColorType::GREY, 8) {
             Err(_) => Err("encoding failure"),

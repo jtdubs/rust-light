@@ -19,7 +19,7 @@ pub fn render(camera : &Camera, film : &mut Film, scene : &mut Scene) {
 
     for x in 0..fw {
         for y in 0..fh {
-            for &(dx, dy) in sampler.lhc_2d(8).iter() {
+            for (dx, dy) in sampler.lhc_2d(8).into_iter() {
                 let fx = (x as f32) + dx;
                 let fy = (y as f32) + dy;
                 let cx = fx * x_scale - 1f32;
