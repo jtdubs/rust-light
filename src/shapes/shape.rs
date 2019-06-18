@@ -1,4 +1,3 @@
-use crate::geometry::transform::{TransMut};
 use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
@@ -16,7 +15,7 @@ impl Intersection {
     }
 }
 
-pub trait Shape : TransMut /* + Trans */ {
+pub trait Shape {
     fn bound(&self) -> BoundingBox;
     fn world_bound(&self) -> BoundingBox;
 
@@ -32,4 +31,3 @@ pub trait Shape : TransMut /* + Trans */ {
         }
     }
 }
-
