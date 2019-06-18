@@ -41,13 +41,11 @@ impl Transform {
     }
 
     pub fn inverse_self(&mut self) {
-        let temp = self.m;
-        self.m = self.n;
-        self.n = temp;
+        std::mem::swap(&mut self.m, &mut self.n);
     }
 
     pub fn compose(&self, t : &Transform) -> Transform {
-        Transform { m: self.m.mul_m(&t.m), n: t.n.mul_m(&self.n) }
+        Transform { m: self.m * t.m, n: t.n * self.n }
     }
 
     pub fn compose_self(&mut self, t : &Transform) {
