@@ -13,7 +13,7 @@ pub struct BoundingBox {
 }
 
 impl BoundingBox {
-    pub fn new() -> BoundingBox {
+    pub fn empty() -> BoundingBox {
         BoundingBox { 
             empty: true,
             min: Point::origin(),
@@ -26,7 +26,7 @@ impl BoundingBox {
     }
 
     pub fn for_points(ps : &[Point]) -> BoundingBox {
-        let mut r = BoundingBox::new();
+        let mut r = BoundingBox::empty();
         for p in ps.iter() {
             r.add_self_point(p);
         }
@@ -243,7 +243,7 @@ impl TransMut for BoundingBox {
 
 impl Default for BoundingBox {
     fn default() -> BoundingBox {
-        BoundingBox::new()
+        BoundingBox::empty()
     }
 }
 

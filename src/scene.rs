@@ -19,7 +19,7 @@ impl Scene {
     }
 
     pub fn bounds(&self) -> BoundingBox {
-        let mut bounds = BoundingBox::new();
+        let mut bounds = BoundingBox::empty();
         for &(a, _) in self.primitives.iter() {
             bounds.add_self_bounding_box(&a);
         }
