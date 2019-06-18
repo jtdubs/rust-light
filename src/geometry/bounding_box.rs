@@ -170,38 +170,31 @@ impl BoundingBox {
     pub fn intersects(&self, r : &Ray) -> bool {
         if self.empty { return false; }
 
-        let mut tmin : f32;
-        let mut tmax : f32;
-
-        let tx1 = (self.min.x - r.origin.x) / r.direction.x;
-        let tx2 = (self.max.x - r.origin.x) / r.direction.x;
-        if tx1 < tx2 {
-            tmin = tx1;
-            tmax = tx2;
-        } else {
-            tmin = tx2;
-            tmax = tx1;
-        };
+        let mut tmin : f32 = (self.min.x - r.origin.x) / r.direction.x;
+        let mut tmax : f32 = (self.max.x - r.origin.x) / r.direction.x;
+        if tmin > tmax {
+            std::mem::swap(&mut tmin, &mut tmax);
+        }
 
         let ty1 = (self.min.y - r.origin.y) / r.direction.y;
         let ty2 = (self.max.y - r.origin.y) / r.direction.y;
         if ty1 < ty2 {
-            tmin = if tmin > ty1 { tmin } else { ty1 };
-            tmax = if tmax < ty2 { tmax } else { ty2 };
+            tmin = tmin.max(ty1);
+            tmax = tmax.min(ty2);
         } else {
-            tmin = if tmin > ty2 { tmin } else { ty2 };
-            tmax = if tmax < ty1 { tmax } else { ty1 };
+            tmin = tmin.max(ty2);
+            tmax = tmax.min(ty1);
         };
         if tmin > tmax { return false; }
 
         let tz1 = (self.min.z - r.origin.z) / r.direction.z;
         let tz2 = (self.max.z - r.origin.z) / r.direction.z;
         if tz1 < tz2 {
-            tmin = if tmin > tz1 { tmin } else { tz1 };
-            tmax = if tmax < tz2 { tmax } else { tz2 };
+            tmin = tmin.max(tz1);
+            tmax = tmax.min(tz2);
         } else {
-            tmin = if tmin > tz2 { tmin } else { tz2 };
-            tmax = if tmax < tz1 { tmax } else { tz1 };
+            tmin = tmin.max(tz2);
+            tmax = tmax.min(tz1);
         };
 
         tmax >= tmin && tmin >= 0f32
