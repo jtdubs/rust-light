@@ -246,5 +246,3 @@ impl Default for BoundingBox {
         BoundingBox::empty()
     }
 }
-
-// TODO: test BoundingBox

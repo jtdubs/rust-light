@@ -40,6 +40,8 @@ impl Ray {
     }
 }
 
+// TODO: implement Neg, Add<Vector>, Sub<Vector>
+
 impl Display for Ray {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "Ray {{ origin: {}, direction: {} }}", self.origin, self.direction)

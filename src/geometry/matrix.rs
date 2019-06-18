@@ -87,6 +87,15 @@ impl Matrix {
                       self[3], self[7], self[11], self[15]])
     }
 
+    pub fn transpose_self(&mut self) {
+        self.m.swap(1, 4);
+        self.m.swap(2, 8);
+        self.m.swap(3, 12);
+        self.m.swap(6, 9);
+        self.m.swap(7, 13);
+        self.m.swap(11, 14);
+    }
+
     pub fn mul_m(&self, o : &Matrix) -> Matrix {
         Matrix::new(&[self[ 0] * o.m[ 0] + self[ 1] * o.m[ 4] + self[ 2] * o.m[ 8] + self[ 3] * o.m[12],
                       self[ 0] * o.m[ 1] + self[ 1] * o.m[ 5] + self[ 2] * o.m[ 9] + self[ 3] * o.m[13],
@@ -449,4 +458,3 @@ fn test_normal_math() {
     assert_eq!(Matrix::identity().mul_n(&n), n);
     assert_eq!(Matrix::identity().premul_n(&n), n);
 }
-

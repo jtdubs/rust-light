@@ -189,5 +189,3 @@ impl Add<Quaternion> for Quaternion {
         self.add_q(&q)
     }
 }
-
-// TODO: test that the _self methods get the same result as the non-_self methods
