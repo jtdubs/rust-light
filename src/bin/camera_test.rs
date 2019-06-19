@@ -26,7 +26,7 @@ fn main() {
     let f = Film::new(16, 12, BoxFilter::new(1f32, 1f32));
     draw_p(1, "Perspective (60)", &f, &PerspectiveCamera::new(std::f32::consts::FRAC_PI_3, f.width as f32 / f.height as f32));
     draw_p(2, "Perspective (90)", &f, &PerspectiveCamera::new(std::f32::consts::FRAC_PI_2, f.width as f32 / f.height as f32));
-    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(1f32, f.width as f32 / f.height as f32));
+    draw_o(3, "Orthographic", &f, &OrthographicCamera::new(f.height as f32 / 2.0f32, f.width as f32 / f.height as f32));
 }
 
 fn draw_p<F : Filter>(ix : usize, title : &str, f : &Film<F>, c : &PerspectiveCamera) {
