@@ -1,5 +1,3 @@
-extern crate light;
-
 use std::path::Path;
 
 use light::cameras::perspective::PerspectiveCamera;

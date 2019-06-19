@@ -1,12 +1,8 @@
-// TODO: organize pixels in rectangular patches to improve cache coherency
-
-extern crate png;
-
 use std::default::Default;
 use std::path::Path;
 use std::fs::File;
-use std::io::BufWriter;
-use png::HasParameters;
+use image::png::PNGEncoder;
+use image::ColorType;
 
 use crate::filters::filter::Filter;
 
@@ -60,10 +56,6 @@ impl<F : Filter> Film<F> {
         (((-ex).floor() as i32, (-ey).floor() as i32), ((self.width as f32 + ex).ceil() as i32, (self.height as f32 + ey).ceil() as i32))
     }
 
-    // fn get_pixel(&self, x : u32, y : u32) -> &Pixel {
-    //     &self.pixels[(y * self.width + x) as usize]
-    // }
-
     #[inline]
     fn get_pixel_mut(&mut self, x : u32, y : u32) -> &mut Pixel {
         &mut self.pixels[(y * self.width + x) as usize]
@@ -94,13 +86,9 @@ impl<F : Filter> Film<F> {
         let pixels : Vec<u8> = self.pixels.iter().map(|p| (p.sum / p.weight_sum).round() as u8).collect();
 
         let file = File::create(path).unwrap();
-        let ref mut w = BufWriter::new(file);
+        let encoder = PNGEncoder::new(file);
 
-        let mut encoder = png::Encoder::new(w, self.width as u32, self.height as u32);
-        encoder.set(png::ColorType::Grayscale).set(png::BitDepth::Eight);
-
-        let mut writer = encoder.write_header().unwrap();
-        match writer.write_image_data(&pixels) {
+        match encoder.encode(pixels.as_slice(), self.width as u32, self.height as u32, ColorType::Gray(8)) {
             Ok(_)  => Ok(()),
             Err(_) => Err("save failed"),
         }

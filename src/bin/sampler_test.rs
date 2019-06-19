@@ -1,5 +1,3 @@
-extern crate light;
-
 use light::sampler::Sampler;
 
 pub fn main() {

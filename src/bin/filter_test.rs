@@ -1,5 +1,3 @@
-extern crate light;
-
 use light::filters::filter::Filter;
 use light::filters::box_filter::BoxFilter;
 use light::filters::triangle::TriangleFilter;

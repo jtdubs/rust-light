@@ -1,5 +1,3 @@
-extern crate rand;
-
 use rand::prelude::*;
 use rand::seq::SliceRandom;
 use rand::distributions::uniform::{Uniform};

@@ -1,5 +1,3 @@
-extern crate light;
-
 use light::cameras::camera::Camera;
 use light::cameras::perspective::PerspectiveCamera;
 use light::cameras::orthographic::OrthographicCamera;
