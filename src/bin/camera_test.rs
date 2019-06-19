@@ -6,7 +6,7 @@ use light::filters::filter::Filter;
 use light::filters::box_filter::BoxFilter;
 use light::geometry::ray::Ray;
 
-fn get_rays<F : Filter>(c : &Camera, f : &Film<F>) -> Vec<Ray> {
+fn get_rays<F : Filter>(c : &dyn Camera, f : &Film<F>) -> Vec<Ray> {
     let mut res = Vec::with_capacity((f.width * f.height) as usize);
     for x in 0..f.width {
         for y in 0..f.height {
@@ -38,7 +38,7 @@ fn draw_o<F : Filter>(ix : usize, title : &str, f : &Film<F>, c : &OrthographicC
     draw(ix, title, f, c, fw.min(fh))
 }
 
-fn draw<F : Filter>(ix : usize, title : &str, f : &Film<F>, c : &Camera, h : f32) {
+fn draw<F : Filter>(ix : usize, title : &str, f : &Film<F>, c : &dyn Camera, h : f32) {
     let fw = f.width as f32;
     let fh = f.height as f32;
     

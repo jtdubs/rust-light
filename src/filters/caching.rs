@@ -9,7 +9,7 @@ pub struct CachingFilter {
 }
 
 impl CachingFilter {
-    pub fn new(f : &Filter) -> CachingFilter {
+    pub fn new(f : &dyn Filter) -> CachingFilter {
         let (w, h) = f.extent();
         let mut cf = CachingFilter {
             w: w,
