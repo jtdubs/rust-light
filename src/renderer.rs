@@ -90,8 +90,8 @@ pub fn renderp<F : Filter + 'static, C : Camera + 'static>(camera : C, film : &m
     let scene = Arc::new(scene);
     let filter = Arc::new(filter);
 
-    // let pool = ThreadPool::new(4);
-    let pool = Builder::new().build();
+    let pool = ThreadPool::new(3);
+    // let pool = Builder::new().build();
 
     for (xs, ys, xe, ye) in patches {
         let tx = tx.clone();
