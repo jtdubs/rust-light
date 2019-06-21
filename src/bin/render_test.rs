@@ -1,3 +1,5 @@
+use std::path::Path;
+
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
 use light::filters::gaussian::GaussianFilter;
@@ -11,7 +13,7 @@ use light::shapes::paraboloid::Paraboloid;
 use light::shapes::cone::Cone;
 use light::shapes::plane::Plane;
 use light::shapes::cylinder::Cylinder;
-use light::renderer::{render,renderp};
+use light::renderer::render;
 use light::geometry::vector::Vector;
 use light::geometry::transform::Trans;
 
@@ -39,6 +41,11 @@ fn main() {
     scene.add(Paraboloid::unit().rotate3(-pi_2, 0f32, 0f32).translate(&Vector::new(3f32, -3f32, 10f32)));
     scene.add(Cone::unit().rotate3(pi_2, 0f32, 0f32).translate(&Vector::new(6f32, -3f32, 10f32)));
 
-    renderp(camera, film, filter, scene);
+    render(camera, film, filter, scene);
+
+    match film.save(&Path::new("out/test.png")) {
+        Ok(_) => { },
+        Err(m) => println!("{}", m),
+    }
 }
 
