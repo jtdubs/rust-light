@@ -1,4 +1,4 @@
-use std::rc::{Rc};
+use std::sync::{Arc};
 
 use crate::geometry::ray::Ray;
 use crate::geometry::bounding_box::BoundingBox;
@@ -6,9 +6,12 @@ use crate::shapes::shape::Intersection;
 use crate::shapes::shape::Shape;
 
 pub struct Scene {
-    pub primitives : Vec<(BoundingBox, Rc<dyn Shape>)>,
+    pub primitives : Vec<(BoundingBox, Arc<dyn Shape>)>,
     pub bounds : BoundingBox
 }
+
+unsafe impl Send for Scene { }
+unsafe impl Sync for Scene { }
 
 impl Scene {
     pub fn new() -> Scene {
@@ -20,7 +23,7 @@ impl Scene {
 
     pub fn add<T : Shape + 'static>(&mut self, p : T) {
         let b = p.world_bound();
-        self.primitives.push((b, Rc::new(p)));
+        self.primitives.push((b, Arc::new(p)));
         self.bounds.add_self_bounding_box(&b);
     }
 

@@ -13,7 +13,7 @@ use light::shapes::paraboloid::Paraboloid;
 use light::shapes::cone::Cone;
 use light::shapes::plane::Plane;
 use light::shapes::cylinder::Cylinder;
-use light::renderer::render;
+use light::renderer::{render,renderp};
 use light::geometry::vector::Vector;
 use light::geometry::transform::Trans;
 
@@ -24,9 +24,9 @@ fn main() {
 
     // let ref mut film = Film::new(320, 240, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
     // let ref mut film = Film::new(640, 480, Box::new(CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32))));
-    let ref mut film = Film::new(1280, 720, CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32)));
-    // let ref mut film = Film::new(1920, 1080, CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32)));
-    let ref camera = PerspectiveCamera::new(pi_3, film.width as f32 / film.height as f32);
+    // let ref mut film = Film::new(1280, 720, CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32)));
+    let ref mut film = Film::new(1920, 1080, CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32)));
+    let camera = PerspectiveCamera::new(pi_3, film.width as f32 / film.height as f32);
 
     let mut scene = Scene::new();
 
@@ -39,7 +39,7 @@ fn main() {
     scene.add(Paraboloid::unit().rotate3(-pi_2, 0f32, 0f32).translate(&Vector::new(3f32, -3f32, 10f32)));
     scene.add(Cone::unit().rotate3(pi_2, 0f32, 0f32).translate(&Vector::new(6f32, -3f32, 10f32)));
 
-    render(camera, film, &mut scene);
+    renderp(camera, film, scene);
 
     match film.save(&Path::new("out/test.png")) {
         Ok(_) => { },

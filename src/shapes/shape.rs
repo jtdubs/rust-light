@@ -15,7 +15,7 @@ impl Intersection {
     }
 }
 
-pub trait Shape {
+pub trait Shape : Send + Sync {
     fn bound(&self) -> BoundingBox;
     fn world_bound(&self) -> BoundingBox;
 
