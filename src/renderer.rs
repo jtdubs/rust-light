@@ -25,7 +25,7 @@ pub fn render<F : Filter + 'static, C : Camera + 'static>(camera : C, film : &mu
     let pool = ThreadPool::new(3);
     let (tx, rx) = channel::<Splats>();
 
-    for patch in get_patches(film, 15) {
+    for patch in get_patches(film, 16) {
         let tx = tx.clone();
         let camera = camera.clone();
         let filter = filter.clone();
@@ -59,9 +59,8 @@ pub fn render_patch<F : Filter, C : Camera>(patch : Patch, tx : Sender<Splats>, 
 
     let (ex, ey) = filter.extent();
 
+    let mut film_updates = Box::new(Vec::with_capacity(51200));
     for x in xs..xe {
-        let mut film_updates = Box::new(Vec::with_capacity(16384));
-
         for y in ys..ye {
             for (dx, dy) in sampler.lhc_2d(8).into_iter() {
                 let fx = (x as f32) + dx;
@@ -93,23 +92,25 @@ pub fn render_patch<F : Filter, C : Camera>(patch : Patch, tx : Sender<Splats>, 
                 }
             }
         }
-
-        tx.send(film_updates).unwrap();
     }
+    tx.send(film_updates).unwrap();
 
     drop(tx);
 }
 
-pub fn get_patches(film : &Film, n : u32) -> Vec<Patch> {
+pub fn get_patches(film : &Film, patch_size : u32) -> Vec<Patch> {
     let fw = film.width;
     let fh = film.height;
 
-    let patch_width  = fw / n;
-    let patch_height = fh / n;
+    let patch_width  = patch_size;
+    let patch_height = patch_size;
 
-    let mut patches = Vec::with_capacity((n * n) as usize);
+    let n = fw / patch_width;
+    let m = fh / patch_height;
+
+    let mut patches = Vec::with_capacity((n * m) as usize);
     for x in 0..n {
-        for y in 0..n {
+        for y in 0..m {
             patches.push((x * patch_width, y * patch_height, (x+1) * patch_width, (y+1) * patch_height));
         }
     }
