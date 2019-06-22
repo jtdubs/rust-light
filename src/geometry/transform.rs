@@ -44,6 +44,10 @@ impl Transform {
         std::mem::swap(&mut self.m, &mut self.n);
     }
 
+    // TODO: add look-at transform
+    // https://stackoverflow.com/a/6802424
+    // should be able to reverse order of multiplication and transpose to get the inverse...
+
     pub fn compose(&self, t : &Transform) -> Transform {
         Transform { m: self.m * t.m, n: t.n * self.n }
     }
