@@ -21,7 +21,7 @@ impl Scene {
         }
     }
 
-    pub fn add<T : Shape + 'static>(&mut self, p : T) {
+    pub fn add<S : Shape + 'static>(&mut self, p : S) {
         let b = p.world_bound();
         self.primitives.push((b, Arc::new(p)));
         self.bounds.add_self_bounding_box(&b);
