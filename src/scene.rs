@@ -1,5 +1,3 @@
-use std::sync::{Arc};
-
 use crate::geometry::ray::Ray;
 use crate::geometry::bounding_box::BoundingBox;
 use crate::shapes::shape::Intersection;
@@ -9,9 +7,6 @@ pub struct Scene {
     pub primitives : Vec<(BoundingBox, Box<dyn Shape>)>,
     pub bounds : BoundingBox
 }
-
-unsafe impl Send for Scene { }
-unsafe impl Sync for Scene { }
 
 impl Scene {
     pub fn new() -> Scene {
