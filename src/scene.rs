@@ -6,7 +6,7 @@ use crate::shapes::shape::Intersection;
 use crate::shapes::shape::Shape;
 
 pub struct Scene {
-    pub primitives : Vec<(BoundingBox, Arc<dyn Shape>)>,
+    pub primitives : Vec<(BoundingBox, Box<dyn Shape>)>,
     pub bounds : BoundingBox
 }
 
@@ -21,9 +21,9 @@ impl Scene {
         }
     }
 
-    pub fn add<S : Shape + 'static>(&mut self, p : S) {
+    pub fn add(&mut self, p : Box<dyn Shape>) {
         let b = p.world_bound();
-        self.primitives.push((b, Arc::new(p)));
+        self.primitives.push((b, p));
         self.bounds.add_self_bounding_box(&b);
     }
 
