@@ -13,7 +13,7 @@ type Patch = (u32, u32, u32, u32);
 type Splat = (u32, u32, f32, f32);
 type Splats = Box<Vec<Splat>>;
 
-pub fn render<F : Filter + 'static, C : Camera + 'static>(camera : C, film : &mut Film, filter : F, scene : Scene) {
+pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Filter + 'static, scene : Scene) {
     let camera = Arc::new(camera);
     let scene = Arc::new(scene);
     let filter = Arc::new(filter);
@@ -42,7 +42,7 @@ pub fn render<F : Filter + 'static, C : Camera + 'static>(camera : C, film : &mu
     }
 }
 
-pub fn render_patch<F : Filter, C : Camera>(patch : Patch, tx : Sender<Splats>, camera : Arc<C>, filter : Arc<F>, scene : Arc<Scene>, film_width : u32, film_height : u32, scene_bounds : BoundingBox) {
+pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, scene_bounds : BoundingBox) {
     let (min_z, max_z) = match scene_bounds.range_z() {
         None => (0f32, 0f32),
         Some((n, x)) => (n, x),
