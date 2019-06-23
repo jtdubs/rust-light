@@ -3,5 +3,6 @@
 set -e
 set -x
 
-perf record -ga cargo run --release --bin render_test
+cargo build --release --bin render_test
+perf record -ga ./target/release/render_test
 perf report -i perf.data
