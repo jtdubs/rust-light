@@ -1,3 +1,5 @@
 - Ray Context (ray + time bounds) (p110)
 - Shape intersections against ray contexts...
 - Looks like transforms might be backwards??
+- Implement the spectrum classes from Chapter 5
+- Camera extentions for lenses and depth-of-field
