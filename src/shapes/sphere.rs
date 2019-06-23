@@ -21,6 +21,8 @@ impl Sphere {
         Sphere { t: Transform::identity(), r: diameter / 2f32 }
     }
 
+    // TODO: add new_partial
+
     pub fn unit() -> Sphere {
         Sphere::new(1f32)
     }
@@ -103,6 +105,21 @@ impl Shape for Sphere {
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
                 return Some(Intersection::new(*r, thit, SurfaceContext::new(r.at_time(thit), (u, v), (dpdu, dpdv), (dndu, dndv))));
+            },
+        }
+    }
+
+    fn intersects(&self, r : &Ray) -> bool {
+        let ray = r.transform(&-self.t);
+
+        let a = ray.direction.magnitude_squared();
+        let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
+        let c = ray.origin.distance_squared(&Point::origin()) - (self.r * self.r);
+
+        match quadratic(a, b, c) {
+            None => false,
+            Some((t1, t2)) => {
+                t1 >= 0f32 || t2 >= 0f32
             },
         }
     }
