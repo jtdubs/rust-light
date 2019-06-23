@@ -1,9 +1,9 @@
 use std::fmt::{Display,Formatter,Result};
 use std::ops::{Add,Sub,Neg};
 
+use crate::geometry::transform::{HasTransform};
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
-use crate::geometry::transform::{Transform,Trans,TransMut};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Ray {
@@ -39,6 +39,14 @@ impl Ray {
     pub fn reverse_self(&mut self) {
         self.direction.reverse_self()
     }
+
+    pub fn to<T : HasTransform>(&self, t : &T) -> Ray {
+        Ray::new(&self.origin.to(t), &self.direction.to(t))
+    }
+
+    pub fn from<T : HasTransform>(&self, t : &T) -> Ray {
+        Ray::new(&self.origin.from(t), &self.direction.from(t))
+    }
 }
 
 impl Display for Ray {
@@ -54,21 +62,6 @@ impl PartialEq for Ray {
 
     fn ne(&self, other: &Ray) -> bool {
         self.origin != other.origin || self.direction != other.direction
-    }
-}
-
-impl Trans for Ray {
-    type Output = Ray;
-
-    fn transform(&self, t : &Transform) -> Ray {
-        Ray::new(&self.origin.transform(t), &self.direction.transform(t))
-    }
-}
-
-impl TransMut for Ray {
-    fn transform_self(&mut self, t : &Transform) {
-        self.origin.transform_self(t);
-        self.direction.transform_self(t)
     }
 }
 

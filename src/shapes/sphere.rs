@@ -1,7 +1,7 @@
 use log::*;
 use std::default::Default;
 
-use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::transform::{Transform,HasTransform,Trans,TransMut};
 use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
@@ -34,6 +34,12 @@ impl Default for Sphere {
     }
 }
 
+impl HasTransform for Sphere {
+    fn get_transform(&self) -> &Transform {
+        &self.t
+    }
+}
+
 impl Shape for Sphere {
     fn bound(&self) -> BoundingBox {
         BoundingBox::for_points(&[Point::new(-self.r, -self.r, -self.r), Point::new(self.r, self.r, self.r)])
@@ -44,11 +50,11 @@ impl Shape for Sphere {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&-self.t)
+        self.bound().from(self)
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&self.t);
+        let ray = r.to(self);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -110,7 +116,7 @@ impl Shape for Sphere {
     }
 
     fn intersects(&self, r : &Ray) -> bool {
-        let ray = r.transform(&self.t);
+        let ray = r.to(self);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));

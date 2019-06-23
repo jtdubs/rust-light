@@ -317,27 +317,6 @@ impl Mul<Normal> for Matrix {
     }
 }
 
-impl Mul<Matrix> for Vector {
-    type Output = Vector;
-    fn mul(self, m : Matrix) -> Vector {
-        m.premul_v(&self)
-    }
-}
-
-impl Mul<Matrix> for Point {
-    type Output = Point;
-    fn mul(self, m : Matrix) -> Point {
-        m.premul_p(&self)
-    }
-}
-
-impl Mul<Matrix> for Normal {
-    type Output = Normal;
-    fn mul(self, m : Matrix) -> Normal {
-        m.premul_n(&self)
-    }
-}
-
 #[test]
 fn test_access() {
     let l = Matrix::new(&[ 0f32,  1f32,  2f32,  3f32,

@@ -1,8 +1,8 @@
 use std::default::Default;
 use std::fmt::{Display,Formatter,Result};
 
+use crate::geometry::transform::HasTransform;
 use crate::geometry::point::Point;
-use crate::geometry::transform::{Transform,Trans,TransMut};
 use crate::geometry::ray::Ray;
 
 #[derive(Copy, Clone, Debug)]
@@ -199,6 +199,20 @@ impl BoundingBox {
 
         tmax >= tmin && tmin >= 0f32
     }
+
+    pub fn to<T : HasTransform>(&self, t : &T) -> BoundingBox {
+        match self.corners() {
+            None => *self,
+            Some(cs) => BoundingBox::for_points(cs.iter().map(|c| { c.to(t) }).collect::<Vec<Point>>().as_slice())
+        }
+    }
+
+    pub fn from<T : HasTransform>(&self, t : &T) -> BoundingBox {
+        match self.corners() {
+            None => *self,
+            Some(cs) => BoundingBox::for_points(cs.iter().map(|c| { c.from(t) }).collect::<Vec<Point>>().as_slice())
+        }
+    }
 }
 
 impl Display for BoundingBox {
@@ -214,23 +228,6 @@ impl PartialEq for BoundingBox {
 
     fn ne(&self, other: &BoundingBox) -> bool {
         self.empty != other.empty || self.min != other.min || self.max != other.max
-    }
-}
-
-impl Trans for BoundingBox {
-    type Output=BoundingBox;
-    fn transform(&self, t : &Transform) -> BoundingBox {
-        match self.corners() {
-            None => *self,
-            Some(cs) => BoundingBox::for_points(cs.iter().map(|c| { c.transform(t) }).collect::<Vec<Point>>().as_slice())
-        }
-    }
-}
-
-impl TransMut for BoundingBox {
-    fn transform_self(&mut self, t : &Transform) {
-        let c = self.clone();
-        self.clone_from(&c.transform(t))
     }
 }
 

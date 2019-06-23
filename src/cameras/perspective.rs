@@ -1,4 +1,4 @@
-use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::transform::{Transform,HasTransform,TransMut};
 use crate::geometry::ray::Ray;
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
@@ -22,7 +22,13 @@ impl PerspectiveCamera {
 impl Camera for PerspectiveCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
         let d = Vector::new(x * self.fov_x_tan, y * self.fov_y_tan, 1f32).normalize();
-        Ray::new(&Point::origin(), &d).transform(&-self.t)
+        Ray::new(&Point::origin(), &d).from(self)
+    }
+}
+
+impl HasTransform for PerspectiveCamera {
+    fn get_transform(&self) -> &Transform {
+        &self.t
     }
 }
 

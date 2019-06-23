@@ -1,6 +1,7 @@
 use log::*;
 use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::ray::Ray;
+use crate::geometry::transform::HasTransform;
 use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone, Debug)]
@@ -26,7 +27,7 @@ impl Intersection {
     }
 }
 
-pub trait Shape : Send + Sync {
+pub trait Shape : HasTransform + Send + Sync {
     fn bound(&self) -> BoundingBox;
     fn world_bound(&self) -> BoundingBox;
 

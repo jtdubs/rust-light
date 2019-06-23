@@ -83,6 +83,10 @@ impl Add<Transform> for Transform {
     }
 }
 
+pub trait HasTransform {
+    fn get_transform(&self) -> &Transform;
+}
+
 pub trait Trans {
     type Output;
 

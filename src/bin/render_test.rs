@@ -18,8 +18,8 @@ use light::geometry::vector::Vector;
 use light::geometry::transform::Trans;
 
 fn main() {
-    let pi_4 : f32 = std::f32::consts::FRAC_PI_4;
-    let pi_2 : f32 = std::f32::consts::FRAC_PI_2;
+    // let pi_4 : f32 = std::f32::consts::FRAC_PI_4;
+    // let pi_2 : f32 = std::f32::consts::FRAC_PI_2;
     let pi_3 : f32 = std::f32::consts::FRAC_PI_3;
 
     let mut film = Film::new(1920, 1080);

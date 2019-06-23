@@ -2,8 +2,9 @@ use std::default::Default;
 use std::ops::{Add,Sub,Mul,Div,Neg};
 use std::fmt::{Display,Formatter,Result};
 
+use crate::geometry::matrix::Matrix;
+use crate::geometry::transform::HasTransform;
 use crate::geometry::normal::Normal;
-use crate::geometry::transform::{Transform,Trans,TransMut};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Vector {
@@ -136,6 +137,14 @@ impl Vector {
         self.y = -self.y;
         self.z = -self.z
     }
+
+    pub fn to<T : HasTransform>(&self, t : &T) -> Vector {
+        t.get_transform().to_object.mul_v(self)
+    }
+
+    pub fn from<T : HasTransform>(&self, t : &T) -> Vector {
+        t.get_transform().to_world.mul_v(self)
+    }
 }
 
 impl Display for Vector {
@@ -157,21 +166,6 @@ impl PartialEq for Vector {
 impl Default for Vector {
     fn default() -> Vector {
         Vector::zero()
-    }
-}
-
-impl Trans for Vector {
-    type Output = Vector;
-
-    fn transform(&self, t : &Transform) -> Vector {
-        t.to_object.mul_v(self)
-    }
-}
-
-impl TransMut for Vector {
-    fn transform_self(&mut self, t : &Transform) {
-        let c = self.clone();
-        self.clone_from(&t.to_object.mul_v(&c))
     }
 }
 
@@ -216,6 +210,14 @@ impl Neg for Vector {
         self.reverse()
     }
 }
+
+impl Mul<Matrix> for Vector {
+    type Output = Vector;
+    fn mul(self, m : Matrix) -> Vector {
+        m.premul_v(&self)
+    }
+}
+
 
 #[test]
 fn test_accessors() {

@@ -1,9 +1,10 @@
 use std::default::Default;
-use std::ops::{Add,Sub};
+use std::ops::{Add,Sub,Mul};
 use std::fmt::{Display,Formatter,Result};
 
+use crate::geometry::transform::HasTransform;
+use crate::geometry::matrix::Matrix;
 use crate::geometry::vector::Vector;
-use crate::geometry::transform::{Transform,Trans,TransMut};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Point {
@@ -60,6 +61,14 @@ impl Point {
     pub fn sub_p(&self, o : &Point) -> Vector {
         Vector::new(self.x - o.x, self.y - o.y, self.z - o.z)
     }
+
+    pub fn to<T : HasTransform>(&self, t : &T) -> Point {
+        t.get_transform().to_object.mul_p(self)
+    }
+
+    pub fn from<T : HasTransform>(&self, t : &T) -> Point {
+        t.get_transform().to_world.mul_p(self)
+    }
 }
 
 impl Display for Point {
@@ -84,21 +93,6 @@ impl Default for Point {
     }
 }
 
-impl Trans for Point {
-    type Output=Point;
-
-    fn transform(&self, t : &Transform) -> Point {
-        t.to_object.mul_p(self)
-    }
-}
-
-impl TransMut for Point {
-    fn transform_self(&mut self, t : &Transform) {
-        let c = self.clone();
-        self.clone_from(&t.to_object.mul_p(&c))
-    }
-}
-
 impl Sub<Point> for Point {
     type Output=Vector;
     fn sub(self, p : Point) -> Vector {
@@ -117,6 +111,13 @@ impl Add<Vector> for Point {
     type Output=Point;
     fn add(self, v : Vector) -> Point {
         self.add_v(&v)
+    }
+}
+
+impl Mul<Matrix> for Point {
+    type Output = Point;
+    fn mul(self, m : Matrix) -> Point {
+        m.premul_p(&self)
     }
 }
 

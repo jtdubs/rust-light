@@ -1,4 +1,4 @@
-use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::transform::{Transform,HasTransform,TransMut};
 use crate::geometry::ray::Ray;
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
@@ -20,7 +20,7 @@ impl Camera for HemisphereCamera {
         let v = y * core::f32::consts::FRAC_PI_2;
 
         let d = Vector::new(h.sin() * v.cos(), v.sin(), h.cos() * v.cos());
-        Ray::new(&Point::origin(), &d).transform(&-self.t)
+        Ray::new(&Point::origin(), &d).from(self)
 
 
 /*                                       h  h.sin()  h.cos()      v  v.sin()  v.cos()
@@ -34,6 +34,12 @@ impl Camera for HemisphereCamera {
             [ 1,  0] -> ( 1,  0, 0)   pi/2        1        0      0        0        1
             [ 1,  1] -> ( 0,  1, 0)   pi/2        1        0   pi/2        1        0
 */
+    }
+}
+
+impl HasTransform for HemisphereCamera {
+    fn get_transform(&self) -> &Transform {
+        &self.t
     }
 }
 

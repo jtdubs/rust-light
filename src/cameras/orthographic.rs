@@ -1,4 +1,4 @@
-use crate::geometry::transform::{Transform,Trans,TransMut};
+use crate::geometry::transform::{HasTransform,Transform,TransMut};
 use crate::geometry::ray::Ray;
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
@@ -19,7 +19,13 @@ impl OrthographicCamera {
 impl Camera for OrthographicCamera {
     fn cast(&self, x : f32, y : f32) -> Ray {
         let o = Point::new(x * self.scale * self.aspect_ratio, y * self.scale, 0f32);
-        Ray::new(&o, &Vector::unit_z()).transform(&-self.t)
+        Ray::new(&o, &Vector::unit_z()).from(self)
+    }
+}
+
+impl HasTransform for OrthographicCamera {
+    fn get_transform(&self) -> &Transform {
+        &self.t
     }
 }
 

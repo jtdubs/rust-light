@@ -2,8 +2,9 @@ use std::default::Default;
 use std::ops::{Add,Sub,Mul,Div,Neg};
 use std::fmt::{Display,Formatter,Result};
 
+use crate::geometry::matrix::Matrix;
+use crate::geometry::transform::HasTransform;
 use crate::geometry::vector::Vector;
-use crate::geometry::transform::{Transform,Trans,TransMut};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Normal {
@@ -112,6 +113,14 @@ impl Normal {
         self.y = self.y - o.y;
         self.z = self.z - o.z;
     }
+
+    pub fn to<T : HasTransform>(&self, t : &T) -> Normal {
+        t.get_transform().to_object.mul_n(self)
+    }
+
+    pub fn from<T : HasTransform>(&self, t : &T) -> Normal {
+        t.get_transform().to_world.mul_n(self)
+    }
 }
 
 impl Display for Normal {
@@ -133,21 +142,6 @@ impl PartialEq for Normal {
 impl Default for Normal {
     fn default() -> Normal {
         Normal::new(0f32, 0f32, 0f32)
-    }
-}
-
-impl Trans for Normal {
-    type Output=Normal;
-
-    fn transform(&self, t : &Transform) -> Normal {
-        t.to_world.transpose().mul_n(self)
-    }
-}
-
-impl TransMut for Normal {
-    fn transform_self(&mut self, t : &Transform) {
-        let c = self.clone();
-        self.clone_from(&t.to_world.transpose().mul_n(&c))
     }
 }
 
@@ -190,6 +184,13 @@ impl Neg for Normal {
     type Output = Normal;
     fn neg(self) -> Normal {
         self.reverse()
+    }
+}
+
+impl Mul<Matrix> for Normal {
+    type Output = Normal;
+    fn mul(self, m : Matrix) -> Normal {
+        m.premul_n(&self)
     }
 }
 
