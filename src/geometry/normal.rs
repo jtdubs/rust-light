@@ -5,7 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::vector::Vector;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Normal {
     pub x : f32,
     pub y : f32,

@@ -1,7 +1,6 @@
 use crate::geometry::ray::Ray;
 use crate::geometry::bounding_box::BoundingBox;
-use crate::shapes::shape::Intersection;
-use crate::shapes::shape::Shape;
+use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Scene {
     pub primitives : Vec<(BoundingBox, Box<dyn Shape>)>,

@@ -5,7 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::matrix::Matrix;
 use crate::geometry::vector::Vector;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Quaternion {
     v : Vector,
     w : f32

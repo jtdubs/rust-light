@@ -1,10 +1,11 @@
 use std::fmt::{Display,Formatter,Result};
+use std::ops::{Add,Sub,Neg};
 
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Ray {
     pub origin    : Point,
     pub direction : Vector,
@@ -40,8 +41,6 @@ impl Ray {
     }
 }
 
-// TODO: implement Neg, Add<Vector>, Sub<Vector>
-
 impl Display for Ray {
     fn fmt(&self, f : &mut Formatter) -> Result {
         writeln!(f, "Ray {{ origin: {}, direction: {} }}", self.origin, self.direction)
@@ -70,6 +69,27 @@ impl TransMut for Ray {
     fn transform_self(&mut self, t : &Transform) {
         self.origin.transform_self(t);
         self.direction.transform_self(t)
+    }
+}
+
+impl Add<Vector> for Ray {
+    type Output=Ray;
+    fn add(self, v : Vector) -> Ray {
+        Ray::new(&self.origin, &(self.direction + v))
+    }
+}
+
+impl Sub<Vector> for Ray {
+    type Output=Ray;
+    fn sub(self, v : Vector) -> Ray {
+        Ray::new(&self.origin, &(self.direction - v))
+    }
+}
+
+impl Neg for Ray {
+    type Output=Ray;
+    fn neg(self) -> Ray {
+        self.reverse()
     }
 }
 

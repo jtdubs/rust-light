@@ -5,7 +5,7 @@ use crate::geometry::matrix::Matrix;
 use crate::geometry::vector::Vector;
 use crate::geometry::quaternion::Quaternion;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Transform {
     m : Matrix,
     n : Matrix,

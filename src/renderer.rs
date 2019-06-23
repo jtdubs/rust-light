@@ -72,7 +72,7 @@ pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera
                 let v = match scene.intersect(&r) {
                     None => 0f32,
                     Some(i) => {
-                        let z = (max_z - i.point.z) / depth;
+                        let z = (max_z - i.context.p.z) / depth;
                         z * 255f32
                     }
                 };

@@ -6,7 +6,7 @@ use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
 use crate::geometry::normal::Normal;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Matrix {
     m : [f32; 16],
 }

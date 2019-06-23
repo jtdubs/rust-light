@@ -5,7 +5,7 @@ use crate::geometry::point::Point;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 use crate::geometry::ray::Ray;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct BoundingBox {
     empty : bool,
     min   : Point,

@@ -1,4 +1,3 @@
-- Diffential Geomtry class (p101)
 - Ray Context (ray + time bounds) (p110)
 - Shape intersections against ray contexts...
-- 
+- Looks like transforms might be backwards??

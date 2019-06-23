@@ -5,7 +5,7 @@ use std::fmt::{Display,Formatter,Result};
 use crate::geometry::normal::Normal;
 use crate::geometry::transform::{Transform,Trans,TransMut};
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub struct Vector {
     pub x : f32,
     pub y : f32,
@@ -64,7 +64,7 @@ impl Vector {
     }
 
     pub fn to_normal(&self) -> Normal {
-        Normal::new(self.x, self.y, self.z)
+        Normal::new(self.x, self.y, self.z).normalize()
     }
 
     pub fn mul_s(&self, s : f32) -> Vector {
