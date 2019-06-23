@@ -1,3 +1,4 @@
+use log::*;
 use threadpool::ThreadPool;
 use std::sync::mpsc::{channel,Sender};
 use std::sync::Arc;
@@ -43,6 +44,8 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
 }
 
 pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, scene_bounds : BoundingBox) {
+    debug!("render_patch({:?})", patch);
+
     let (min_z, max_z) = match scene_bounds.range_z() {
         None => (0f32, 0f32),
         Some((n, x)) => (n, x),
@@ -111,7 +114,20 @@ pub fn get_patches(film : &Film, patch_size : u32) -> Vec<Patch> {
     let mut patches = Vec::with_capacity((n * m) as usize);
     for x in 0..n {
         for y in 0..m {
-            patches.push((x * patch_width, y * patch_height, (x+1) * patch_width, (y+1) * patch_height));
+            let xs = x * patch_width;
+            let ys = y * patch_height;
+            let mut xe = (x+1) * patch_width;
+            let mut ye = (y+1) * patch_height;
+
+            if x == (n-1) && fw % patch_width != 0 {
+                xe = fw;
+            }
+
+            if y == (m-1) && fh % patch_height != 0 {
+                ye = fh;
+            }
+
+            patches.push((xs, ys, xe, ye));
         }
     }
 

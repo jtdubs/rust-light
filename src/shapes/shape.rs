@@ -13,15 +13,15 @@ pub struct Intersection {
 
 impl Intersection {
     pub fn new(ray : Ray, time : f32, context : SurfaceContext) -> Intersection {
-        info!("intersection.ray    = {:?}", ray);
-        info!("intersection.time   = {:?}", time);
-        info!("intersection.point  = {:?}", context.p);
-        info!("intersection.normal = {:?}", context.n);
-        info!("intersection.uv     = {:?}", (context.u, context.v));
-        info!("intersection.dpdu   = {:?}", context.dpdu);
-        info!("intersection.dpdv   = {:?}", context.dpdv);
-        info!("intersection.dndu   = {:?}", context.dndu);
-        info!("intersection.dndv   = {:?}", context.dndv);
+        debug!("intersection.ray    = {:?}", ray);
+        debug!("intersection.time   = {:?}", time);
+        debug!("intersection.point  = {:?}", context.p);
+        debug!("intersection.normal = {:?}", context.n);
+        debug!("intersection.uv     = {:?}", (context.u, context.v));
+        debug!("intersection.dpdu   = {:?}", context.dpdu);
+        debug!("intersection.dpdv   = {:?}", context.dpdv);
+        debug!("intersection.dndu   = {:?}", context.dndu);
+        debug!("intersection.dndv   = {:?}", context.dndv);
 
         Intersection { ray: ray, time: time, context: context }
     }

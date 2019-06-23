@@ -81,7 +81,7 @@ impl Shape for Sphere {
                     phi += twopi;
                 }
 
-                info!("sphere.phi  = {:?}", phi);
+                debug!("sphere.phi  = {:?}", phi);
 
                 let u = phi / twopi;
                 let theta = (phit.z / self.r).min(1f32).max(-1f32).acos();
