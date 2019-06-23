@@ -44,11 +44,11 @@ impl Shape for Sphere {
     }
 
     fn world_bound(&self) -> BoundingBox {
-        self.bound().transform(&self.t)
+        self.bound().transform(&-self.t)
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
-        let ray = r.transform(&-self.t);
+        let ray = r.transform(&self.t);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
@@ -110,7 +110,7 @@ impl Shape for Sphere {
     }
 
     fn intersects(&self, r : &Ray) -> bool {
-        let ray = r.transform(&-self.t);
+        let ray = r.transform(&self.t);
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));

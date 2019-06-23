@@ -140,14 +140,14 @@ impl Trans for Normal {
     type Output=Normal;
 
     fn transform(&self, t : &Transform) -> Normal {
-        t.inverse_transformation_matrix().transpose().mul_n(self)
+        t.to_world.transpose().mul_n(self)
     }
 }
 
 impl TransMut for Normal {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
-        self.clone_from(&t.inverse_transformation_matrix().transpose().mul_n(&c))
+        self.clone_from(&t.to_world.transpose().mul_n(&c))
     }
 }
 

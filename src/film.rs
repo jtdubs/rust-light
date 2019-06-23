@@ -49,7 +49,7 @@ impl Film {
 
     #[inline]
     fn get_pixel_mut(&mut self, x : u32, y : u32) -> &mut Pixel {
-        &mut self.pixels[(y * self.width + x) as usize]
+        &mut self.pixels[((self.height - y - 1) * self.width + x) as usize]
     }
 
     #[inline]

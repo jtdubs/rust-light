@@ -164,14 +164,14 @@ impl Trans for Vector {
     type Output = Vector;
 
     fn transform(&self, t : &Transform) -> Vector {
-        t.transformation_matrix().mul_v(self)
+        t.to_object.mul_v(self)
     }
 }
 
 impl TransMut for Vector {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
-        self.clone_from(&t.transformation_matrix().mul_v(&c))
+        self.clone_from(&t.to_object.mul_v(&c))
     }
 }
 

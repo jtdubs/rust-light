@@ -88,14 +88,14 @@ impl Trans for Point {
     type Output=Point;
 
     fn transform(&self, t : &Transform) -> Point {
-        t.transformation_matrix().mul_p(self)
+        t.to_object.mul_p(self)
     }
 }
 
 impl TransMut for Point {
     fn transform_self(&mut self, t : &Transform) {
         let c = self.clone();
-        self.clone_from(&t.transformation_matrix().mul_p(&c))
+        self.clone_from(&t.to_object.mul_p(&c))
     }
 }
 
