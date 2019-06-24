@@ -4,7 +4,6 @@ use std::f32::consts::*;
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
 use light::filters::mitchell::MitchellFilter;
-use light::filters::gaussian::GaussianFilter;
 use light::filters::caching::CachingFilter;
 use light::scene::Scene;
 // use light::shapes::rectangular_prism::RectangularPrism;

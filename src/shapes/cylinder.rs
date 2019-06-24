@@ -94,7 +94,7 @@ impl Shape for Cylinder {
                     phi += 2f32 * PI;
                 }
 
-                if (phit.z < self.z_min || phit.z > self.z_max || phi > self.phi_max) {
+                if phit.z < self.z_min || phit.z > self.z_max || phi > self.phi_max {
                     if thit == t1 {
                         return None
                     }
@@ -111,7 +111,7 @@ impl Shape for Cylinder {
                         phi += 2f32 * PI;
                     }
 
-                    if (phit.z < self.z_min || phit.z > self.z_max || phi > self.phi_max) {
+                    if phit.z < self.z_min || phit.z > self.z_max || phi > self.phi_max {
                         return None
                     }
                 }

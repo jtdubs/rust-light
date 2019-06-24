@@ -8,7 +8,6 @@ use crate::sampler::Sampler;
 use crate::film::Film;
 use crate::filters::filter::Filter;
 use crate::cameras::camera::Camera;
-use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::point::Point;
 
 type Patch = (u32, u32, u32, u32);
