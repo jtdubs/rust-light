@@ -67,7 +67,7 @@ impl Shape for Cylinder {
     }
 
     fn surface_area(&self) -> f32 {
-        PI * 2f32 * self.radius * (self.z_max - self.z_min)
+        self.phi_max * self.radius * (self.z_max - self.z_min)
     }
 
     fn intersect(&self, r : &Ray) -> Option<Intersection> {
