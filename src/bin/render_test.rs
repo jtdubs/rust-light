@@ -4,7 +4,8 @@ use std::f32::consts::*;
 
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
-use light::filters::mitchell::MitchellFilter;
+use light::filters::box_filter::BoxFilter;
+use light::filters::gaussian::GaussianFilter;
 use light::filters::caching::CachingFilter;
 use light::scene::Scene;
 // use light::shapes::rectangular_prism::RectangularPrism;
@@ -24,8 +25,8 @@ fn main() {
 
     let mut film = Film::new(1920, 1080);
 
-    // let filter = CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32));
-    let filter = CachingFilter::new(&MitchellFilter::new(2f32, 2f32, 2f32, -0.5f32));
+    let filter = CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32));
+    // let filter = BoxFilter::new(0.5f32, 0.5f32);
     let camera = PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32);
 
     let mut scene = Scene::new();

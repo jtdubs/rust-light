@@ -13,6 +13,14 @@ impl Sampler {
         Sampler { range: Uniform::new_inclusive(0f32, 1f32) }
     }
 
+    pub fn centers_1d(&mut self) -> Vec<f32> {
+        vec![0.5f32]
+    }
+
+    pub fn centers_2d(&mut self) -> Vec<(f32, f32)> {
+        vec![(0.5f32, 0.5f32)]
+    }
+
     pub fn uniform_1d(&mut self, n : u32) -> Vec<f32> {
         let mut rng = thread_rng();
         rng.sample_iter(&self.range).take(n as usize).collect()
