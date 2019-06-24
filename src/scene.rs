@@ -1,9 +1,11 @@
+use std::sync::Arc;
+
 use crate::geometry::ray::Ray;
 use crate::geometry::bounding_box::BoundingBox;
 use crate::shapes::shape::{Shape,Intersection};
 
 pub struct Scene {
-    pub primitives : Vec<(BoundingBox, Box<dyn Shape>)>,
+    pub primitives : Vec<(BoundingBox, Arc<dyn Shape>)>,
     pub bounds : BoundingBox
 }
 
@@ -15,24 +17,24 @@ impl Scene {
         }
     }
 
-    pub fn add(&mut self, p : Box<dyn Shape>) {
+    pub fn add(&mut self, p : Arc<dyn Shape>) {
         let b = p.world_bound();
         self.primitives.push((b, p));
         self.bounds.add_self_bounding_box(&b);
     }
 
-    pub fn intersect(&self, r : &Ray) -> Option<Intersection> {
+    pub fn intersect(&self, r : &Ray) -> Option<(Arc<dyn Shape>, Intersection)> {
         let mut first_intersection = None;
 
         if self.bounds.intersects(&r) {
-            for &(ref a, ref p) in self.primitives.iter() {
+            for (a, p) in self.primitives.iter() {
                 if a.intersects(r) {
                     match p.intersect(r) {
                         None => { }
-                        Some(ref i) => {
+                        Some(i) => {
                             match first_intersection {
-                                None => first_intersection = Some(*i),
-                                Some(i0) => if i.time < i0.time { first_intersection = Some(*i) },
+                                None => first_intersection = Some((p.clone(), i)),
+                                Some((_, i0)) => if i.time < i0.time { first_intersection = Some((p.clone(), i)) },
                             }
                         }
                     }

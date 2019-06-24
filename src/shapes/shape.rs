@@ -1,7 +1,9 @@
 use log::*;
+use std::sync::Arc;
+
 use crate::geometry::bounding_box::BoundingBox;
 use crate::geometry::ray::Ray;
-use crate::geometry::transform::HasTransform;
+use crate::geometry::transform::{Transform,HasTransform};
 use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone, Debug)]
@@ -40,5 +42,11 @@ pub trait Shape : HasTransform + Send + Sync {
             None => false,
             Some(_) => true,
         }
+    }
+}
+
+impl HasTransform for Arc<dyn Shape> {
+    fn get_transform(&self) -> &Transform {
+        (**self).get_transform()
     }
 }
