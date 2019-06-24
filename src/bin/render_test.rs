@@ -1,4 +1,5 @@
 use std::path::Path;
+use std::f32::consts::*;
 
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
@@ -21,18 +22,16 @@ use light::geometry::transform::Trans;
 fn main() {
     env_logger::init();
 
-    // let pi_4 : f32 = std::f32::consts::FRAC_PI_4;
-    // let pi_2 : f32 = std::f32::consts::FRAC_PI_2;
-    let pi_3 : f32 = std::f32::consts::FRAC_PI_3;
-
     let mut film = Film::new(1920, 1080);
 
     // let filter = CachingFilter::new(&GaussianFilter::new(2f32, 2f32, 0.25f32));
     let filter = CachingFilter::new(&MitchellFilter::new(2f32, 2f32, 2f32, -0.5f32));
-    let camera = PerspectiveCamera::new(pi_3, film.width as f32 / film.height as f32);
+    let camera = PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32);
 
     let mut scene = Scene::new();
-    scene.add(Box::new(Sphere::unit().rotate3(0f32, 0f32, 0f32).translate(&Vector::new(0f32, 0f32, 1.5f32))));
+    scene.add(Box::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-2f32, 0f32, 3f32))));
+    scene.add(Box::new(Sphere::unit().rotate3(0f32, 0f32, 0f32).translate(&Vector::new( 0f32, 0f32, 3f32))));
+    scene.add(Box::new(Sphere::unit().rotate3(0f32, 0f32, 0f32).translate(&Vector::new( 2f32, 0f32, 3f32))));
 
     // scene.add(Box::new(Triangle::unit().rotate3(-pi_4, 0f32, 0f32).translate(&Vector::new(-4f32, 3f32, 10f32))));
     // scene.add(Box::new(Plane::unit().rotate3(-pi_4, 0f32, 0f32).translate(&Vector::new(0f32, 3f32, 10f32))));
