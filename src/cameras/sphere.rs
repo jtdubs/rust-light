@@ -5,12 +5,12 @@ use crate::geometry::point::Point;
 use crate::cameras::camera::Camera;
 
 pub struct SphereCamera {
-    t : Transform,
+    transform : Transform,
 }
 
 impl SphereCamera {
     pub fn new() -> SphereCamera {
-        SphereCamera { t: Transform::identity() }
+        SphereCamera { transform: Transform::identity() }
     }
 }
 
@@ -40,12 +40,12 @@ impl Camera for SphereCamera {
 
 impl HasTransform for SphereCamera {
     fn get_transform(&self) -> &Transform {
-        &self.t
+        &self.transform
     }
 }
 
 impl TransMut for SphereCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = *t + self.t;
+        self.transform = *t + self.transform;
     }
 }

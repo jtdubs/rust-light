@@ -13,21 +13,21 @@ use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone, Debug)]
 pub struct Sphere {
-    t : Transform,
-    r : f32,
-    z_min : f32,
-    z_max : f32,
+    transform : Transform,
+    radius    : f32,
+    z_min     : f32,
+    z_max     : f32,
     theta_min : f32,
     theta_max : f32,
-    phi_max : f32,
+    phi_max   : f32,
 }
 
 impl Sphere {
     pub fn new(radius : f32) -> Sphere {
         Sphere {
-            t:         Transform::identity(),
-		    r:         radius,
-		    z_min:     -radius,
+            transform: Transform::identity(),
+		    radius:    radius,
+		    z_min:    -radius,
 		    z_max:     radius,
 		    theta_min: 0f32,
 		    theta_max: PI,
@@ -41,8 +41,8 @@ impl Sphere {
         let phi_max = phi_max.max(0f32).min(2f32 * PI);
 
         Sphere {
-            t:         Transform::identity(),
-		    r:         radius,
+            transform: Transform::identity(),
+		    radius:    radius,
 		    z_min:     z_min,
 		    z_max:     z_max,
 		    theta_min: (z_min / radius).acos(),
@@ -64,17 +64,17 @@ impl Default for Sphere {
 
 impl HasTransform for Sphere {
     fn get_transform(&self) -> &Transform {
-        &self.t
+        &self.transform
     }
 }
 
 impl Shape for Sphere {
     fn bound(&self) -> BoundingBox {
-        BoundingBox::for_points(&[Point::new(-self.r, -self.r, self.z_min), Point::new(self.r, self.r, self.z_max)])
+        BoundingBox::for_points(&[Point::new(-self.radius, -self.radius, self.z_min), Point::new(self.radius, self.radius, self.z_max)])
     }
 
     fn surface_area(&self) -> f32 {
-        self.phi_max * self.r * (self.z_max - self.z_min)
+        self.phi_max * self.radius * (self.z_max - self.z_min)
     }
 
     fn world_bound(&self) -> BoundingBox {
@@ -86,7 +86,7 @@ impl Shape for Sphere {
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
-        let c = ray.origin.distance_squared(&Point::origin()) - (self.r * self.r);
+        let c = ray.origin.distance_squared(&Point::origin()) - (self.radius * self.radius);
 
         match quadratic(a, b, c) {
             None => { None },
@@ -98,7 +98,7 @@ impl Shape for Sphere {
 
                 let mut phit = ray.at_time(thit);
                 if phit.x == 0f32 && phit.y == 0f32 {
-                    phit.x = 1e-5f32 * self.r;
+                    phit.x = 1e-5f32 * self.radius;
                 }
 
                 let mut phi = phit.y.atan2(phit.x);
@@ -108,7 +108,7 @@ impl Shape for Sphere {
 
                 debug!("sphere.phi  = {:?}", phi);
 
-                if (self.z_min > -self.r && phit.z < self.z_min) || (self.z_max < self.r && phit.z > self.z_max) || phi > self.phi_max {
+                if (self.z_min > -self.radius && phit.z < self.z_min) || (self.z_max < self.radius && phit.z > self.z_max) || phi > self.phi_max {
                     if thit == t1 {
                         return None
                     }
@@ -117,7 +117,7 @@ impl Shape for Sphere {
 
                     phit = ray.at_time(thit);
                     if phit.x == 0f32 && phit.y == 0f32 {
-                        phit.x = 1e-5f32 * self.r;
+                        phit.x = 1e-5f32 * self.radius;
                     }
 
                     phi = phit.y.atan2(phit.x);
@@ -125,20 +125,20 @@ impl Shape for Sphere {
                         phi += 2f32 * PI;
                     }
 
-                    if (self.z_min > -self.r && phit.z < self.z_min) || (self.z_max < self.r && phit.z > self.z_max) || phi > self.phi_max {
+                    if (self.z_min > -self.radius && phit.z < self.z_min) || (self.z_max < self.radius && phit.z > self.z_max) || phi > self.phi_max {
                         return None
                     }
                 }
 
                 let u = phi / self.phi_max;
-                let theta = (phit.z / self.r).min(1f32).max(-1f32).acos();
+                let theta = (phit.z / self.radius).min(1f32).max(-1f32).acos();
                 let v = (theta - self.theta_min) / (self.theta_max - self.theta_min);
 
                 let zr = (phit.x*phit.x + phit.y*phit.y).sqrt();
                 let cosphi = phit.x / zr;
                 let sinphi = phit.y / zr;
                 let dpdu = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
-                let dpdv = (self.theta_max - self.theta_min) * Vector::new(phit.z * cosphi, phit.z * sinphi, -self.r * theta.sin());
+                let dpdv = (self.theta_max - self.theta_min) * Vector::new(phit.z * cosphi, phit.z * sinphi, -self.radius * theta.sin());
 
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = (self.theta_max - self.theta_min) * phit.z * self.phi_max * Vector::new(-sinphi, cosphi, 0f32);
@@ -167,7 +167,7 @@ impl Shape for Sphere {
 
         let a = ray.direction.magnitude_squared();
         let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
-        let c = ray.origin.distance_squared(&Point::origin()) - (self.r * self.r);
+        let c = ray.origin.distance_squared(&Point::origin()) - (self.radius * self.radius);
 
         match quadratic(a, b, c) {
             None => false,
@@ -182,12 +182,12 @@ impl Trans for Sphere {
     type Output=Sphere;
 
     fn transform(&self, t : &Transform) -> Sphere {
-        Sphere { t: *t + self.t, .. *self }
+        Sphere { transform: *t + self.transform, .. *self }
     }
 }
 
 impl TransMut for Sphere {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = *t + self.t;
+        self.transform = *t + self.transform;
     }
 }

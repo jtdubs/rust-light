@@ -5,12 +5,12 @@ use crate::geometry::point::Point;
 use crate::cameras::camera::Camera;
 
 pub struct HemisphereCamera {
-    t : Transform,
+    transform : Transform,
 }
 
 impl HemisphereCamera {
     pub fn new() -> HemisphereCamera {
-        HemisphereCamera { t: Transform::identity() }
+        HemisphereCamera { transform: Transform::identity() }
     }
 }
 
@@ -39,12 +39,12 @@ impl Camera for HemisphereCamera {
 
 impl HasTransform for HemisphereCamera {
     fn get_transform(&self) -> &Transform {
-        &self.t
+        &self.transform
     }
 }
 
 impl TransMut for HemisphereCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = *t + self.t;
+        self.transform = *t + self.transform;
     }
 }

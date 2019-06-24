@@ -5,14 +5,14 @@ use crate::geometry::point::Point;
 use crate::cameras::camera::Camera;
 
 pub struct OrthographicCamera {
-    t : Transform,
+    transform : Transform,
     pub scale : f32,
     pub aspect_ratio : f32
 }
 
 impl OrthographicCamera {
     pub fn new(scale : f32, aspect_ratio : f32) -> OrthographicCamera {
-        OrthographicCamera { t: Transform::identity(), scale: scale, aspect_ratio: aspect_ratio }
+        OrthographicCamera { transform: Transform::identity(), scale: scale, aspect_ratio: aspect_ratio }
     }
 }
 
@@ -25,12 +25,12 @@ impl Camera for OrthographicCamera {
 
 impl HasTransform for OrthographicCamera {
     fn get_transform(&self) -> &Transform {
-        &self.t
+        &self.transform
     }
 }
 
 impl TransMut for OrthographicCamera {
     fn transform_self(&mut self, t : &Transform) {
-        self.t = *t + self.t;
+        self.transform = *t + self.transform;
     }
 }

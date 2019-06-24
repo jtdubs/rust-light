@@ -1,7 +1,7 @@
 use crate::filters::filter::Filter;
 
 pub struct TriangleFilter {
-    width : f32,
+    width  : f32,
     height : f32,
 }
     

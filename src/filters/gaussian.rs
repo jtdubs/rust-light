@@ -1,9 +1,9 @@
 use crate::filters::filter::Filter;
 
 pub struct GaussianFilter {
-    width : f32,
+    width  : f32,
     height : f32,
-    alpha : f32,
+    alpha  : f32,
     beta_x : f32,
     beta_y : f32,
 }

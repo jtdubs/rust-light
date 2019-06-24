@@ -1,9 +1,9 @@
 use crate::filters::filter::Filter;
 
 pub struct LanczosSincFilter {
-    width : f32,
+    width  : f32,
     height : f32,
-    tau : f32,
+    tau    : f32,
 }
     
 impl LanczosSincFilter {

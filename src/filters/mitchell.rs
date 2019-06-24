@@ -1,10 +1,10 @@
 use crate::filters::filter::Filter;
 
 pub struct MitchellFilter {
-    width : f32,
+    width  : f32,
     height : f32,
-    b : f32,
-    c : f32,
+    b      : f32,
+    c      : f32,
 }
 
 impl MitchellFilter {
