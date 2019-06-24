@@ -139,7 +139,7 @@ impl Shape for Cylinder {
                 let dndu = ((f*c_f - e*c_e) * egf2 * dpdu + (e*c_f - f*c_e) * egf2 * dpdv).to_normal();
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
-                return Some(Intersection::new(*r, thit, SurfaceContext::new(r.at_time(thit), (u, v), (dpdu, dpdv), (dndu, dndv))));
+                return Some(Intersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
             },
         }
     }

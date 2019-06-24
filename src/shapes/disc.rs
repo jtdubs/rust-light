@@ -115,7 +115,7 @@ impl Shape for Disc {
         let dndu = Normal::new(0f32, 0f32, 0f32);
         let dndv = Normal::new(0f32, 0f32, 0f32);
 
-        return Some(Intersection::new(*r, thit, SurfaceContext::new(r.at_time(thit), (u, v), (dpdu, dpdv), (dndu, dndv))));
+        return Some(Intersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
     }
 }
 
