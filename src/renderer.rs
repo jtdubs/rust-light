@@ -9,6 +9,7 @@ use crate::film::Film;
 use crate::filters::filter::Filter;
 use crate::cameras::camera::Camera;
 use crate::geometry::bounding_box::BoundingBox;
+use crate::geometry::point::Point;
 
 type Patch = (u32, u32, u32, u32);
 type Splat = (u32, u32, f32, f32);
@@ -18,7 +19,6 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
     let camera = Arc::new(camera);
     let scene = Arc::new(scene);
     let filter = Arc::new(filter);
-    let bounds = scene.bounds;
 
     let fw = film.width;
     let fh = film.height;
@@ -31,7 +31,7 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
         let camera = camera.clone();
         let filter = filter.clone();
         let scene = scene.clone();
-        pool.execute(move || { render_patch(patch, tx, camera, filter, scene, fw, fh, bounds); });
+        pool.execute(move || { render_patch(patch, tx, camera, filter, scene, fw, fh); });
     }
 
     drop(tx);
@@ -43,19 +43,12 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
     }
 }
 
-pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, scene_bounds : BoundingBox) {
+pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32) {
     debug!("render_patch({:?})", patch);
-
-    let (min_z, max_z) = match scene_bounds.range_z() {
-        None => (0f32, 0f32),
-        Some((n, x)) => (n, x),
-    };
 
     let mut sampler = Sampler::new();
 
     let (xs, ys, xe, ye) = patch;
-
-    let depth = max_z - min_z;
 
     let x_scale = 2f32 / (film_width as f32);
     let y_scale = 2f32 / (film_height as f32);
@@ -75,8 +68,12 @@ pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera
                 let v = match scene.intersect(&r) {
                     None => 0f32,
                     Some(i) => {
-                        let z = (max_z - i.context.p.z) / depth;
-                        z * 255f32
+                        let fudge = ((Point::origin() - i.context.p).to_normal().dot(&i.context.n.normalize()).acos().sin() / 2f32) + 0.5f32;
+                        if ((i.context.u * 8f32).floor() as u32 % 2 == 0) ^ ((i.context.v * 8f32).floor() as u32 % 2 == 0) {
+                            255f32 * fudge
+                        } else {
+                            255f32 * (1f32 - fudge)
+                        }
                     }
                 };
 
