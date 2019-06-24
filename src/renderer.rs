@@ -67,11 +67,11 @@ pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera
                 let v = match scene.intersect(&r) {
                     None => 0f32,
                     Some(i) => {
-                        let fudge = ((Point::origin() - i.context.p).to_normal().dot(&i.context.n.normalize()).acos().sin() / 2f32) + 0.5f32;
+                        let fudge = ((Point::origin() - i.context.p).to_normal().dot(&i.context.n.normalize()) / 2f32) + 0.5f32;
                         if ((i.context.u * 8f32).floor() as u32 % 2 == 0) ^ ((i.context.v * 8f32).floor() as u32 % 2 == 0) {
-                            255f32 * fudge
-                        } else {
                             255f32 * (1f32 - fudge)
+                        } else {
+                            64f32 * (1f32 - fudge)
                         }
                     }
                 };
