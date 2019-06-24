@@ -89,7 +89,11 @@ impl Shape for Disc {
         let ray = r.to(self);
 
         if ray.direction.z.abs() < 1e-7f32 { return None; }
+
         let thit = -ray.origin.z / ray.direction.z;
+        if thit < 0f32 {
+            return None;
+        }
 
         let phit = ray.at_time(thit);
 
