@@ -1,5 +1,5 @@
 // pub mod cone;
-// pub mod cylinder;
+pub mod cylinder;
 // pub mod disc;
 // pub mod paraboloid;
 // pub mod plane;

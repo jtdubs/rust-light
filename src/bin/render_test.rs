@@ -14,7 +14,7 @@ use light::shapes::sphere::Sphere;
 // use light::shapes::paraboloid::Paraboloid;
 // use light::shapes::cone::Cone;
 // use light::shapes::plane::Plane;
-// use light::shapes::cylinder::Cylinder;
+use light::shapes::cylinder::Cylinder;
 use light::renderer::render;
 use light::geometry::vector::Vector;
 use light::geometry::transform::Trans;
@@ -29,9 +29,14 @@ fn main() {
     let camera = PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32);
 
     let mut scene = Scene::new();
-    scene.add(Box::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-2f32, 0f32, 3f32))));
-    scene.add(Box::new(Sphere::unit().rotate3(0f32, 0f32, 0f32).translate(&Vector::new( 0f32, 0f32, 3f32))));
-    scene.add(Box::new(Sphere::unit().rotate3(0f32, 0f32, 0f32).translate(&Vector::new( 2f32, 0f32, 3f32))));
+
+    scene.add(Box::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-2f32, 0.8f32, 3f32))));
+    scene.add(Box::new(Sphere::unit().translate(&Vector::new( 0f32, 0.8f32, 3f32))));
+    scene.add(Box::new(Sphere::unit().translate(&Vector::new( 2f32, 0.8f32, 3f32))));
+
+    scene.add(Box::new(Cylinder::new_partial(0.5f32, 1f32, PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-2f32, -0.8f32, 3f32))));
+    scene.add(Box::new(Cylinder::unit().translate(&Vector::new( 0f32, -0.8f32, 3f32))));
+    scene.add(Box::new(Cylinder::unit().rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new( 2f32, -0.8f32, 3f32))));
 
     // scene.add(Box::new(Triangle::unit().rotate3(-pi_4, 0f32, 0f32).translate(&Vector::new(-4f32, 3f32, 10f32))));
     // scene.add(Box::new(Plane::unit().rotate3(-pi_4, 0f32, 0f32).translate(&Vector::new(0f32, 3f32, 10f32))));
