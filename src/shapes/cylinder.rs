@@ -7,7 +7,7 @@ use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
 use crate::geometry::vector::Vector;
 use crate::math::quadratic;
-use crate::shapes::shape::{Shape,Intersection};
+use crate::shapes::shape::{Shape,ShapeIntersection};
 use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone)]
@@ -70,7 +70,7 @@ impl Shape for Cylinder {
         self.phi_max * self.radius * (self.z_max - self.z_min)
     }
 
-    fn intersect(&self, r : &Ray) -> Option<Intersection> {
+    fn intersect(&self, r : &Ray) -> Option<ShapeIntersection> {
         let ray = r.to(self);
 
         let a = (ray.direction.x * ray.direction.x) + (ray.direction.y * ray.direction.y);
@@ -139,7 +139,7 @@ impl Shape for Cylinder {
                 let dndu = ((f*c_f - e*c_e) * egf2 * dpdu + (e*c_f - f*c_e) * egf2 * dpdv).to_normal();
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
-                return Some(Intersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
             },
         }
     }

@@ -7,7 +7,7 @@ use crate::geometry::ray::Ray;
 use crate::geometry::normal::Normal;
 use crate::geometry::vector::Vector;
 use crate::geometry::point::Point;
-use crate::shapes::shape::{Shape,Intersection};
+use crate::shapes::shape::{Shape,ShapeIntersection};
 use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone)]
@@ -85,7 +85,7 @@ impl Shape for Disc {
         ((self.outer_radius * self.outer_radius) - (self.inner_radius * self.inner_radius)) * (self.phi_max / 2f32)
     }
 
-    fn intersect(&self, r : &Ray) -> Option<Intersection> {
+    fn intersect(&self, r : &Ray) -> Option<ShapeIntersection> {
         let ray = r.to(self);
 
         if ray.direction.z.abs() < 1e-7f32 { return None; }
@@ -119,7 +119,7 @@ impl Shape for Disc {
         let dndu = Normal::new(0f32, 0f32, 0f32);
         let dndv = Normal::new(0f32, 0f32, 0f32);
 
-        return Some(Intersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
     }
 }
 

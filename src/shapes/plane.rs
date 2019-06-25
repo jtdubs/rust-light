@@ -6,7 +6,7 @@ use crate::geometry::ray::Ray;
 use crate::geometry::point::Point;
 use crate::geometry::vector::Vector;
 use crate::geometry::normal::Normal;
-use crate::shapes::shape::{Shape,Intersection};
+use crate::shapes::shape::{Shape,ShapeIntersection};
 use crate::shapes::surface_context::SurfaceContext;
 
 #[derive(Copy, Clone)]
@@ -51,7 +51,7 @@ impl Shape for Plane {
         4f32 * self.dx * self.dy
     }
 
-    fn intersect(&self, r : &Ray) -> Option<Intersection> {
+    fn intersect(&self, r : &Ray) -> Option<ShapeIntersection> {
         let ray = r.to(self);
 
         if ray.direction.z.abs() < 1e-7f32 { return None; }
@@ -76,7 +76,7 @@ impl Shape for Plane {
         let dndu = Normal::new(0f32, 0f32, 0f32);
         let dndv = Normal::new(0f32, 0f32, 0f32);
 
-        return Some(Intersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
     }
 }
 
