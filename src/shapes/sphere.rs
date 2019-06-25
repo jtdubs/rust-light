@@ -161,21 +161,6 @@ impl Shape for Sphere {
             },
         }
     }
-
-    fn intersects(&self, r : &Ray) -> bool {
-        let ray = r.to(self);
-
-        let a = ray.direction.magnitude_squared();
-        let b = 2f32 * ray.direction.dot(&ray.origin.sub_p(&Point::origin()));
-        let c = ray.origin.distance_squared(&Point::origin()) - (self.radius * self.radius);
-
-        match quadratic(a, b, c) {
-            None => false,
-            Some((t0, t1)) => {
-                t0 >= 0f32 || t1 >= 0f32
-            },
-        }
-    }
 }
 
 impl Trans for Sphere {
