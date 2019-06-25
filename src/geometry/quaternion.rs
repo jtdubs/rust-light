@@ -62,7 +62,7 @@ impl Quaternion {
         let wy = w * y;
         let wz = w * z;
         Matrix::new(&[1f32 - 2f32 * (yy + zz),        2f32 * (xy - wz),        2f32 * (xz + wy), 0f32,
-                             2f32 * (wy + wz), 1f32 - 2f32 * (xx + zz),        2f32 * (yz - wx), 0f32,
+                             2f32 * (xy + wz), 1f32 - 2f32 * (xx + zz),        2f32 * (yz - wx), 0f32,
                              2f32 * (xz - wy),        2f32 * (yz + wx), 1f32 - 2f32 * (xx + yy), 0f32,
                                          0f32,                    0f32,                    0f32, 1f32])
     }
