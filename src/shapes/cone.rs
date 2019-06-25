@@ -66,7 +66,7 @@ impl Shape for Cone {
         let m = (self.height * self.height) / (self.radius * self.radius);
 
         let a = m * (ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y) - (ray.direction.z * ray.direction.z);
-        let b = 2f32 * (m * (ray.origin.x * ray.direction.x + ray.origin.y * ray.direction.y) + (-ray.origin.z * ray.direction.z + ray.direction.z * self.height)));
+        let b = 2f32 * (m * (ray.origin.x * ray.direction.x + ray.origin.y * ray.direction.y) + (-ray.origin.z * ray.direction.z + ray.direction.z * self.height));
         let c = m * (ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y) + (-ray.origin.z * ray.origin.z + 2f32 * ray.origin.z * self.height - self.height * self.height);
 
         match quadratic(a, b, c) {
@@ -112,8 +112,9 @@ impl Shape for Cone {
                 let u = phi / self.phi_max;
                 let v = (phit.z - self.z_min) / (self.z_max - self.z_min);
 
+                // TODO: reverse these
                 let dpdv = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
-                let dpdu = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.height); // should this be height or z_max-z_min??
+                let dpdu = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.z_max - self.z_min);
 
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = (self.phi_max / (1f32 - v)) * Vector::new(phit.y, -phit.x, 0f32);
