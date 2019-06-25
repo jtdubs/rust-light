@@ -84,7 +84,6 @@ fn main() {
     scene.add(Arc::new(Plane::unit().rotate(FRAC_PI_3, &Vector::unit_x()).translate(&Vector::new(2f32, -0.8f32, 6f32))));
 
     scene.add(Arc::new(Cone::unit().rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(4f32, 0.3f32, 6f32))));
-    // scene.add(Arc::new(Cone::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(FRAC_PI_2, &Vector::unit_y()).translate(&Vector::new(4f32, -0.8f32, 6f32))));
     scene.add(Arc::new(Cone::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(PI, &Vector::unit_z()).rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(4f32, -1.3f32, 6f32))));
 
     // scene.add(Arc::new(Triangle::unit().rotate3(-pi_4, 0f32, 0f32).translate(&Vector::new(-4f32, 3f32, 10f32))));

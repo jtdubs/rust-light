@@ -63,13 +63,11 @@ impl Shape for Cone {
     fn intersect(&self, r : &Ray) -> Option<ShapeIntersection> {
         let ray = r.to(self);
 
-        // let a = ((self.height * self.height) / (self.radius * self.radius)) * (ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y) - (ray.direction.z * ray.direction.z);
-        // let b = 2f32 * ((self.height * self.height) / (self.radius * self.radius)) * (ray.origin.x * ray.direction.x + ray.origin.y * ray.direction.y) - ((ray.origin.z - self.height) * ray.direction.z);
-        // let c = ((self.height * self.height) / (self.radius * self.radius)) * (ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y) - (ray.origin.z * ray.origin.z) + (2f32 * ray.origin.z * self.height) - (self.height * self.height);
+        let m = (self.height * self.height) / (self.radius * self.radius);
 
-        let a = (self.height * self.height * ray.direction.x * ray.direction.x + self.height * self.height * ray.direction.y * ray.direction.y) / (self.radius * self.radius) + (-ray.direction.z * ray.direction.z);
-        let b = (2f32 * self.height * self.height * ray.origin.x * ray.direction.x + 2f32 * self.height * self.height * ray.origin.y * ray.direction.y) / (self.radius * self.radius) + (-2f32 * ray.origin.z * ray.direction.z + 2f32 * ray.direction.z * self.height);
-        let c = (self.height * self.height * ray.origin.x * ray.origin.x + self.height * self.height * ray.origin.y * ray.origin.y) / (self.radius * self.radius) + (-ray.origin.z * ray.origin.z + 2f32 * ray.origin.z * self.height - self.height * self.height);
+        let a = m * (ray.direction.x * ray.direction.x + ray.direction.y * ray.direction.y) - (ray.direction.z * ray.direction.z);
+        let b = 2f32 * (m * (ray.origin.x * ray.direction.x + ray.origin.y * ray.direction.y) + (-ray.origin.z * ray.direction.z + ray.direction.z * self.height)));
+        let c = m * (ray.origin.x * ray.origin.x + ray.origin.y * ray.origin.y) + (-ray.origin.z * ray.origin.z + 2f32 * ray.origin.z * self.height - self.height * self.height);
 
         match quadratic(a, b, c) {
             None => { None }
