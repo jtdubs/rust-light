@@ -114,8 +114,8 @@ impl Shape for Cone {
                 let u = phi / self.phi_max;
                 let v = (phit.z - self.z_min) / (self.z_max - self.z_min);
 
-                let dpdu = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
-                let dpdv = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.height); // should this be height or z_max-z_min??
+                let dpdv = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
+                let dpdu = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.height); // should this be height or z_max-z_min??
 
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = (self.phi_max / (1f32 - v)) * Vector::new(phit.y, -phit.x, 0f32);
