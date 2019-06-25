@@ -2,5 +2,4 @@
 - Shape intersections against ray contexts...
 - Implement the spectrum classes from Chapter 5
 - Camera extentions for lenses and depth-of-field
-- pull out individul samplers so they can be handed to the renderer
-- implement "fast" and "slow" renderers...
+- command-line params for quality (fast v. slow)
