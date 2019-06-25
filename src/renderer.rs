@@ -4,7 +4,7 @@ use std::sync::mpsc::{channel,Sender};
 use std::sync::Arc;
 
 use crate::scene::Scene;
-use crate::sampler::Sampler;
+use crate::sampler::{SamplerFactory2D,Sampler2D};
 use crate::film::Film;
 use crate::filters::filter::Filter;
 use crate::cameras::camera::Camera;
@@ -14,7 +14,7 @@ type Patch = (u32, u32, u32, u32);
 type Splat = (u32, u32, f32, f32);
 type Splats = Box<Vec<Splat>>;
 
-pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Filter + 'static, scene : Scene) {
+pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Filter + 'static, sampler_factory : impl SamplerFactory2D + 'static, scene : Scene) {
     let camera = Arc::new(camera);
     let scene = Arc::new(scene);
     let filter = Arc::new(filter);
@@ -30,7 +30,8 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
         let camera = camera.clone();
         let filter = filter.clone();
         let scene = scene.clone();
-        pool.execute(move || { render_patch(patch, tx, camera, filter, scene, fw, fh); });
+        let sampler = sampler_factory.get_sampler();
+        pool.execute(move || { render_patch(patch, tx, camera, filter, scene, fw, fh, sampler); });
     }
 
     drop(tx);
@@ -40,12 +41,11 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
             film.splat(x, y, s, w);
         }
     }
+
 }
 
-pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32) {
+pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : impl Sampler2D) {
     debug!("render_patch({:?})", patch);
-
-    let mut sampler = Sampler::new();
 
     let (xs, ys, xe, ye) = patch;
 
@@ -57,7 +57,7 @@ pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera
     let mut film_updates = Box::new(Vec::with_capacity(51200));
     for x in xs..xe {
         for y in ys..ye {
-            for (dx, dy) in sampler.lhc_2d(8).into_iter() {
+            for (dx, dy) in sampler.get_samples().into_iter() {
                 let fx = (x as f32) + dx;
                 let fy = (y as f32) + dy;
                 let cx = fx * x_scale - 1f32;

@@ -19,6 +19,44 @@ use light::shapes::cylinder::Cylinder;
 use light::renderer::render;
 use light::geometry::vector::Vector;
 use light::geometry::transform::Trans;
+use light::sampler::*;
+
+
+struct FastSamplerFactory {
+}
+
+impl FastSamplerFactory {
+    pub fn new() -> FastSamplerFactory {
+        FastSamplerFactory { }
+    }
+}
+
+impl SamplerFactory2D for FastSamplerFactory {
+    type Output = CentersSampler2D;
+
+    fn get_sampler(&self) -> Self::Output {
+        CentersSampler2D::new()
+    }
+}
+
+
+struct SlowSamplerFactory {
+}
+
+impl SlowSamplerFactory {
+    pub fn new() -> SlowSamplerFactory {
+        SlowSamplerFactory { }
+    }
+}
+
+impl SamplerFactory2D for SlowSamplerFactory {
+    type Output = LHCSampler2D;
+
+    fn get_sampler(&self) -> Self::Output {
+        LHCSampler2D::new(16)
+    }
+}
+
 
 fn main() {
     env_logger::init();
@@ -27,7 +65,10 @@ fn main() {
 
     let filter = CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32));
     // let filter = BoxFilter::new(0.5f32, 0.5f32);
+
     let camera = PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32);
+
+    let sampler = SlowSamplerFactory::new();
 
     let mut scene = Scene::new();
 
@@ -50,7 +91,7 @@ fn main() {
     // scene.add(Arc::new(Paraboloid::unit().rotate3(-pi_2, 0f32, 0f32).translate(&Vector::new(3f32, -3f32, 10f32))));
     // scene.add(Arc::new(Cone::unit().rotate3(pi_2, 0f32, 0f32).translate(&Vector::new(6f32, -3f32, 10f32))));
 
-    render(camera, &mut film, filter, scene);
+    render(camera, &mut film, filter, sampler, scene);
 
     match film.save(&Path::new("out/test.png")) {
         Ok(_) => { },
