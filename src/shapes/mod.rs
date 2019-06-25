@@ -1,4 +1,4 @@
-// pub mod cone;
+pub mod cone;
 pub mod cylinder;
 pub mod disc;
 // pub mod paraboloid;
