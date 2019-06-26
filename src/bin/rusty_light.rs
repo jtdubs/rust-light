@@ -4,7 +4,7 @@ use std::f32::consts::*;
 
 use clap::*;
 
-use light::cameras::{Camera, PerspectiveCamera, OrthographicCamera, HemisphereCamera, SphereCamera};
+use light::cameras::{Camera, PerspectiveCamera, OrthographicCamera, HemisphereCamera, SphereCamera, PerspectiveLensCamera};
 use light::film::Film;
 use light::filters::{BoxFilter, GaussianFilter, CachingFilter};
 use light::scene::Scene;
@@ -80,14 +80,26 @@ fn get_app<'a, 'b>() -> App<'a, 'b> {
                 .long("camera")
                 .value_name("TYPE")
                 .takes_value(true)
-                .possible_values(&["perspective", "ortho", "hemisphere", "sphere"])
+                .possible_values(&["perspective", "ortho", "hemisphere", "sphere", "perspective-lens"])
                 .default_value("perspective"))
+        .arg(Arg::with_name("lens-radius")
+                .long("lens-radius")
+                .value_name("D")
+                .takes_value(true)
+                .default_value("1")
+                .required_if("camera", "perspective-lens"))
+        .arg(Arg::with_name("focal-distance")
+                .long("focal-distance")
+                .value_name("D")
+                .takes_value(true)
+                .default_value("6")
+                .required_if("camera", "perspective-lens"))
         .arg(Arg::with_name("fov")
                 .long("fov")
                 .value_name("DEG")
                 .takes_value(true)
                 .default_value("60")
-                .required_if("camera", "perspective"))
+                .required_ifs(&[("camera", "perspective"), ("camera", "perspective-lens")]))
         .arg(Arg::with_name("scale")
                 .long("scale")
                 .value_name("S")
@@ -136,6 +148,12 @@ fn get_renderer_setup() -> Option<RendererSetup> {
                     let fov = matches.value_of("fov").unwrap().parse::<f32>().unwrap() * PI / 180f32;
                     Arc::new(PerspectiveCamera::new(fov, film.width as f32 / film.height as f32))
                 },
+                "perspective-lens" => {
+                    let fov = matches.value_of("fov").unwrap().parse::<f32>().unwrap() * PI / 180f32;
+                    let lr = matches.value_of("lens-radius").unwrap().parse::<f32>().unwrap();
+                    let fd = matches.value_of("focal-distance").unwrap().parse::<f32>().unwrap();
+                    Arc::new(PerspectiveLensCamera::new(fov, film.width as f32 / film.height as f32, lr, fd))
+                },
                 "ortho" => {
                     let scale = matches.value_of("scale").unwrap().parse::<f32>().unwrap();
                     Arc::new(OrthographicCamera::new(scale, film.width as f32 / film.height as f32))
@@ -156,23 +174,25 @@ fn get_renderer_setup() -> Option<RendererSetup> {
 fn build_scene() -> Scene {
     let mut scene = Scene::new();
 
-    scene.add(Arc::new(Sphere::unit().translate(&Vector::new( -5f32, 0.8f32, 7f32))));
-    scene.add(Arc::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-5f32, -0.8f32, 7f32))));
+    for z in vec![5f32, 10f32, 20f32, 40f32].into_iter() {
+        scene.add(Arc::new(Sphere::unit().translate(&Vector::new( -5f32, 0.8f32, z))));
+        scene.add(Arc::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-5f32, -0.8f32, z))));
 
-    scene.add(Arc::new(Cylinder::unit().translate(&Vector::new( -3f32, 0.8f32, 7f32))));
-    scene.add(Arc::new(Cylinder::new_partial(0.5f32, 1f32, PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-3f32, -0.8f32, 7f32))));
+        scene.add(Arc::new(Cylinder::unit().translate(&Vector::new( -3f32, 0.8f32, z))));
+        scene.add(Arc::new(Cylinder::new_partial(0.5f32, 1f32, PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-3f32, -0.8f32, z))));
 
-    scene.add(Arc::new(Disc::new_annulus(0.1f32, 0.5f32).translate(&Vector::new(-1f32, 0.8f32, 7f32))));
-    scene.add(Arc::new(Disc::new_partial_annulus(0.1f32, 0.5f32, PI * 1.5f32).rotate(FRAC_PI_3, &Vector::unit_x()).translate(&Vector::new(-1f32, -0.8f32, 7f32))));
-    
-    scene.add(Arc::new(Plane::unit().translate(&Vector::new(1f32, 0.8f32, 7f32))));
-    scene.add(Arc::new(Plane::unit().rotate(FRAC_PI_3, &Vector::unit_x()).translate(&Vector::new(1f32, -0.8f32, 7f32))));
+        scene.add(Arc::new(Disc::new_annulus(0.1f32, 0.5f32).translate(&Vector::new(-1f32, 0.8f32, z))));
+        scene.add(Arc::new(Disc::new_partial_annulus(0.1f32, 0.5f32, PI * 1.5f32).rotate(FRAC_PI_3, &Vector::unit_x()).translate(&Vector::new(-1f32, -0.8f32, z))));
+        
+        scene.add(Arc::new(Plane::unit().translate(&Vector::new(1f32, 0.8f32, z))));
+        scene.add(Arc::new(Plane::unit().rotate(FRAC_PI_3, &Vector::unit_x()).translate(&Vector::new(1f32, -0.8f32, z))));
 
-    scene.add(Arc::new(Cone::unit().rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(3f32, 0.3f32, 7f32))));
-    scene.add(Arc::new(Cone::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(PI, &Vector::unit_z()).rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(3f32, -1.3f32, 7f32))));
+        scene.add(Arc::new(Cone::unit().rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(3f32, 0.3f32, z))));
+        scene.add(Arc::new(Cone::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(PI, &Vector::unit_z()).rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(3f32, -1.3f32, z))));
 
-    scene.add(Arc::new(Paraboloid::unit().rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(5f32, 0.3f32, 7f32))));
-    scene.add(Arc::new(Paraboloid::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(PI, &Vector::unit_z()).rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(5f32, -1.3f32, 7f32))));
+        scene.add(Arc::new(Paraboloid::unit().rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(5f32, 0.3f32, z))));
+        scene.add(Arc::new(Paraboloid::new_partial(0.5f32, 1f32, 0.2f32, 0.8f32, PI * 1.5f32).rotate(PI, &Vector::unit_z()).rotate(-FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(5f32, -1.3f32, z))));
+    }
 
     scene
 }
