@@ -73,10 +73,12 @@ impl Shape for Plane {
         let dpdu = Vector::unit_x();
         let dpdv = Vector::unit_y();
 
+        let normal = Normal::new(0f32, 0f32, 1f32).face_forward(&ray.direction);
+
         let dndu = Normal::new(0f32, 0f32, 0f32);
         let dndv = Normal::new(0f32, 0f32, 0f32);
 
-        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, normal, (u, v), (dpdu, dpdv), (dndu, dndv))));
     }
 }
 

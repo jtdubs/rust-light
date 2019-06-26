@@ -137,8 +137,11 @@ impl Shape for Sphere {
                 let zr = (phit.x*phit.x + phit.y*phit.y).sqrt();
                 let cosphi = phit.x / zr;
                 let sinphi = phit.y / zr;
+
                 let dpdu = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
                 let dpdv = (self.theta_max - self.theta_min) * Vector::new(phit.z * cosphi, phit.z * sinphi, -self.radius * theta.sin());
+
+                let normal = dpdu.cross(&dpdv).normalize().to_normal().face_forward(&ray.direction);
 
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = (self.theta_max - self.theta_min) * phit.z * self.phi_max * Vector::new(-sinphi, cosphi, 0f32);
@@ -157,7 +160,7 @@ impl Shape for Sphere {
                 let dndu = ((f*c_f - e*c_e) * egf2 * dpdu + (e*c_f - f*c_e) * egf2 * dpdv).to_normal();
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
-                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, normal, (u, v), (dpdu, dpdv), (dndu, dndv))));
             },
         }
     }

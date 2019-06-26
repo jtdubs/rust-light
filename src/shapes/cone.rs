@@ -116,6 +116,8 @@ impl Shape for Cone {
                 let dpdv = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
                 let dpdu = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.z_max - self.z_min);
 
+                let normal = dpdu.cross(&dpdv).normalize().to_normal().face_forward(&ray.direction);
+
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = (self.phi_max / (1f32 - v)) * Vector::new(phit.y, -phit.x, 0f32);
                 let d2pdvv = Vector::zero();
@@ -133,7 +135,7 @@ impl Shape for Cone {
                 let dndu = ((f*c_f - e*c_e) * egf2 * dpdu + (e*c_f - f*c_e) * egf2 * dpdv).to_normal();
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
-                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, normal, (u, v), (dpdu, dpdv), (dndu, dndv))));
             }
         }
     }

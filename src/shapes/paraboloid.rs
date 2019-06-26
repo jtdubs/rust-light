@@ -113,9 +113,10 @@ impl Shape for Paraboloid {
                 let u = phi / self.phi_max;
                 let v = (phit.z - self.z_min) / (self.z_max - self.z_min);
 
-                // TODO: reverse these
-                let dpdv = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
-                let dpdu = (self.z_max - self.z_min) * Vector::new(phit.x / (2f32 * phit.z), phit.y / (2f32 * phit.z), 1f32);
+                let dpdu = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
+                let dpdv = (self.z_max - self.z_min) * Vector::new(phit.x / (2f32 * phit.z), phit.y / (2f32 * phit.z), 1f32);
+
+                let normal = dpdu.cross(&dpdv).normalize().to_normal().face_forward(&ray.direction);
 
                 let d2pduu = -self.phi_max * self.phi_max * Vector::new(phit.x, phit.y, 0f32);
                 let d2pduv = self.phi_max * (self.z_max - self.z_min) * Vector::new(-phit.y / (2f32 * phit.z), phit.x / (2f32 * phit.z), 0f32);
@@ -134,7 +135,7 @@ impl Shape for Paraboloid {
                 let dndu = ((f*c_f - e*c_e) * egf2 * dpdu + (e*c_f - f*c_e) * egf2 * dpdv).to_normal();
                 let dndv = ((g*c_f - f*c_e) * egf2 * dpdu + (f*c_f - g*c_e) * egf2 * dpdv).to_normal();
 
-                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+                return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, normal, (u, v), (dpdu, dpdv), (dndu, dndv))));
             }
         }
     }

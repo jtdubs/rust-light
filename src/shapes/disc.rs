@@ -116,10 +116,12 @@ impl Shape for Disc {
         let dpdu = (self.phi_max / FRAC_PI_2) * Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
         let dpdv = ((self.outer_radius - self.inner_radius) / self.outer_radius) * Vector::new(-phit.x / (1f32-v), -phit.y / (1f32-v), 0f32);
 
+        let normal = dpdu.cross(&dpdv).normalize().to_normal().face_forward(&ray.direction);
+
         let dndu = Normal::new(0f32, 0f32, 0f32);
         let dndv = Normal::new(0f32, 0f32, 0f32);
 
-        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, (u, v), (dpdu, dpdv), (dndu, dndv))));
+        return Some(ShapeIntersection::new(*r, thit, SurfaceContext::new(phit, normal, (u, v), (dpdu, dpdv), (dndu, dndv))));
     }
 }
 

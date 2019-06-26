@@ -15,10 +15,10 @@ pub struct SurfaceContext {
 }
 
 impl SurfaceContext {
-    pub fn new(p : Point, (u, v) : (f32, f32), (dpdu, dpdv) : (Vector, Vector), (dndu, dndv) : (Normal, Normal)) -> SurfaceContext {
+    pub fn new(p : Point, n : Normal, (u, v) : (f32, f32), (dpdu, dpdv) : (Vector, Vector), (dndu, dndv) : (Normal, Normal)) -> SurfaceContext {
         SurfaceContext {
             p: p,
-            n: dpdu.cross(&dpdv).normalize().to_normal(),
+            n: n,
             u: u,
             v: v,
             dpdu: dpdu,
