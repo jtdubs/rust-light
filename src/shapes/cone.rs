@@ -56,8 +56,7 @@ impl Shape for Cone {
     }
 
     fn surface_area(&self) -> f32 {
-        // TODO: fix this
-        self.radius * (self.radius * self.radius + self.height * self.height).sqrt() * core::f32::consts::PI
+        ((self.phi_max * self.radius) / (2f32 * self.height)) * (self.z_max - self.z_min) * (self.radius + (self.height * self.height + self.radius * self.radius).sqrt())
     }
 
     fn intersect(&self, r : &Ray) -> Option<ShapeIntersection> {
@@ -112,9 +111,8 @@ impl Shape for Cone {
                 let u = phi / self.phi_max;
                 let v = (phit.z - self.z_min) / (self.z_max - self.z_min);
 
-                // TODO: reverse these
-                let dpdv = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
-                let dpdu = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.z_max - self.z_min);
+                let dpdu = Vector::new(-self.phi_max * phit.y, self.phi_max * phit.x, 0f32);
+                let dpdv = Vector::new(-phit.x / (1f32 - v), phit.y / (1f32 - v), self.z_max - self.z_min);
 
                 let normal = dpdu.cross(&dpdv).normalize().to_normal().face_forward(&ray.direction);
 
