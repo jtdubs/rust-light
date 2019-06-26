@@ -1,8 +1,6 @@
-use light::cameras::camera::Camera;
-use light::cameras::perspective::PerspectiveCamera;
-use light::cameras::orthographic::OrthographicCamera;
+use light::cameras::{Camera, PerspectiveCamera, OrthographicCamera};
 use light::film::Film;
-use light::geometry::ray::Ray;
+use light::geometry::Ray;
 
 fn get_rays(c : &dyn Camera, f : &Film) -> Vec<Ray> {
     let mut res = Vec::with_capacity((f.width * f.height) as usize);

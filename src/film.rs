@@ -1,6 +1,7 @@
 use std::path::Path;
 use std::default::Default;
 use std::fs::File;
+
 use image::png::PNGEncoder;
 use image::ColorType;
 

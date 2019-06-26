@@ -1,10 +1,7 @@
 use std::sync::Arc;
 
-use crate::geometry::ray::Ray;
-use crate::geometry::bounding_box::BoundingBox;
-use crate::shapes::shape::{Shape,ShapeIntersection};
-use crate::shapes::surface_context::SurfaceContext;
-use crate::geometry::transform::{Transform,HasTransform};
+use crate::geometry::{Ray, BoundingBox, Transform, HasTransform};
+use crate::shapes::{Shape, ShapeIntersection, SurfaceContext};
 
 pub struct Scene {
     pub primitives : Vec<(BoundingBox, Arc<dyn Shape>)>,

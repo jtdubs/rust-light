@@ -1,6 +1,4 @@
-use crate::geometry::normal::Normal;
-use crate::geometry::point::Point;
-use crate::geometry::vector::Vector;
+use crate::geometry::{Normal, Point, Vector};
 
 #[derive(Copy, Clone, Debug)]
 pub struct SurfaceContext {

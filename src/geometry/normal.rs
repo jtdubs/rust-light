@@ -1,10 +1,8 @@
 use std::default::Default;
-use std::ops::{Add,Sub,Mul,Div,Neg};
-use std::fmt::{Display,Formatter,Result};
+use std::ops::{Add, Sub, Mul, Div, Neg};
+use std::fmt::{Display, Formatter, Result};
 
-use crate::geometry::matrix::Matrix;
-use crate::geometry::transform::HasTransform;
-use crate::geometry::vector::Vector;
+use crate::geometry::{Matrix, Vector, HasTransform};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Normal {

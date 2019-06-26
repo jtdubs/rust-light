@@ -1,14 +1,9 @@
 use std::default::Default;
 use std::f32::consts::*;
 
-use crate::geometry::transform::{Transform,Trans,TransMut,HasTransform};
-use crate::geometry::bounding_box::BoundingBox;
-use crate::geometry::ray::Ray;
-use crate::geometry::point::Point;
-use crate::geometry::vector::Vector;
+use crate::geometry::{Transform, Trans, TransMut, HasTransform, BoundingBox, Ray, Point, Vector};
 use crate::math::quadratic;
-use crate::shapes::shape::{Shape,ShapeIntersection};
-use crate::shapes::surface_context::SurfaceContext;
+use crate::shapes::{Shape, ShapeIntersection, SurfaceContext};
 
 #[derive(Copy, Clone)]
 pub struct Cone {

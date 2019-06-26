@@ -1,4 +1,4 @@
-use crate::filters::filter::Filter;
+use crate::filters::Filter;
 
 pub struct MitchellFilter {
     width  : f32,

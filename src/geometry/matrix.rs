@@ -1,10 +1,8 @@
 use std::default::Default;
-use std::ops::{Add,Sub,Mul,Div,Index};
-use std::fmt::{Display,Formatter,Result};
+use std::ops::{Add, Sub, Mul, Div, Index};
+use std::fmt::{Display, Formatter, Result};
 
-use crate::geometry::vector::Vector;
-use crate::geometry::point::Point;
-use crate::geometry::normal::Normal;
+use crate::geometry::{Vector, Normal, Point};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Matrix {

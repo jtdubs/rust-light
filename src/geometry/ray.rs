@@ -1,9 +1,7 @@
-use std::fmt::{Display,Formatter,Result};
-use std::ops::{Add,Sub,Neg};
+use std::fmt::{Display, Formatter, Result};
+use std::ops::{Add, Sub, Neg};
 
-use crate::geometry::transform::{HasTransform};
-use crate::geometry::vector::Vector;
-use crate::geometry::point::Point;
+use crate::geometry::{Vector, Point, HasTransform};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Ray {

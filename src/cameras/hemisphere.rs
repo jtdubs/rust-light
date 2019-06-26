@@ -1,8 +1,5 @@
-use crate::geometry::transform::{Transform,HasTransform,TransMut};
-use crate::geometry::ray::Ray;
-use crate::geometry::vector::Vector;
-use crate::geometry::point::Point;
-use crate::cameras::camera::Camera;
+use crate::geometry::{Ray, Vector, Point, Transform, HasTransform, TransMut};
+use crate::cameras::Camera;
 
 pub struct HemisphereCamera {
     transform : Transform,

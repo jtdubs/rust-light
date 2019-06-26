@@ -2,4 +2,3 @@
 - Shape intersections against ray contexts...
 - Implement the spectrum classes from Chapter 5
 - Camera extentions for lenses and depth-of-field
-- improve bulk importing of cameras, filters, shapes, etc.

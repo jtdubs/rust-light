@@ -1,14 +1,14 @@
 use log::*;
 use threadpool::ThreadPool;
-use std::sync::mpsc::{channel,Sender};
+use std::sync::mpsc::{channel, Sender};
 use std::sync::Arc;
 
 use crate::scene::Scene;
-use crate::sampler::{SamplerFactory2D,Sampler2D};
+use crate::sampler::{SamplerFactory2D, Sampler2D};
 use crate::film::Film;
-use crate::filters::filter::Filter;
-use crate::cameras::camera::Camera;
-use crate::geometry::point::Point;
+use crate::filters::Filter;
+use crate::cameras::Camera;
+use crate::geometry::Point;
 
 type Patch = (u32, u32, u32, u32);
 type Splat = (u32, u32, f32, f32);

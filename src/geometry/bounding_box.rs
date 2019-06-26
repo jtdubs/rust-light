@@ -1,9 +1,7 @@
 use std::default::Default;
-use std::fmt::{Display,Formatter,Result};
+use std::fmt::{Display, Formatter, Result};
 
-use crate::geometry::transform::HasTransform;
-use crate::geometry::point::Point;
-use crate::geometry::ray::Ray;
+use crate::geometry::{Point, Ray, HasTransform};
 
 #[derive(Copy, Clone, Debug)]
 pub struct BoundingBox {

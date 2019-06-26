@@ -1,9 +1,7 @@
 use log::*;
 
-use crate::geometry::bounding_box::BoundingBox;
-use crate::geometry::ray::Ray;
-use crate::geometry::transform::{HasTransform};
-use crate::shapes::surface_context::SurfaceContext;
+use crate::geometry::{BoundingBox, Ray, HasTransform};
+use crate::shapes::SurfaceContext;
 
 pub trait Shape : HasTransform + Send + Sync {
     fn bound(&self) -> BoundingBox;

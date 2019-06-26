@@ -4,26 +4,14 @@ use std::f32::consts::*;
 
 use clap::*;
 
-use light::cameras::camera::Camera;
-use light::cameras::perspective::PerspectiveCamera;
-use light::cameras::orthographic::OrthographicCamera;
-use light::cameras::hemisphere::HemisphereCamera;
-use light::cameras::sphere::SphereCamera;
+use light::cameras::{Camera, PerspectiveCamera, OrthographicCamera, HemisphereCamera, SphereCamera};
 use light::film::Film;
-use light::filters::box_filter::BoxFilter;
-use light::filters::gaussian::GaussianFilter;
-use light::filters::caching::CachingFilter;
+use light::filters::{BoxFilter, GaussianFilter, CachingFilter};
 use light::scene::Scene;
-use light::shapes::disc::Disc;
-use light::shapes::sphere::Sphere;
-use light::shapes::paraboloid::Paraboloid;
-use light::shapes::cone::Cone;
-use light::shapes::plane::Plane;
-use light::shapes::cylinder::Cylinder;
+use light::shapes::{Sphere, Disc, Cylinder, Paraboloid, Plane, Cone};
 use light::renderer::render;
-use light::geometry::vector::Vector;
-use light::geometry::transform::Trans;
-use light::sampler::*;
+use light::geometry::{Vector, Trans};
+use light::sampler::{SamplerFactory2D, Sampler2D, CentersSampler2D, LHCSampler2D};
 
 
 struct SamplerFactory {
@@ -46,6 +34,7 @@ impl SamplerFactory2D for SamplerFactory {
     }
 }
 
+
 struct RendererSetup {
     pub film_size       : (u32, u32),
     pub film            : Film,
@@ -67,6 +56,7 @@ impl RendererSetup {
         }
     }
 }
+
 
 fn get_app<'a, 'b>() -> App<'a, 'b> {
     App::new("Rusty Light")

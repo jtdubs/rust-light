@@ -1,4 +1,4 @@
-use crate::filters::filter::Filter;
+use crate::filters::Filter;
 
 pub struct TriangleFilter {
     width  : f32,

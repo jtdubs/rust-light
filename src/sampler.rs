@@ -1,7 +1,7 @@
 use rand::prelude::*;
 use rand::distributions::uniform::Uniform;
 
-use crate::math::{radical_inverse,sobol,van_der_corput};
+use crate::math::{radical_inverse, sobol, van_der_corput};
 
 pub trait SamplerFactory1D {
     fn get_sampler(&self) -> Box<dyn Sampler1D>;

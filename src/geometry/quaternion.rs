@@ -1,9 +1,8 @@
 use std::default::Default;
-use std::ops::{Add,Sub,Mul,Neg};
-use std::fmt::{Display,Formatter,Result};
+use std::ops::{Add, Sub, Mul, Neg};
+use std::fmt::{Display, Formatter, Result};
 
-use crate::geometry::matrix::Matrix;
-use crate::geometry::vector::Vector;
+use crate::geometry::{Matrix, Vector};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Quaternion {

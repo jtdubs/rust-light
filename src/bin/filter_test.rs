@@ -1,9 +1,4 @@
-use light::filters::filter::Filter;
-use light::filters::box_filter::BoxFilter;
-use light::filters::triangle::TriangleFilter;
-use light::filters::gaussian::GaussianFilter;
-use light::filters::mitchell::MitchellFilter;
-use light::filters::lanczos_sinc::LanczosSincFilter;
+use light::filters::*;
 
 fn main() {
     println!("clf");

@@ -1,9 +1,7 @@
 use std::default::Default;
-use std::ops::{Add,Neg};
+use std::ops::{Add, Neg};
 
-use crate::geometry::matrix::Matrix;
-use crate::geometry::vector::Vector;
-use crate::geometry::quaternion::Quaternion;
+use crate::geometry::{Matrix, Vector, Quaternion};
 
 #[derive(Copy, Clone, Debug)]
 pub struct Transform {
