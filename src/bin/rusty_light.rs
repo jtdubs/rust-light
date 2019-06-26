@@ -11,7 +11,7 @@ use light::scene::Scene;
 use light::shapes::{Sphere, Disc, Cylinder, Paraboloid, Plane, Cone};
 use light::renderer::render;
 use light::geometry::{Vector, Trans};
-use light::sampler::{SamplerFactory2D, Sampler2D, CentersSampler2D, LHCSampler2D};
+use light::sampler::{SamplerFactory2D, Sampler2D, CentersSampler2D, LHCSampler2D, StrataSampler2D};
 
 
 struct SamplerFactory {
@@ -30,6 +30,8 @@ impl SamplerFactory2D for SamplerFactory {
             Box::new(CentersSampler2D::new())
         } else {
             Box::new(LHCSampler2D::new(self.n))
+            // let w = (self.n as f32).sqrt().round() as usize;
+            // Box::new(StrataSampler2D::new(w, w))
         }
     }
 }
@@ -72,8 +74,8 @@ fn get_app<'a, 'b>() -> App<'a, 'b> {
                 .long("filter")
                 .value_name("TYPE")
                 .takes_value(true)
-                .possible_values(&["box", "guassian"])
-                .default_value("guassian"))
+                .possible_values(&["box", "gaussian"])
+                .default_value("gaussian"))
         .arg(Arg::with_name("camera")
                 .long("camera")
                 .value_name("TYPE")
@@ -125,7 +127,7 @@ fn get_renderer_setup() -> Option<RendererSetup> {
 
             let filter = match matches.value_of("filter").unwrap() {
                 "box"      => Some(CachingFilter::new(&BoxFilter::new(0.5f32, 0.5f32))),
-                "guassian" => Some(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32))),
+                "gaussian" => Some(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32))),
                 _          => None,
             }.unwrap();
 
