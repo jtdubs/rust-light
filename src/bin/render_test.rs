@@ -4,7 +4,6 @@ use std::f32::consts::*;
 
 use light::cameras::perspective::PerspectiveCamera;
 use light::film::Film;
-use light::filters::box_filter::BoxFilter;
 use light::filters::gaussian::GaussianFilter;
 use light::filters::caching::CachingFilter;
 use light::scene::Scene;
@@ -20,38 +19,23 @@ use light::geometry::transform::Trans;
 use light::sampler::*;
 
 
-struct FastSamplerFactory {
+struct SamplerFactory {
+    n : usize,
 }
 
-impl FastSamplerFactory {
-    pub fn new() -> FastSamplerFactory {
-        FastSamplerFactory { }
+impl SamplerFactory {
+    pub fn new(n : usize) -> SamplerFactory {
+        SamplerFactory { n: n }
     }
 }
 
-impl SamplerFactory2D for FastSamplerFactory {
-    type Output = CentersSampler2D;
-
-    fn get_sampler(&self) -> Self::Output {
-        CentersSampler2D::new()
-    }
-}
-
-
-struct SlowSamplerFactory {
-}
-
-impl SlowSamplerFactory {
-    pub fn new() -> SlowSamplerFactory {
-        SlowSamplerFactory { }
-    }
-}
-
-impl SamplerFactory2D for SlowSamplerFactory {
-    type Output = LHCSampler2D;
-
-    fn get_sampler(&self) -> Self::Output {
-        LHCSampler2D::new(16)
+impl SamplerFactory2D for SamplerFactory {
+    fn get_sampler(&self) -> Box<dyn Sampler2D> {
+        if self.n == 1 {
+            Box::new(CentersSampler2D::new())
+        } else {
+            Box::new(LHCSampler2D::new(self.n))
+        }
     }
 }
 
@@ -61,12 +45,11 @@ fn main() {
 
     let mut film = Film::new(1920, 1080);
 
-    let filter = CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32));
-    // let filter = BoxFilter::new(0.5f32, 0.5f32);
+    let filter = Arc::new(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32)));
 
-    let camera = PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32);
+    let camera = Arc::new(PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32));
 
-    let sampler = SlowSamplerFactory::new();
+    let sampler = Arc::new(SamplerFactory::new(16));
 
     let mut scene = Scene::new();
 

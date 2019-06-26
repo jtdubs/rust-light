@@ -4,15 +4,11 @@ use rand::distributions::uniform::Uniform;
 use crate::math::{radical_inverse,sobol,van_der_corput};
 
 pub trait SamplerFactory1D {
-    type Output : Sampler1D;
-
-    fn get_sampler(&self) -> Self::Output;
+    fn get_sampler(&self) -> Box<dyn Sampler1D>;
 }
 
 pub trait SamplerFactory2D {
-    type Output : Sampler2D;
-
-    fn get_sampler(&self) -> Self::Output;
+    fn get_sampler(&self) -> Box<dyn Sampler2D>;
 }
 
 

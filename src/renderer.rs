@@ -14,10 +14,8 @@ type Patch = (u32, u32, u32, u32);
 type Splat = (u32, u32, f32, f32);
 type Splats = Box<Vec<Splat>>;
 
-pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Filter + 'static, sampler_factory : impl SamplerFactory2D + 'static, scene : Scene) {
-    let camera = Arc::new(camera);
+pub fn render(camera : Arc<dyn Camera>, film : &mut Film, filter : Arc<dyn Filter>, sampler_factory : Arc<dyn SamplerFactory2D>, scene : Scene) {
     let scene = Arc::new(scene);
-    let filter = Arc::new(filter);
 
     let fw = film.width;
     let fh = film.height;
@@ -44,7 +42,7 @@ pub fn render(camera : impl Camera + 'static, film : &mut Film, filter : impl Fi
 
 }
 
-pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<impl Camera>, filter : Arc<impl Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : impl Sampler2D) {
+pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<dyn Camera>, filter : Arc<dyn Filter>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : Box<dyn Sampler2D>) {
     debug!("render_patch({:?})", patch);
 
     let (xs, ys, xe, ye) = patch;
