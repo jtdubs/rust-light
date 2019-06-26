@@ -3,4 +3,5 @@
 set -e
 set -x
 
-time cargo run --release --bin render_test
+cargo build --release --bin rusty_light
+time ./target/release/rusty_light

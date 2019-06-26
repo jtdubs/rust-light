@@ -3,6 +3,6 @@
 set -e
 set -x
 
-cargo build --release --bin render_test
-RUST_LOG=info ./target/release/render_test
+cargo build --release --bin rusty_light
+RUST_LOG=info ./target/release/rusty_light
 feh out/test.png
