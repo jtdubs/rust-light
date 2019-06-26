@@ -1,3 +1,5 @@
+use std::f32::consts::*;
+
 use rand::prelude::*;
 use rand::distributions::uniform::Uniform;
 
@@ -331,5 +333,30 @@ impl Sampler2D for S02Sampler2D {
             v.push((van_der_corput(x as u32, self.s1), sobol(x as u32, self.s2)));
         }
         v
+    }
+}
+
+
+pub fn to_disc_uniform((u1, u2) : (f32, f32)) -> (f32, f32) {
+    let r = u1.sqrt();
+    let theta = u2 * 2f32 * PI;
+    (r * theta.cos(), r * theta.sin())
+}
+
+pub fn to_disc_concentric((u1, u2) : (f32, f32)) -> (f32, f32) {
+    let a = (2f32 * u1) - 1f32;
+    let b = (2f32 * u2) - 1f32;
+
+    if a == 0f32 && b == 0f32 {
+        (0f32, 0f32)
+    } else {
+        let (radius, theta) =
+            if (a * a) > (b * b) {
+                (a, FRAC_PI_4 * b / a)
+            } else {
+                (b, FRAC_PI_2 - FRAC_PI_4 * a / b)
+            };
+
+        (radius * theta.cos(), radius * theta.sin())
     }
 }
