@@ -3,3 +3,4 @@
 - Implement the spectrum classes from Chapter 5
 - Camera extentions for lenses and depth-of-field
 - command-line params for quality (fast v. slow)
+fix sampler tests
