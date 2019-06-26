@@ -116,8 +116,8 @@ fn main() {
     let mut film = Film::new(film_width, film_height);
 
     let filter = match matches.value_of("filter").unwrap() {
-        "box"      => Some(Arc::new(CachingFilter::new(&BoxFilter::new(0.5f32, 0.5f32)))),
-        "guassian" => Some(Arc::new(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32)))),
+        "box"      => Some(CachingFilter::new(&BoxFilter::new(0.5f32, 0.5f32))),
+        "guassian" => Some(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32))),
         _          => None,
     }.unwrap();
 

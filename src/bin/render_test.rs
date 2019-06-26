@@ -45,7 +45,7 @@ fn main() {
 
     let mut film = Film::new(1920, 1080);
 
-    let filter = Arc::new(CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32)));
+    let filter = CachingFilter::new(&GaussianFilter::new(1.4f32, 1.4f32, 0.25f32));
 
     let camera = Arc::new(PerspectiveCamera::new(FRAC_PI_3, film.width as f32 / film.height as f32));
 
