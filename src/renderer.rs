@@ -1,40 +1,64 @@
+use std::path::Path;
 use log::*;
 use threadpool::ThreadPool;
-use std::sync::{Arc, RwLock, Mutex};
+use std::sync::{Arc, Mutex};
 
 use crate::scene::Scene;
 use crate::sampler::{SamplerFactory2D, Sampler2D};
 use crate::film::Film;
-use crate::filters::Filter;
+use crate::filters::{Filter, CachingFilter};
 use crate::cameras::Camera;
 use crate::geometry::Point;
 
 type Patch = (u32, u32, u32, u32);
 
-pub fn render(camera : Arc<dyn Camera>, film : Film, filter : impl Filter + 'static, sampler_factory : Arc<dyn SamplerFactory2D>, scene : Scene) -> Arc<Mutex<Film>> {
-    let patches = get_patches(&film, 16);
+pub struct RendererSetup {
+    pub film            : Film,
+    pub filter          : CachingFilter,
+    pub camera          : Arc<dyn Camera>,
+    pub sampler_factory : Arc<dyn SamplerFactory2D>,
+    pub output_filename : String,
+}
 
-    let fw = film.width;
-    let fh = film.height;
+impl RendererSetup {
+    pub fn new(film : Film, filter : CachingFilter, camera : Arc<dyn Camera>, sampler_factory : Arc<SamplerFactory2D>, output_filename : String) -> RendererSetup {
+        RendererSetup {
+            film:            film,
+            filter:          filter,
+            camera:          camera,
+            sampler_factory: sampler_factory,
+            output_filename: output_filename,
+        }
+    }
+}
+
+pub fn render(setup : RendererSetup, scene : Scene) {
+    let patches = get_patches(&setup.film, 16);
+
+    let fw = setup.film.width;
+    let fh = setup.film.height;
 
     let scene = Arc::new(scene);
-    let filter = Arc::new(filter);
-    let arc_film = Arc::new(Mutex::new(film));
+    let filter = Arc::new(setup.filter);
+    let film = Arc::new(Mutex::new(setup.film));
 
     let pool = ThreadPool::new(4);
 
     for patch in patches {
-        let camera = camera.clone();
+        let camera = setup.camera.clone();
         let filter = filter.clone();
         let scene = scene.clone();
-        let arc_film = arc_film.clone();
-        let sampler = sampler_factory.get_sampler();
-        pool.execute(move || { render_patch(patch, arc_film, camera, filter, scene, fw, fh, sampler); });
+        let film = film.clone();
+        let sampler = setup.sampler_factory.get_sampler();
+        pool.execute(move || { render_patch(patch, film, camera, filter, scene, fw, fh, sampler); });
     }
 
     pool.join();
 
-    arc_film
+    match film.lock().unwrap().save(&Path::new(&setup.output_filename)) {
+        Ok(_) => { },
+        Err(m) => println!("{}", m),
+    };
 }
 
 pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<impl Filter + 'static>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : Box<dyn Sampler2D>) {
