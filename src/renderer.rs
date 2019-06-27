@@ -1,5 +1,4 @@
 use std::path::Path;
-use log::*;
 use threadpool::ThreadPool;
 use std::sync::{Arc, Mutex};
 
@@ -35,9 +34,6 @@ impl RendererSetup {
 pub fn render(setup : RendererSetup, scene : Scene) {
     let patches = get_patches(&setup.film, 16);
 
-    let fw = setup.film.width;
-    let fh = setup.film.height;
-
     let scene = Arc::new(scene);
     let filter = Arc::new(setup.filter);
     let film = Arc::new(Mutex::new(setup.film));
@@ -50,7 +46,7 @@ pub fn render(setup : RendererSetup, scene : Scene) {
         let scene = scene.clone();
         let film = film.clone();
         let sampler = setup.sampler_factory.get_sampler();
-        pool.execute(move || { render_patch(patch, film, camera, filter, scene, fw, fh, sampler); });
+        pool.execute(move || { render_patch(patch, film, camera, filter, scene, sampler); });
     }
 
     pool.join();
@@ -61,13 +57,13 @@ pub fn render(setup : RendererSetup, scene : Scene) {
     };
 }
 
-pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<impl Filter + 'static>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : Box<dyn Sampler2D>) {
-    debug!("render_patch({:?})", patch);
-
+pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<impl Filter + 'static>, scene : Arc<Scene>, mut sampler : Box<dyn Sampler2D>) {
     let (xs, ys, xe, ye) = patch;
 
-    let x_scale = 2f32 / (film_width as f32);
-    let y_scale = 2f32 / (film_height as f32);
+    let the_film = film.lock().unwrap();
+    let x_scale = 2f32 / (the_film.width as f32);
+    let y_scale = 2f32 / (the_film.height as f32);
+    drop(the_film);
 
     for x in xs..xe {
         for y in ys..ye {

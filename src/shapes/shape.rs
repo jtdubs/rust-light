@@ -1,5 +1,3 @@
-use log::*;
-
 use crate::geometry::{BoundingBox, Ray, HasTransform};
 use crate::shapes::SurfaceContext;
 
@@ -28,16 +26,6 @@ pub struct ShapeIntersection {
 
 impl ShapeIntersection {
     pub fn new(ray : Ray, time : f32, context : SurfaceContext) -> ShapeIntersection {
-        debug!("intersection.ray    = {:?}", ray);
-        debug!("intersection.time   = {:?}", time);
-        debug!("intersection.point  = {:?}", context.p);
-        debug!("intersection.normal = {:?}", context.n);
-        debug!("intersection.uv     = {:?}", (context.u, context.v));
-        debug!("intersection.dpdu   = {:?}", context.dpdu);
-        debug!("intersection.dpdv   = {:?}", context.dpdv);
-        debug!("intersection.dndu   = {:?}", context.dndu);
-        debug!("intersection.dndv   = {:?}", context.dndv);
-
         ShapeIntersection { ray: ray, time: time, context: context }
     }
 }
