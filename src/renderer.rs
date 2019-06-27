@@ -57,7 +57,7 @@ pub fn render(setup : RendererSetup, scene : Scene) {
     };
 }
 
-pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<impl Filter + 'static>, scene : Arc<Scene>, mut sampler : Box<dyn Sampler2D>) {
+pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<CachingFilter>, scene : Arc<Scene>, mut sampler : Box<dyn Sampler2D>) {
     let (xs, ys, xe, ye) = patch;
 
     let the_film = film.lock().unwrap();
