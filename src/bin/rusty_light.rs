@@ -174,7 +174,7 @@ fn get_renderer_setup() -> Option<RendererSetup> {
 fn build_scene() -> Scene {
     let mut scene = Scene::new();
 
-    for z in vec![5f32, 10f32, 20f32, 40f32].into_iter() {
+    for z in vec![7f32].into_iter() { // , 10f32, 20f32, 40f32].into_iter() {
         scene.add(Arc::new(Sphere::unit().translate(&Vector::new( -5f32, 0.8f32, z))));
         scene.add(Arc::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-5f32, -0.8f32, z))));
 
@@ -201,9 +201,9 @@ fn main() {
     env_logger::init();
 
     if let Some(mut setup) = get_renderer_setup() {
-        render(setup.camera, &mut setup.film, setup.filter, setup.sampler_factory, build_scene());
+        let film = render(setup.camera, setup.film, setup.filter, setup.sampler_factory, build_scene());
 
-        match setup.film.save(&Path::new(&setup.output_filename)) {
+        match film.lock().unwrap().save(&Path::new(&setup.output_filename)) {
             Ok(_) => { },
             Err(m) => println!("{}", m),
         };
