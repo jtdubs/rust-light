@@ -38,7 +38,7 @@ pub fn render(setup : RendererSetup, scene : Scene) {
     let filter = Arc::new(setup.filter);
     let film = Arc::new(Mutex::new(setup.film));
 
-    let pool = ThreadPool::new(4);
+    let pool = ThreadPool::new(8);
 
     for patch in patches {
         let camera = setup.camera.clone();
