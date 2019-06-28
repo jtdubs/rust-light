@@ -1,5 +1,3 @@
-use log::*;
-
 use crate::geometry::{Ray, Vector, Point, Transform, HasTransform, TransMut};
 use crate::cameras::Camera;
 use crate::sampler::{UniformSampler2D, Sampler2D, to_disc_concentric};
@@ -19,18 +17,14 @@ impl PerspectiveLensCamera {
         let fov_y_tan = (fov_y / 2f32).tan();
         let fov_x_tan = fov_y_tan * aspect_ratio;
 
-        let c = PerspectiveLensCamera {
+        PerspectiveLensCamera {
             transform:      Transform::identity(),
             fov_y:          fov_y,
             fov_x_tan:      fov_x_tan,
             fov_y_tan:      fov_y_tan,
             lens_radius:    lens_radius,
             focal_distance: focal_distance,
-        };
-
-        info!("{:?}", c);
-
-        c
+        }
     }
 }
 

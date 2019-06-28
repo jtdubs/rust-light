@@ -1,61 +1,75 @@
-use log::*;
+use std::path::Path;
 use threadpool::ThreadPool;
-use std::sync::mpsc::{channel, Sender};
-use std::sync::Arc;
+use std::sync::{Arc, Mutex};
 
 use crate::scene::Scene;
 use crate::sampler::{SamplerFactory2D, Sampler2D};
 use crate::film::Film;
-use crate::filters::Filter;
+use crate::filters::{Filter, CachingFilter};
 use crate::cameras::Camera;
 use crate::geometry::Point;
 
 type Patch = (u32, u32, u32, u32);
-type Splat = (u32, u32, f32, f32);
-type Splats = Box<Vec<Splat>>;
 
-pub fn render(camera : Arc<dyn Camera>, film : &mut Film, filter : impl Filter + 'static, sampler_factory : Arc<dyn SamplerFactory2D>, scene : Scene) {
-    let scene = Arc::new(scene);
-    let filter = Arc::new(filter);
-
-    let fw = film.width;
-    let fh = film.height;
-
-    let pool = ThreadPool::new(3);
-    let (tx, rx) = channel::<Splats>();
-
-    for patch in get_patches(film, 16) {
-        let tx = tx.clone();
-        let camera = camera.clone();
-        let filter = filter.clone();
-        let scene = scene.clone();
-        let sampler = sampler_factory.get_sampler();
-        pool.execute(move || { render_patch(patch, tx, camera, filter, scene, fw, fh, sampler); });
-    }
-
-    drop(tx);
-
-    for v in rx {
-        for (x, y, s, w) in v.into_iter() {
-            film.splat(x, y, s, w);
-        }
-    }
-
+pub struct RendererSetup {
+    pub film            : Film,
+    pub filter          : CachingFilter,
+    pub camera          : Arc<dyn Camera>,
+    pub sampler_factory : Arc<dyn SamplerFactory2D>,
+    pub output_filename : String,
 }
 
-pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<dyn Camera>, filter : Arc<impl Filter + 'static>, scene : Arc<Scene>, film_width : u32, film_height : u32, mut sampler : Box<dyn Sampler2D>) {
-    debug!("render_patch({:?})", patch);
+impl RendererSetup {
+    pub fn new(film : Film, filter : CachingFilter, camera : Arc<dyn Camera>, sampler_factory : Arc<SamplerFactory2D>, output_filename : String) -> RendererSetup {
+        RendererSetup {
+            film:            film,
+            filter:          filter,
+            camera:          camera,
+            sampler_factory: sampler_factory,
+            output_filename: output_filename,
+        }
+    }
+}
 
+pub fn render(setup : RendererSetup, scene : Scene) {
+    let patches = get_patches(&setup.film, 16);
+
+    let scene = Arc::new(scene);
+    let filter = Arc::new(setup.filter);
+    let film = Arc::new(Mutex::new(setup.film));
+
+    let pool = ThreadPool::new(8);
+
+    for patch in patches {
+        let camera = setup.camera.clone();
+        let filter = filter.clone();
+        let scene = scene.clone();
+        let film = film.clone();
+        let sampler = setup.sampler_factory.get_sampler();
+        pool.execute(move || { render_patch(patch, film, camera, filter, scene, sampler); });
+    }
+
+    pool.join();
+
+    match film.lock().unwrap().save(&Path::new(&setup.output_filename)) {
+        Ok(_) => { },
+        Err(m) => println!("{}", m),
+    };
+}
+
+pub fn render_patch(patch : Patch, film : Arc<Mutex<Film>>, camera : Arc<dyn Camera>, filter : Arc<CachingFilter>, scene : Arc<Scene>, mut sampler : Box<dyn Sampler2D>) {
     let (xs, ys, xe, ye) = patch;
 
-    let x_scale = 2f32 / (film_width as f32);
-    let y_scale = 2f32 / (film_height as f32);
+    let the_film = film.lock().unwrap();
+    let x_scale = 2f32 / (the_film.width as f32);
+    let y_scale = 2f32 / (the_film.height as f32);
+    drop(the_film);
 
-    let (ex, ey) = filter.extent();
-
-    let mut film_updates = Box::new(Vec::with_capacity(51200));
     for x in xs..xe {
         for y in ys..ye {
+            let mut sum = 0f32;
+            let mut weight_sum = 0f32;
+
             for (dx, dy) in sampler.get_samples().into_iter() {
                 let fx = (x as f32) + dx;
                 let fy = (y as f32) + dy;
@@ -75,25 +89,14 @@ pub fn render_patch(patch : Patch, tx : Sender<Splats>, camera : Arc<dyn Camera>
                     }
                 };
 
-                let min_x = (fx - 0.5f32 - ex).ceil().max(0f32) as u32;
-                let min_y = (fy - 0.5f32 - ey).ceil().max(0f32) as u32;
-                let max_x = (fx + 0.5f32 + ex).min(film_width as f32 - 1f32) as u32;
-                let max_y = (fy + 0.5f32 + ey).min(film_height as f32 - 1f32) as u32;
-                let ox = 0.5f32 - fx;
-                let oy = 0.5f32 - fy;
-
-                for ux in min_x..=max_x {
-                    for uy in min_y..=max_y {
-                        let w = filter.weight(ux as f32 + ox, uy as f32 + oy);
-                        film_updates.push((ux, uy, v * w, w));
-                    }
-                }
+                let w = filter.weight(dx - 0.5f32, dy - 0.5f32);
+                sum += v * w;
+                weight_sum += w;
             }
+
+            film.lock().unwrap().splat(x, y, sum, weight_sum);
         }
     }
-    tx.send(film_updates).unwrap();
-
-    drop(tx);
 }
 
 pub fn get_patches(film : &Film, patch_size : u32) -> Vec<Patch> {

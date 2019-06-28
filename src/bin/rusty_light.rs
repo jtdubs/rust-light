@@ -1,4 +1,3 @@
-use std::path::Path;
 use std::sync::Arc;
 use std::f32::consts::*;
 
@@ -9,9 +8,9 @@ use light::film::Film;
 use light::filters::{BoxFilter, GaussianFilter, CachingFilter};
 use light::scene::Scene;
 use light::shapes::{Sphere, Disc, Cylinder, Paraboloid, Plane, Cone};
-use light::renderer::render;
+use light::renderer::{render, RendererSetup};
 use light::geometry::{Vector, Trans};
-use light::sampler::{SamplerFactory2D, Sampler2D, CentersSampler2D, LHCSampler2D, StrataSampler2D};
+use light::sampler::{SamplerFactory2D, Sampler2D, CentersSampler2D, LHCSampler2D};
 
 
 struct SamplerFactory {
@@ -32,29 +31,6 @@ impl SamplerFactory2D for SamplerFactory {
             Box::new(LHCSampler2D::new(self.n))
             // let w = (self.n as f32).sqrt().round() as usize;
             // Box::new(StrataSampler2D::new(w, w))
-        }
-    }
-}
-
-
-struct RendererSetup {
-    pub film_size       : (u32, u32),
-    pub film            : Film,
-    pub filter          : CachingFilter,
-    pub camera          : Arc<dyn Camera>,
-    pub sampler_factory : Arc<dyn SamplerFactory2D>,
-    pub output_filename : String,
-}
-
-impl RendererSetup {
-    pub fn new(film_size : (u32, u32), film : Film, filter : CachingFilter, camera : Arc<dyn Camera>, sampler_factory : Arc<SamplerFactory2D>, output_filename : String) -> RendererSetup {
-        RendererSetup {
-            film_size:       film_size,
-            film:            film,
-            filter:          filter,
-            camera:          camera,
-            sampler_factory: sampler_factory,
-            output_filename: output_filename,
         }
     }
 }
@@ -166,7 +142,7 @@ fn get_renderer_setup() -> Option<RendererSetup> {
                     
             let output_filename = String::from(matches.value_of("output").unwrap());
 
-            Some(RendererSetup::new(film_size, film, filter, camera, sampler_factory, output_filename))
+            Some(RendererSetup::new(film, filter, camera, sampler_factory, output_filename))
         }
     }
 }
@@ -174,7 +150,7 @@ fn get_renderer_setup() -> Option<RendererSetup> {
 fn build_scene() -> Scene {
     let mut scene = Scene::new();
 
-    for z in vec![5f32, 10f32, 20f32, 40f32].into_iter() {
+    for z in vec![7f32].into_iter() { // , 10f32, 20f32, 40f32].into_iter() {
         scene.add(Arc::new(Sphere::unit().translate(&Vector::new( -5f32, 0.8f32, z))));
         scene.add(Arc::new(Sphere::new_partial(0.5f32, (-0.3f32, 0.3f32), PI).rotate(FRAC_PI_2, &Vector::unit_x()).translate(&Vector::new(-5f32, -0.8f32, z))));
 
@@ -200,12 +176,7 @@ fn build_scene() -> Scene {
 fn main() {
     env_logger::init();
 
-    if let Some(mut setup) = get_renderer_setup() {
-        render(setup.camera, &mut setup.film, setup.filter, setup.sampler_factory, build_scene());
-
-        match setup.film.save(&Path::new(&setup.output_filename)) {
-            Ok(_) => { },
-            Err(m) => println!("{}", m),
-        };
+    if let Some(setup) = get_renderer_setup() {
+        render(setup, build_scene());
     }
 }
