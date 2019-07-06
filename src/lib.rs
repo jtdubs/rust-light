@@ -7,3 +7,4 @@ pub mod renderer;
 pub mod sampler;
 pub mod scene;
 pub mod shapes;
+pub mod textures;
