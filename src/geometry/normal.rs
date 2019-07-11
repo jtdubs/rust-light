@@ -201,7 +201,6 @@ fn test_accessors() {
 
 #[test]
 fn test_construction() {
-    assert_eq!(Normal::new(1f32, 2f32, 3f32), Vector::new(1f32, 2f32, 3f32).to_normal());
     assert_eq!(Normal::new(1f32, 2f32, 3f32).x, 1f32);
     assert_eq!(Normal::new(1f32, 2f32, 3f32).y, 2f32);
     assert_eq!(Normal::new(1f32, 2f32, 3f32).z, 3f32);

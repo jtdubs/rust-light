@@ -158,11 +158,11 @@ impl TransMut for Cylinder {
 
 #[test]
 fn test_cylinder() {
-    let c = Cylinder::unit().rotate3(Float::frac_pi_2(), 0f32, 0f32).translate(&Vector::new(0f32, 0f32, 10f32));
+    let c = Cylinder::unit().rotate3(FRAC_PI_2, 0f32, 0f32).translate(&Vector::new(0f32, 0f32, 10f32));
     let r = Ray::z_axis();
 
     match c.intersect(&r) {
         None => assert!(false),
-        Some(t) => assert_eq!(t, 9.5f32),
+        Some(t) => assert!((t.time - 9.5f32).abs() < 1e-4f32),
     }
 }

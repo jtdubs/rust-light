@@ -217,88 +217,94 @@ impl Mul<Matrix> for Vector {
 }
 
 
-#[test]
-fn test_accessors() {
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).x, 1f32);
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).y, 2f32);
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).z, 3f32);
-}
+#[cfg(test)]
+mod tests {
+    use std::f32::consts::*;
+    use super::*;
 
-#[test]
-fn test_equality() {
-    assert!(Vector::zero() == Vector::zero());
-    assert!(Vector::zero() == Vector::new(0f32, 0f32, 0f32));
-    assert!(Vector::zero() != Vector::new(1f32, 0f32, 0f32));
-    assert!(Vector::zero() != Vector::new(0f32, 1f32, 0f32));
-    assert!(Vector::zero() != Vector::new(0f32, 0f32, 1f32));
-    assert!(Vector::unit_x() == Vector::unit_x());
-    assert!(Vector::unit_x() != Vector::unit_y());
-}
+    #[test]
+    fn test_accessors() {
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).x, 1f32);
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).y, 2f32);
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).z, 3f32);
+    }
 
-#[test]
-fn test_dot() {
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::zero()), 0f32);
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::unit_y()), 2f32);
-    assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::new(4f32, 5f32, 6f32)), 32f32);
-}
+    #[test]
+    fn test_equality() {
+        assert!(Vector::zero() == Vector::zero());
+        assert!(Vector::zero() == Vector::new(0f32, 0f32, 0f32));
+        assert!(Vector::zero() != Vector::new(1f32, 0f32, 0f32));
+        assert!(Vector::zero() != Vector::new(0f32, 1f32, 0f32));
+        assert!(Vector::zero() != Vector::new(0f32, 0f32, 1f32));
+        assert!(Vector::unit_x() == Vector::unit_x());
+        assert!(Vector::unit_x() != Vector::unit_y());
+    }
 
-#[test]
-fn test_cross() {
-    assert_eq!(Vector::unit_x().cross(&Vector::unit_y()), Vector::unit_z());
-}
+    #[test]
+    fn test_dot() {
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::zero()), 0f32);
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::unit_y()), 2f32);
+        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::new(4f32, 5f32, 6f32)), 32f32);
+    }
 
-#[test]
-fn test_magnitude() {
-    assert_eq!(Vector::zero().magnitude(), 0f32);
-    assert_eq!(Vector::unit_x().magnitude(), 1f32);
-}
+    #[test]
+    fn test_cross() {
+        assert_eq!(Vector::unit_x().cross(&Vector::unit_y()), Vector::unit_z());
+    }
 
-#[test]
-fn test_normalize() {
-    assert_eq!(Vector::unit_x().mul_s(3f32).normalize(), Vector::unit_x());
-}
+    #[test]
+    fn test_magnitude() {
+        assert_eq!(Vector::zero().magnitude(), 0f32);
+        assert_eq!(Vector::unit_x().magnitude(), 1f32);
+    }
 
-#[test]
-fn test_reverse() {
-    assert_eq!(Vector::zero().reverse(), Vector::zero());
-    assert_eq!(Vector::new(1f32, -2f32, 3f32).reverse(), Vector::new(-1f32, 2f32, -3f32));
-}
+    #[test]
+    fn test_normalize() {
+        assert_eq!(Vector::unit_x().mul_s(3f32).normalize(), Vector::unit_x());
+    }
 
-#[test]
-fn test_add() {
-    assert_eq!(Vector::unit_x().add_v(&Vector::unit_x()), Vector::new(2f32, 0f32, 0f32));
-    assert_eq!(Vector::unit_x().add_v(&Vector::unit_y()), Vector::new(1f32, 1f32, 0f32));
-    assert_eq!(Vector::unit_x().add_v(&Vector::unit_z()), Vector::new(1f32, 0f32, 1f32));
+    #[test]
+    fn test_reverse() {
+        assert_eq!(Vector::zero().reverse(), Vector::zero());
+        assert_eq!(Vector::new(1f32, -2f32, 3f32).reverse(), Vector::new(-1f32, 2f32, -3f32));
+    }
 
-    let mut v = Vector::unit_x();
-    v.add_self_v(&Vector::unit_x());
-    v.add_self_v(&Vector::unit_y());
-    assert_eq!(v, Vector::new(2f32, 1f32, 0f32));
-}
+    #[test]
+    fn test_add() {
+        assert_eq!(Vector::unit_x().add_v(&Vector::unit_x()), Vector::new(2f32, 0f32, 0f32));
+        assert_eq!(Vector::unit_x().add_v(&Vector::unit_y()), Vector::new(1f32, 1f32, 0f32));
+        assert_eq!(Vector::unit_x().add_v(&Vector::unit_z()), Vector::new(1f32, 0f32, 1f32));
 
-#[test]
-fn test_mul() {
-    assert_eq!(Vector::unit_x().mul_s(3f32), Vector::new(3f32, 0f32, 0f32));
-    assert_eq!(Vector::unit_y().mul_s(3f32), Vector::new(0f32, 3f32, 0f32));
+        let mut v = Vector::unit_x();
+        v.add_self_v(&Vector::unit_x());
+        v.add_self_v(&Vector::unit_y());
+        assert_eq!(v, Vector::new(2f32, 1f32, 0f32));
+    }
 
-    let mut v = Vector::unit_x();
-    v.mul_self_s(3f32);
-    assert_eq!(v, Vector::new(3f32, 0f32, 0f32));
-}
+    #[test]
+    fn test_mul() {
+        assert_eq!(Vector::unit_x().mul_s(3f32), Vector::new(3f32, 0f32, 0f32));
+        assert_eq!(Vector::unit_y().mul_s(3f32), Vector::new(0f32, 3f32, 0f32));
 
-#[test]
-fn test_div() {
-    assert_eq!(Vector::unit_x().mul_s(3f32).div_s(3f32), Vector::unit_x());
-    assert_eq!(Vector::unit_y().mul_s(3f32).div_s(3f32), Vector::unit_y());
+        let mut v = Vector::unit_x();
+        v.mul_self_s(3f32);
+        assert_eq!(v, Vector::new(3f32, 0f32, 0f32));
+    }
 
-    let mut v = Vector::unit_x();
-    v.mul_self_s(3f32);
-    v.div_self_s(3f32);
-    assert_eq!(v, Vector::unit_x());
-}
+    #[test]
+    fn test_div() {
+        assert_eq!(Vector::unit_x().mul_s(3f32).div_s(3f32), Vector::unit_x());
+        assert_eq!(Vector::unit_y().mul_s(3f32).div_s(3f32), Vector::unit_y());
 
-#[test]
-fn test_angle() {
-    assert_eq!(Vector::unit_x().angle_between(&Vector::unit_y()), Float::frac_pi_2());
-    assert_eq!(Vector::unit_y().angle_between(&Vector::unit_x()), Float::frac_pi_2());
+        let mut v = Vector::unit_x();
+        v.mul_self_s(3f32);
+        v.div_self_s(3f32);
+        assert_eq!(v, Vector::unit_x());
+    }
+
+    #[test]
+    fn test_angle() {
+        assert_eq!(Vector::unit_x().angle_between(&Vector::unit_y()), FRAC_PI_2);
+        assert_eq!(Vector::unit_y().angle_between(&Vector::unit_x()), FRAC_PI_2);
+    }
 }
