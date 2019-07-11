@@ -153,11 +153,11 @@ impl Display for Vector {
 
 impl PartialEq for Vector {
     fn eq(&self, other: &Vector) -> bool {
-        self.x == other.x && self.y == other.y && self.z == other.z
+        (self.x - other.x).abs() < 1e-3f32 && (self.y - other.y).abs() < 1e-3f32 && (self.z - other.z).abs() < 1e-3f32
     }
 
     fn ne(&self, other: &Vector) -> bool {
-        self.x != other.x || self.y != other.y || self.z != other.z
+        (self.x - other.x).abs() > 1e-3f32 || (self.y - other.y).abs() > 1e-3f32 || (self.z - other.z).abs() > 1e-3f32
     }
 }
 
@@ -222,84 +222,71 @@ mod tests {
     use std::f32::consts::*;
     use super::*;
 
-    #[test]
-    fn test_accessors() {
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).x, 1f32);
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).y, 2f32);
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).z, 3f32);
+    use quickcheck::*;
+
+    impl Arbitrary for Vector {
+        fn arbitrary<G: Gen>(g : &mut G) -> Vector {
+            Vector::new(f32::arbitrary(g), f32::arbitrary(g), f32::arbitrary(g))
+        }
     }
 
-    #[test]
-    fn test_equality() {
-        assert!(Vector::zero() == Vector::zero());
-        assert!(Vector::zero() == Vector::new(0f32, 0f32, 0f32));
-        assert!(Vector::zero() != Vector::new(1f32, 0f32, 0f32));
-        assert!(Vector::zero() != Vector::new(0f32, 1f32, 0f32));
-        assert!(Vector::zero() != Vector::new(0f32, 0f32, 1f32));
-        assert!(Vector::unit_x() == Vector::unit_x());
-        assert!(Vector::unit_x() != Vector::unit_y());
-    }
+    #[quickcheck]
+    fn prop_constructor_x_is_x(x : f32) -> bool { x == Vector::new(x, 0f32, 0f32).x  }
 
-    #[test]
-    fn test_dot() {
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::zero()), 0f32);
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::unit_y()), 2f32);
-        assert_eq!(Vector::new(1f32, 2f32, 3f32).dot(&Vector::new(4f32, 5f32, 6f32)), 32f32);
-    }
+    #[quickcheck]
+    fn prop_constructor_y_is_y(y : f32) -> bool { y == Vector::new(0f32, y, 0f32).y }
+
+    #[quickcheck]
+    fn prop_constructor_z_is_z(z : f32) -> bool { z == Vector::new(0f32, 0f32, z).z }
+
+    #[quickcheck]
+    fn prop_vector_equals_itself(x : f32, y : f32, z : f32) -> bool { Vector::new(x, y, z) == Vector::new(x, y, z) }
+
+    #[quickcheck]
+    fn prop_dot_unit_x_is_x(v : Vector) -> bool { v.dot(&Vector::unit_x()) == v.x }
+
+    #[quickcheck]
+    fn prop_dot_unit_y_is_y(v : Vector) -> bool { v.dot(&Vector::unit_y()) == v.y }
+
+    #[quickcheck]
+    fn prop_dot_unit_z_is_z(v : Vector) -> bool { v.dot(&Vector::unit_z()) == v.z }
+
+    #[quickcheck]
+    fn prop_reverse_reverse_is_identity(v : Vector) -> bool { v.reverse().reverse() == v }
+
+    #[quickcheck]
+    fn prop_zero_is_additive_identity(v : Vector) -> bool { v + Vector::zero() == v }
+
+    #[quickcheck]
+    fn prop_one_is_multiplicitive_identity(v : Vector) -> bool { v * 1f32 == v }
+
+    #[quickcheck]
+    fn prop_zero_is_multiplicitive_zero(v : Vector) -> bool { v * 0f32 == Vector::zero() }
+
+    #[quickcheck]
+    fn prop_normalize_is_length_one(v : Vector) -> bool { (v.normalize().magnitude() - 1f32).abs() <= 1e-4f32 }
+
+    #[quickcheck]
+    fn prop_addition_commutes(a : Vector, b : Vector) -> bool { a + b == b + a }
+
+    #[quickcheck]
+    fn prop_addition_associates(a : Vector, b : Vector, c : Vector) -> bool { a + (b + c) == (a + b) + c }
+
+    #[quickcheck]
+    fn prop_division_cancels_multiplication(s : f32, a : Vector) -> bool { s == 0f32 || a * s / s == a }
+
+    #[quickcheck]
+    fn prop_one_is_division_identity(a : Vector) -> bool { a / 1f32 == a }
+
+    #[quickcheck]
+    fn prop_negate_negate_is_identity(a : Vector) -> bool { -(-a) == a }
+
+    #[quickcheck]
+    fn prop_subtraction_is_negated_addition(a : Vector, b : Vector) -> bool { a - b == a + -b }
 
     #[test]
     fn test_cross() {
         assert_eq!(Vector::unit_x().cross(&Vector::unit_y()), Vector::unit_z());
-    }
-
-    #[test]
-    fn test_magnitude() {
-        assert_eq!(Vector::zero().magnitude(), 0f32);
-        assert_eq!(Vector::unit_x().magnitude(), 1f32);
-    }
-
-    #[test]
-    fn test_normalize() {
-        assert_eq!(Vector::unit_x().mul_s(3f32).normalize(), Vector::unit_x());
-    }
-
-    #[test]
-    fn test_reverse() {
-        assert_eq!(Vector::zero().reverse(), Vector::zero());
-        assert_eq!(Vector::new(1f32, -2f32, 3f32).reverse(), Vector::new(-1f32, 2f32, -3f32));
-    }
-
-    #[test]
-    fn test_add() {
-        assert_eq!(Vector::unit_x().add_v(&Vector::unit_x()), Vector::new(2f32, 0f32, 0f32));
-        assert_eq!(Vector::unit_x().add_v(&Vector::unit_y()), Vector::new(1f32, 1f32, 0f32));
-        assert_eq!(Vector::unit_x().add_v(&Vector::unit_z()), Vector::new(1f32, 0f32, 1f32));
-
-        let mut v = Vector::unit_x();
-        v.add_self_v(&Vector::unit_x());
-        v.add_self_v(&Vector::unit_y());
-        assert_eq!(v, Vector::new(2f32, 1f32, 0f32));
-    }
-
-    #[test]
-    fn test_mul() {
-        assert_eq!(Vector::unit_x().mul_s(3f32), Vector::new(3f32, 0f32, 0f32));
-        assert_eq!(Vector::unit_y().mul_s(3f32), Vector::new(0f32, 3f32, 0f32));
-
-        let mut v = Vector::unit_x();
-        v.mul_self_s(3f32);
-        assert_eq!(v, Vector::new(3f32, 0f32, 0f32));
-    }
-
-    #[test]
-    fn test_div() {
-        assert_eq!(Vector::unit_x().mul_s(3f32).div_s(3f32), Vector::unit_x());
-        assert_eq!(Vector::unit_y().mul_s(3f32).div_s(3f32), Vector::unit_y());
-
-        let mut v = Vector::unit_x();
-        v.mul_self_s(3f32);
-        v.div_self_s(3f32);
-        assert_eq!(v, Vector::unit_x());
     }
 
     #[test]

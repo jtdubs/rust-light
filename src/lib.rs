@@ -8,3 +8,7 @@ pub mod sampler;
 pub mod scene;
 pub mod shapes;
 pub mod textures;
+
+#[cfg(test)]
+#[macro_use]
+extern crate quickcheck_macros;
